@@ -2,1009 +2,2374 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
-<title>Control de Horarios · Redpack</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-<script src="https://accounts.google.com/gsi/client" async defer></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GUIAS RK- ADMIN & CUADRATURA V0.4</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20x%3D%222%22%20y%3D%2224%22%20width%3D%2234%22%20height%3D%2220%22%20rx%3D%222%22%20fill%3D%22%23d81f2a%22/%3E%3Cpath%20d%3D%22M36%2030%20h13%20l9%209%20v5%20h-22%20z%22%20fill%3D%22%23d81f2a%22/%3E%3Crect%20x%3D%2243%22%20y%3D%2233%22%20width%3D%228%22%20height%3D%226%22%20rx%3D%221%22%20fill%3D%22%23bfe3ff%22/%3E%3Crect%20x%3D%222%22%20y%3D%2220%22%20width%3D%2234%22%20height%3D%225%22%20fill%3D%22%238f151d%22/%3E%3Crect%20x%3D%222%22%20y%3D%2242%22%20width%3D%2252%22%20height%3D%222%22%20fill%3D%22%231a1a1a%22%20opacity%3D%220.25%22/%3E%3Ccircle%20cx%3D%2214%22%20cy%3D%2246%22%20r%3D%226%22%20fill%3D%22%23111%22/%3E%3Ccircle%20cx%3D%2214%22%20cy%3D%2246%22%20r%3D%222.3%22%20fill%3D%22%23999%22/%3E%3Ccircle%20cx%3D%2246%22%20cy%3D%2246%22%20r%3D%226%22%20fill%3D%22%23111%22/%3E%3Ccircle%20cx%3D%2246%22%20cy%3D%2246%22%20r%3D%222.3%22%20fill%3D%22%23999%22/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 <style>
-  :root{
-    --carbon-900:#161618;
-    --carbon-800:#1d1d20;
-    --carbon-700:#26262a;
-    --carbon-600:#333338;
-    --carbon-line:#3a3a40;
-    --ink:#eeece9;
-    --ink-dim:#a8a6ac;
-    --ink-faint:#6f6d74;
-    --guindo:#7c2340;
-    --guindo-light:#a33454;
-    --guindo-glow:rgba(163,52,84,.35);
-    --ok:#4f9c72;
-    --ok-glow:rgba(79,156,114,.25);
-    --warn:#c98a3b;
-    --err:#b6394a;
-    --radius:16px;
-    --radius-sm:10px;
-    --font-display:'Manrope',sans-serif;
-    --font-body:'Inter',sans-serif;
-    --font-mono:'JetBrains Mono',monospace;
-  }
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;height:100%;}
-  body{
-    background:
-      radial-gradient(1200px 600px at 50% -10%, #232327 0%, var(--carbon-900) 60%),
-      var(--carbon-900);
-    color:var(--ink);
-    font-family:var(--font-body);
-    min-height:100vh;
-    display:flex;
-    align-items:flex-start;
-    justify-content:center;
-    padding:28px 16px 60px;
-    -webkit-font-smoothing:antialiased;
-  }
-  .app{width:100%;max-width:440px;transition:max-width 0.25s ease;}
-  .app.expanded{max-width:1024px;}
+    :root {
+        --primary: #9b2222;
+        --primary-hover: #b82d2d;
+        --carbon-dark: #0b0b0c;
+        --carbon-light: #141416;
+        --carbon-card: #1d1d21;
+        --carbon-border: #2d2d34;
+        --accent: #ffc107;
+        --accent-hover: #ffca2c;
+        --text-main: #f3f4f6;
+        --text-dim: #9ca3af;
+        --white: #ffffff;
+        --good: #10b981;
+        --bad: #ef4444;
+        --glow: rgba(155, 34, 34, 0.15);
+        /* Headers dinámicos */
+        --bg-header-admin: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+        --border-header-admin: #1d4ed8;
+        --bg-header-cuadratura: linear-gradient(135deg, #4a0e0e 0%, #5c0f0f 100%);
+        --border-header-cuadratura: #3d0a0a;
+        --bg-header-tracker: linear-gradient(135deg, #0f3d3d 0%, #0e7490 100%);
+        --border-header-tracker: #0e7490;
+        /* Variables de tema (se sobreescriben en modo light) */
+        --body-bg: var(--carbon-dark);
+        --card-bg: var(--carbon-light);
+        --input-bg: #000;
+        --table-row-hover: rgba(255, 255, 255, 0.02);
+        --border-subtle: #1a1a1f;
+        --scroll-track: var(--carbon-dark);
+    }
 
-  /* ---------- Header ---------- */
-  .brand{display:flex;align-items:center;gap:12px;margin-bottom:22px;padding:0 2px;}
-  .brand-mark{
-    width:38px;height:38px;border-radius:10px;flex:none;
-    background:linear-gradient(150deg,var(--guindo-light),var(--guindo) 70%);
-    display:flex;align-items:center;justify-content:center;
-    box-shadow:0 4px 18px var(--guindo-glow);
-  }
-  .brand-mark svg{width:19px;height:19px;}
-  .brand-text .t1{font-family:var(--font-display);font-weight:800;font-size:15.5px;letter-spacing:.2px;line-height:1.15;}
-  .brand-text .t2{font-size:11.5px;color:var(--ink-faint);font-family:var(--font-mono);letter-spacing:.3px;}
+    /* ============ TEMA LIGHT ============ */
+    body.theme-light {
+        --carbon-dark: #f3f4f6;
+        --carbon-light: #ffffff;
+        --carbon-card: #f9fafb;
+        --carbon-border: #d1d5db;
+        --text-main: #1f2937;
+        --text-dim: #6b7280;
+        --white: #111827;
+        --body-bg: #e5e7eb;
+        --card-bg: #ffffff;
+        --input-bg: #ffffff;
+        --table-row-hover: rgba(0, 0, 0, 0.03);
+        --border-subtle: #e5e7eb;
+        --scroll-track: #e5e7eb;
+        --glow: rgba(155, 34, 34, 0.1);
+    }
+    body.theme-light {
+        background: var(--body-bg);
+        background-image: radial-gradient(circle at top right, #ffffff 0%, #e5e7eb 80%);
+        color: var(--text-main);
+    }
+    body.theme-light .card { background: var(--card-bg); border-color: var(--carbon-border); }
+    body.theme-light #filter-bar input,
+    body.theme-light #filter-bar select,
+    body.theme-light #tracker-filter-bar input,
+    body.theme-light #tracker-filter-bar select,
+    body.theme-light .form-row input,
+    body.theme-light .form-row select,
+    body.theme-light #edit-modal select,
+    body.theme-light #edit-modal input,
+    body.theme-light #bulk-bar select,
+    body.theme-light #bulk-bar input[type="date"] {
+        background: var(--input-bg) !important;
+        color: var(--text-main) !important;
+        border-color: var(--carbon-border) !important;
+    }
+    body.theme-light .date-range-popup { background: #ffffff; border-color: #d1d5db; }
+    body.theme-light .date-range-popup input[type="date"] { background: #ffffff; color: #1f2937; }
+    body.theme-light .mini-calendar-popup { background: #ffffff; border-color: #d1d5db; }
+    body.theme-light .mc-day { color: #1f2937; background: rgba(0,0,0,0.03); }
+    body.theme-light .mc-day:hover { background: #e5e7eb; }
+    body.theme-light .mc-header button { color: #1f2937; border-color: #d1d5db; }
+    body.theme-light .mc-header button:hover { background: #e5e7eb; }
+    body.theme-light .mc-title { color: #111827; }
+    body.theme-light .stat-box { background: rgba(0,0,0,0.04); }
+    body.theme-light .c-num-box { background: rgba(0,0,0,0.03); }
+    body.theme-light #bulk-bar { background: #fef2f2; border-color: #fca5a5; }
+    body.theme-light #bulk-bar .bulk-count { color: #9b2222; }
+    body.theme-light td { border-bottom-color: var(--border-subtle); }
+    body.theme-light tr:hover td { background: var(--table-row-hover); }
+    body.theme-light th { border-bottom-color: var(--carbon-border); }
+    body.theme-light .empty-msg { color: #6b7280; }
+    body.theme-light .top-nav-user #user-email { color: rgba(255,255,255,0.85); }
+    body.theme-light .nav-search-group input[type="text"] { color: #fff; }
+    body.theme-light .nav-search-group select { color: #fff; }
+    body.theme-light #edit-modal { background: #ffffff; }
+    body.theme-light .guia-text { color: var(--text-main); }
+    body.theme-light #login-screen { background: #e5e7eb; }
+    body.theme-light #login-screen h1 { color: #111827; }
+    body.theme-light #login-screen p { color: #6b7280; }
+    body.theme-light .mc-day.mc-selected { background: var(--primary); color: #fff; }
+    body.theme-light .mc-day.mc-today { border-color: var(--accent); }
 
-  /* ---------- Card ---------- */
-  .card{
-    background:linear-gradient(180deg,var(--carbon-800),var(--carbon-700));
-    border:1px solid var(--carbon-line);
-    border-radius:var(--radius);
-    padding:26px 22px;
-    box-shadow:0 24px 60px -20px rgba(0,0,0,.6);
-  }
-  .hidden{display:none !important;}
+    * { box-sizing: border-box; outline: none; scrollbar-width: thin; scrollbar-color: var(--carbon-border) var(--scroll-track); }
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-track { background: var(--scroll-track); }
+    ::-webkit-scrollbar-thumb { background: var(--carbon-border); border-radius: 10px; border: 2px solid var(--scroll-track); }
+    ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+    ::-webkit-scrollbar-corner { background: var(--scroll-track); }
+    body {
+        font-family: 'Lexend', sans-serif;
+        margin: 0;
+        background: var(--body-bg);
+        color: var(--text-main);
+        min-height: 100vh;
+        background-image: radial-gradient(circle at top right, #1a1a1e 0%, var(--carbon-dark) 80%);
+        font-size: 13px;
+        transition: background 0.3s ease, color 0.3s ease;
+    }
+    #login-screen {
+        display: flex; position: fixed; inset: 0; background: var(--carbon-dark);
+        z-index: 3000; flex-direction: column; align-items: center; justify-content: center;
+        gap: 20px; text-align: center; padding: 20px;
+    }
+    #login-screen h1 { font-size: 1.8rem; margin: 0; letter-spacing: 1px; color: var(--white); font-weight: 700; }
+    #login-screen p { font-size: 0.9rem; color: var(--text-dim); margin: 0; max-width: 320px; line-height: 1.4; }
+    #btn-google-login {
+        display: flex; align-items: center; gap: 10px;
+        background: var(--white); color: #121212; border: none; border-radius: 8px;
+        padding: 12px 24px; font-size: 0.95rem; font-weight: 600;
+        font-family: 'Lexend', sans-serif; cursor: pointer; transition: all 0.2s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    }
+    #btn-google-login:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(255,255,255,0.15); }
+    #login-status { font-size: 0.8rem; color: var(--accent); min-height: 1.2em; }
 
-  /* ---------- Login screen ---------- */
-  #screen-login .headline{font-family:var(--font-display);font-weight:800;font-size:22px;line-height:1.25;margin:6px 0 8px;}
-  #screen-login .sub{color:var(--ink-dim);font-size:14px;line-height:1.55;margin-bottom:26px;}
-  .g-wrap{display:flex;justify-content:center;margin-bottom:14px;min-height:44px;}
-  .login-hint{font-size:12px;color:var(--ink-faint);text-align:center;line-height:1.5;}
-  .login-status{font-size:13px;text-align:center;margin-top:14px;color:var(--warn);min-height:18px;}
+    #app-root { display: none; flex-direction: column; padding: 16px; gap: 16px; max-width: 1200px; margin: 0 auto; }
 
-  /* ---------- Onboarding ---------- */
-  #screen-onboard .headline{font-family:var(--font-display);font-weight:800;font-size:19px;margin:0 0 6px;}
-  #screen-onboard .sub{color:var(--ink-dim);font-size:13.5px;margin-bottom:18px;}
-  label{display:block;font-size:12px;color:var(--ink-faint);margin-bottom:7px;text-transform:uppercase;letter-spacing:.6px;font-weight:600;}
-  input[type=text], input[type=date]{
-    padding:13px 14px;border-radius:var(--radius-sm);
-    border:1px solid var(--carbon-line);background:var(--carbon-900);
-    color:var(--ink);font-size:14px;font-family:var(--font-body);outline:none;
-  }
-  input[type=text]:focus, input[type=date]:focus{border-color:var(--guindo-light);box-shadow:0 0 0 3px rgba(163,52,84,.18);}
-  input[type=text]{width:100%;}
-  .email-pill{
-    display:flex;align-items:center;gap:9px;padding:10px 12px;border-radius:var(--radius-sm);
-    background:var(--carbon-900);border:1px solid var(--carbon-line);margin-bottom:18px;
-  }
-  .email-pill img{width:26px;height:26px;border-radius:50%;}
-  .email-pill span{font-family:var(--font-mono);font-size:12.5px;color:var(--ink-dim);word-break:break-all;}
-  .btn{
-    padding:14px;border-radius:var(--radius-sm);border:none;
-    font-family:var(--font-display);font-weight:700;font-size:14.5px;letter-spacing:.2px;
-    cursor:pointer;transition:transform .12s ease, box-shadow .12s ease, opacity .12s ease;
-  }
-  .btn:active{transform:scale(.98);}
-  .btn-primary{background:linear-gradient(135deg,var(--guindo-light),var(--guindo));color:#fff;box-shadow:0 10px 26px -10px var(--guindo-glow);width:100%;}
-  .btn-primary:disabled{opacity:.45;cursor:not-allowed;box-shadow:none;}
-  .btn-ghost{background:transparent;color:var(--ink-dim);border:1px solid var(--carbon-line);margin-top:10px;width:100%;}
+    .tab-content {
+        display: none;
+        flex-direction: column;
+        gap: 16px;
+    }
+    .tab-content.active {
+        display: flex;
+    }
 
-  /* ---------- Main screen ---------- */
-  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
-  .who{display:flex;align-items:center;gap:10px;}
-  .who img{width:34px;height:34px;border-radius:50%;border:1px solid var(--carbon-line);}
-  .who .name{font-weight:700;font-size:14px;font-family:var(--font-display);}
-  .who .role{font-size:10.5px;color:var(--guindo-light);text-transform:uppercase;letter-spacing:.5px;font-weight:700;}
-  .icon-btn{
-    width:34px;height:34px;border-radius:9px;border:1px solid var(--carbon-line);
-    background:var(--carbon-900);color:var(--ink-dim);display:flex;align-items:center;justify-content:center;cursor:pointer;
-  }
-  .clock{font-family:var(--font-mono);font-size:34px;font-weight:600;text-align:center;margin:6px 0 2px;letter-spacing:1px;}
-  .date{font-size:12.5px;color:var(--ink-faint);text-align:center;margin-bottom:22px;text-transform:capitalize;}
+    /* ---- Barra superior unificada (Top Nav) ---- */
+    #top-nav {
+        display: flex; align-items: center; gap: 20px;
+        background: var(--bg-header-admin);
+        border: 1px solid var(--border-header-admin);
+        border-radius: 14px;
+        padding: 10px 18px;
+        min-height: 58px;
+        box-shadow: 0 6px 24px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.06);
+        position: sticky; top: 8px; z-index: 200;
+        transition: background 0.3s ease, border-color 0.3s ease;
+    }
+    
+    /* Contenedor del título dinámico y los botones */
+    .header-left-group {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex: 0 1 auto;
+    }
+    
+    .header-dynamic-title {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: var(--white);
+        white-space: nowrap;
+        letter-spacing: 0.5px;
+        border-right: 1px solid rgba(255, 255, 255, 0.2);
+        padding-right: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .top-nav-tabs { display: flex; gap: 8px; flex: 0 0 auto; }
+    .nav-tab-btn {
+        display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+        background: rgba(0,0,0,0.22); border: 1px solid rgba(255,255,255,0.12); color: rgba(255,255,255,0.8);
+        border-radius: 10px; padding: 6px 12px; cursor: pointer; font-family: 'Lexend', sans-serif;
+        font-size: 0.62rem; font-weight: 700; letter-spacing: 0.3px; text-transform: uppercase; line-height: 1.25;
+        transition: all 0.2s ease; min-width: 78px;
+    }
+    .nav-tab-btn i { font-size: 1.05rem; color: var(--accent); }
+    .nav-tab-btn:hover { background: rgba(0,0,0,0.35); color: var(--white); transform: translateY(-1px); }
+    
+    /* Estados activos específicos por tipo de header */
+    #top-nav.admin-mode .nav-tab-btn.active {
+        background: var(--white); color: #1e3a8a; border-color: var(--white);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+    }
+    #top-nav.admin-mode .nav-tab-btn.active i { color: #1e3a8a; }
 
-  /* Radar / geofence signature element */
-  .radar-wrap{display:flex;flex-direction:column;align-items:center;margin:4px 0 16px;}
-  .radar{position:relative;width:126px;height:126px;}
-  .radar-ring{position:absolute;inset:0;border-radius:50%;border:1px solid var(--carbon-line);}
-  .radar-ring.r2{inset:12px;}
-  .radar-ring.r3{inset:24px;}
-  .radar-fill{
-    position:absolute;inset:0;border-radius:50%;
-    background:conic-gradient(from 0deg, transparent 0deg, var(--guindo-glow) 70deg, transparent 140deg);
-    animation:spin 3.4s linear infinite;
-  }
-  @keyframes spin{to{transform:rotate(360deg);}}
-  .radar-core{
-    position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
-    width:66px;height:66px;border-radius:50%;
-    background:radial-gradient(circle at 35% 30%, var(--carbon-600), var(--carbon-800) 75%);
-    border:1px solid var(--carbon-line);
-    display:flex;flex-direction:column;align-items:center;justify-content:center;
-    text-align:center;
-  }
-  .radar-core .dist{font-family:var(--font-mono);font-weight:700;font-size:13px;}
-  .radar-core .lbl{font-size:7.5px;color:var(--ink-faint);letter-spacing:.4px;text-transform:uppercase;margin-top:1px;}
-  .radar-dot{position:absolute;width:10px;height:10px;border-radius:50%;background:var(--ink-faint);left:50%;top:50%;transform:translate(-50%,-50%);transition:all .4s ease;box-shadow:0 0 0 4px rgba(0,0,0,.25);}
-  .radar-dot.ok{background:var(--ok);box-shadow:0 0 0 6px var(--ok-glow);}
-  .radar-dot.bad{background:var(--err);box-shadow:0 0 0 6px rgba(182,57,74,.28);}
-  .geo-status{font-size:12.5px;color:var(--ink-faint);text-align:center;margin-top:12px;min-height:16px;font-family:var(--font-mono);}
+    #top-nav.cuadratura-mode .nav-tab-btn.active {
+        background: var(--white); color: #4a0e0e; border-color: var(--white);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+    }
+    #top-nav.cuadratura-mode .nav-tab-btn.active i { color: #4a0e0e; }
 
-  .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px;}
-  .btn-in{background:linear-gradient(135deg,#5fae7f,var(--ok));color:#0d1b12;box-shadow:0 10px 26px -12px var(--ok-glow);}
-  .btn-out{background:linear-gradient(135deg,var(--guindo-light),var(--guindo));color:#fff;box-shadow:0 10px 26px -12px var(--guindo-glow);}
-  .btn-icon{font-size:17px;display:block;margin-bottom:2px;}
+    #top-nav.tracker-mode .nav-tab-btn.active {
+        background: var(--white); color: #0e7490; border-color: var(--white);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+    }
+    #top-nav.tracker-mode .nav-tab-btn.active i { color: #0e7490; }
 
-  .feed{margin-top:22px;}
-  .feed h3{font-family:var(--font-display);font-size:11px;letter-spacing:.6px;text-transform:uppercase;color:var(--ink-faint);margin:0 0 10px;display:flex;align-items:center;justify-content:space-between;}
-  .feed-item{
-    display:flex;align-items:center;justify-content:space-between;
-    padding:11px 0;border-top:1px solid var(--carbon-line);font-size:13px;
-  }
-  .feed-item:first-child{border-top:none;}
-  .feed-item .fi-left{display:flex;align-items:center;gap:9px;}
-  .dot{width:7px;height:7px;border-radius:50%;flex:none;}
-  .dot.ok{background:var(--ok);}
-  .dot.bad{background:var(--err);}
-  .fi-time{font-family:var(--font-mono);color:var(--ink-faint);font-size:11.5px;}
-  .empty{color:var(--ink-faint);font-size:13px;text-align:center;padding:14px 0;}
+    .top-nav-search { flex: 1 1 auto; min-width: 0; position: relative; }
+    .nav-search-group { display: none; align-items: center; gap: 8px; }
+    .nav-search-group.active { display: flex; }
+    .nav-search-group .search-icon { position: static; transform: none; color: rgba(255,255,255,0.6); font-size: 0.9rem; }
+    .nav-search-group input[type="text"] {
+        flex: 1; min-width: 0; height: 38px; background: rgba(0,0,0,0.28); color: #fff;
+        border: 1px solid rgba(255,255,255,0.15); border-radius: 9px; padding: 0 14px;
+        font-family: 'Lexend', sans-serif; font-size: 0.85rem; transition: all 0.2s;
+    }
+    .nav-search-group input[type="text"]::placeholder { color: rgba(255,255,255,0.5); }
+    .nav-search-group input[type="text"]:focus { background: rgba(0,0,0,0.4); border-color: var(--accent); box-shadow: 0 0 0 3px rgba(255,193,7,0.15); }
+    .nav-search-group select {
+        flex: 0 0 auto; height: 38px; background: rgba(0,0,0,0.28); border: 1px solid rgba(255,255,255,0.15); color: #fff;
+        border-radius: 9px; padding: 0 10px; font-family: 'Lexend', sans-serif; font-size: 0.8rem; font-weight: 700; cursor: pointer;
+    }
 
-  /* ---------- Historial inteligente 7 días (entrada/salida) ---------- */
-  .hist-refresh{cursor:pointer;color:var(--ink-faint);font-family:var(--font-mono);font-size:10px;letter-spacing:0;text-transform:none;display:flex;align-items:center;gap:4px;}
-  .hist-refresh:active{opacity:.6;}
-  .hist-head{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 2px 6px;}
-  .hist-head span{font-size:9.5px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.5px;font-weight:700;}
-  .hist-list{display:flex;flex-direction:column;gap:8px;}
-  .hist-row{
-    display:grid;grid-template-columns:1fr 1fr;gap:8px;
-    background:var(--carbon-900);border:1px solid var(--carbon-line);border-radius:var(--radius-sm);
-    padding:10px 12px;position:relative;
-  }
-  .hist-row.open{border-color:rgba(79,156,114,.4);}
-  .hist-daytag{
-    font-family:var(--font-mono);font-size:9.5px;color:var(--ink-faint);
-    margin-bottom:4px;letter-spacing:.3px;
-  }
-  .hist-col{display:flex;flex-direction:column;gap:2px;}
-  .hist-col .hc-top{display:flex;align-items:center;gap:5px;}
-  .hist-col .hc-icon{font-size:11px;line-height:1;}
-  .hist-col.in .hc-icon{color:var(--ok);}
-  .hist-col.out .hc-icon{color:var(--guindo-light);}
-  .hist-col .hc-time{font-family:var(--font-mono);font-weight:700;font-size:14px;}
-  .hist-col .hc-date{font-size:10px;color:var(--ink-faint);}
-  .hist-col .hc-empty{font-family:var(--font-mono);font-size:13px;color:var(--ink-faint);}
-  .hist-dur{
-    grid-column:1 / -1;font-family:var(--font-mono);font-size:10.5px;color:var(--ink-faint);
-    border-top:1px dashed var(--carbon-line);padding-top:6px;margin-top:2px;display:flex;justify-content:space-between;
-  }
-  .hist-dur .badge-open{color:var(--ok);font-weight:700;}
-  .hist-loading{color:var(--ink-faint);font-size:12.5px;text-align:center;padding:16px 0;font-family:var(--font-mono);}
+    /* ============ BUSCADOR MASIVO (ADMIN) ============ */
+    .search-bulk-wrap {
+        position: relative;
+        width: 100%;
+    }
+    .search-bulk-wrap input[type="text"] {
+        width: 100%;
+    }
+    #search-universal {
+        padding-right: 100px !important;
+    }
+    .search-actions {
+        position: absolute;
+        right: 6px;
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
+        gap: 4px;
+    }
+    .search-action-btn {
+        background: rgba(255,255,255,0.12);
+        border: 1px solid rgba(255,255,255,0.2);
+        color: #fff;
+        border-radius: 6px;
+        padding: 5px 8px;
+        cursor: pointer;
+        font-size: 0.72rem;
+        font-family: 'Lexend', sans-serif;
+        font-weight: 600;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        white-space: nowrap;
+    }
+    .search-action-btn:hover { background: rgba(255,255,255,0.25); }
+    .search-action-btn.copy-btn { background: rgba(16,185,129,0.25); border-color: rgba(16,185,129,0.5); }
+    .search-action-btn.copy-btn:hover { background: rgba(16,185,129,0.45); }
 
-  .toast{
-    position:fixed;left:50%;bottom:26px;transform:translateX(-50%);
-    background:var(--carbon-700);border:1px solid var(--carbon-line);
-    padding:12px 18px;border-radius:12px;font-size:13.5px;max-width:90vw;text-align:center;
-    box-shadow:0 14px 40px -12px rgba(0,0,0,.6);z-index:50;opacity:0;pointer-events:none;transition:opacity .25s, transform .25s;
-  }
-  .toast.show{opacity:1;transform:translateX(-50%) translateY(-4px);}
-  .toast.ok{border-color:var(--ok);}
-  .toast.bad{border-color:var(--err);}
+    /* Panel de búsqueda masiva (textarea) */
+    #bulk-search-panel {
+        display: none;
+        position: absolute;
+        top: calc(100% + 8px);
+        left: 0;
+        right: 0;
+        background: var(--carbon-card);
+        border: 1px solid var(--carbon-border);
+        border-radius: 12px;
+        padding: 14px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+        z-index: 500;
+    }
+    #bulk-search-panel.open { display: block; }
+    #bulk-search-panel textarea {
+        width: 100%;
+        min-height: 110px;
+        background: #000;
+        color: #fff;
+        border: 1px solid var(--carbon-border);
+        border-radius: 8px;
+        padding: 10px;
+        font-family: 'Lexend', monospace;
+        font-size: 0.85rem;
+        resize: vertical;
+        line-height: 1.5;
+    }
+    body.theme-light #bulk-search-panel textarea { background: #fff; color: #1f2937; }
+    #bulk-search-panel .bs-actions { display: flex; gap: 8px; margin-top: 10px; justify-content: flex-end; }
+    #bulk-search-panel .bs-info { font-size: 0.72rem; color: var(--text-dim); margin-bottom: 8px; }
 
-  /* ---------- Admin Matrix ---------- */
-  #screen-admin .headline{font-family:var(--font-display);font-weight:800;font-size:18px;margin:0 0 16px;display:flex;align-items:center;justify-content:space-between;}
-  .admin-grid{display:grid;grid-template-columns:300px 1fr;gap:20px;}
-  @media(max-width:850px){ .admin-grid{grid-template-columns:1fr;}}
-  .admin-sidebar{display:flex;flex-direction:column;gap:16px;}
-  .panel-section{background:var(--carbon-900);border:1px solid var(--carbon-line);border-radius:var(--radius-sm);padding:14px;}
-  .panel-section h4{margin:0 0 10px;font-family:var(--font-display);font-size:11px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:0.5px;}
-  
-  .filters{display:flex;flex-direction:column;gap:10px;}
-  .filters input[type=text]{width:100%;}
-  .date-range-container{display:flex;gap:6px;align-items:center;}
-  .date-range-container input{width:100%;background:var(--carbon-800);border-color:var(--carbon-line);}
-  
-  .user-select-list{max-height:160px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;margin-top:6px;padding-right:2px;}
-  .user-select-item{display:flex;align-items:center;gap:8px;font-size:12px;padding:6px;border-radius:6px;cursor:pointer;background:var(--carbon-800);}
-  .user-select-item:hover{background:var(--carbon-600);}
-  .user-select-item input{margin:0;}
+    /* Info del límite de días */
+    .search-limit-info {
+        font-size: 0.65rem;
+        color: rgba(255,255,255,0.65);
+        background: rgba(0,0,0,0.25);
+        padding: 3px 8px;
+        border-radius: 6px;
+        white-space: nowrap;
+        border: 1px solid rgba(255,255,255,0.1);
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
 
-  /* Real-time rows UI with micro-leds */
-  .rt-separator{background:var(--carbon-600);color:var(--ink-faint);font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:6px 8px;border-radius:4px;margin:12px 0 6px;}
-  .tr-active{background:rgba(79,156,114,0.08) !important;}
-  .tr-active:hover{background:rgba(79,156,114,0.14) !important;}
-  .led{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px;vertical-align:middle;}
-  .led.on{background:var(--ok);box-shadow:0 0 8px var(--ok);}
-  .led.off{background:#555;}
+    .top-nav-user {
+        display: flex; align-items: center; gap: 8px; flex: 0 0 auto;
+        background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 20px; padding: 5px 6px 5px 12px;
+    }
+    .top-nav-user #user-email {
+        font-size: 0.65rem; color: rgba(255,255,255,0.75); font-weight: 500;
+        max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .top-nav-user #btn-logout {
+        display: flex; align-items: center; justify-content: center;
+        background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.85);
+        width: 26px; height: 26px; border-radius: 50%; cursor: pointer; font-size: 0.7rem; transition: all 0.2s;
+    }
+    .top-nav-user #btn-logout:hover { background: var(--bad); border-color: var(--bad); color: var(--white); }
 
-  /* Stats and KPI Widget */
-  .kpi-row{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:14px;}
-  .kpi-card{background:var(--carbon-900);border:1px solid var(--carbon-line);border-radius:var(--radius-sm);padding:12px;text-align:center;}
-  .kpi-card .val{font-family:var(--font-mono);font-size:22px;font-weight:700;color:var(--ok);}
-  .kpi-card .lbl{font-size:10.5px;color:var(--ink-faint);margin-top:2px;text-transform:uppercase;}
+    /* Botón de cambio de tema (siempre visible, sin cambiar header) */
+    #btn-theme-toggle {
+        display: flex; align-items: center; justify-content: center;
+        background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff;
+        width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 0.85rem;
+        transition: all 0.2s; flex: 0 0 auto;
+    }
+    #btn-theme-toggle:hover { background: var(--accent); color: #111; border-color: var(--accent); }
 
-  /* Chart Layout */
-  .chart-container{background:var(--carbon-900);border:1px solid var(--carbon-line);border-radius:var(--radius-sm);padding:14px;margin-bottom:14px;}
-  .chart-svg{width:100%;height:140px;margin-top:10px;overflow:visible;}
-  .chart-bar{fill:var(--guindo-light);transition:height 0.3s, y 0.3s;cursor:pointer;}
-  .chart-bar:hover{fill:var(--guindo);}
-  .chart-axis{stroke:var(--carbon-line);stroke-width:1;}
-  .chart-text{fill:var(--ink-dim);font-size:9px;font-family:var(--font-mono);text-anchor:middle;}
+    @media (max-width: 990px) {
+        .header-dynamic-title { display: none; }
+    }
+    @media (max-width: 760px) {
+        #top-nav { flex-wrap: wrap; position: static; min-height: 0; }
+        .top-nav-search { order: 3; flex: 1 1 100%; }
+        .top-nav-user #user-email { display: none; }
+        .search-limit-info { display: none; }
+    }
 
-  table{width:100%;border-collapse:collapse;font-size:12px;}
-  th{text-align:left;color:var(--ink-faint);font-weight:600;text-transform:uppercase;font-size:9.5px;letter-spacing:.4px;padding:0 6px 8px;}
-  td{padding:9px 6px;border-top:1px solid var(--carbon-line);font-family:var(--font-mono);color:var(--ink-dim);}
-  .table-wrap{max-height:340px;overflow:auto;border:1px solid var(--carbon-line);border-radius:var(--radius-sm);background:var(--carbon-900);}
-  .back-link{display:flex;align-items:center;gap:6px;color:var(--ink-dim);font-size:13px;margin-bottom:16px;cursor:pointer;width:fit-content;}
+    /* ---- Ajustes móviles específicos de CUADRATURA ---- */
+    @media (max-width: 640px) {
+        #cuadratura-tab .card { padding: 12px; }
+        #stats-panel { grid-template-columns: repeat(2, 1fr) !important; gap: 8px; }
+        #stats-panel .c-num-box { padding: 8px 6px; }
+        #stats-panel .stat-num { font-size: 1.15rem !important; }
+        #cuadratura-tab .c-flex-between { gap: 10px; }
+        #cuadratura-tab .c-flex-center { flex-wrap: wrap; row-gap: 8px; }
+        #cuadratura-tab #info-display { width: 100%; justify-content: space-between; }
+        #cuadratura-tab .btn-primary, #cuadratura-tab .btn-secondary { flex: 1 1 auto; justify-content: center; text-align: center; }
+        #dataTable, #table-pending { font-size: 0.68rem; }
+        #dataTable th, #dataTable td, #table-pending th, #table-pending td { padding: 6px 8px; white-space: nowrap; }
+        .nav-search-group select { max-width: 100px; }
+    }
 
-  .foot-note{font-size:10.5px;color:var(--ink-faint);text-align:center;margin-top:18px;line-height:1.6;}
+    .card {
+        background: var(--card-bg); border: 1px solid var(--carbon-border);
+        border-radius: 12px; padding: 16px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+        transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    /* ---- Estadísticas ---- */
+    #stats-panel {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 12px;
+    }
+    .stat-box {
+        text-align: center;
+        background: rgba(0, 0, 0, 0.3); border: 1px solid var(--carbon-border); border-radius: 10px;
+        padding: 14px 10px; transition: transform 0.2s;
+    }
+    .stat-box:hover { transform: translateY(-2px); }
+    .stat-box .stat-num { font-size: 1.6rem; font-weight: 700; color: var(--accent); text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+    .stat-box.stat-today .stat-num { color: var(--good); }
+    .stat-box .stat-label { font-size: 0.68rem; color: var(--text-dim); margin-top: 4px; font-weight: 600; letter-spacing: 0.5px; }
+
+    /* ---- Filtros ---- */
+    #filter-bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+    .filter-group { display: flex; align-items: center; gap: 6px; }
+    #filter-bar input, #filter-bar select {
+        background: var(--input-bg); color: var(--text-main); border: 1px solid var(--carbon-border);
+        border-radius: 8px; padding: 8px 12px; font-family: 'Lexend', sans-serif; font-size: 0.85rem;
+        transition: all 0.2s;
+    }
+    #filter-bar input:focus, #filter-bar select:focus { border-color: var(--primary); }
+
+    #tracker-filter-bar input, #tracker-filter-bar select {
+        background: var(--input-bg); color: var(--text-main); border: 1px solid var(--carbon-border);
+        border-radius: 8px; padding: 8px 12px; font-family: 'Lexend', sans-serif; font-size: 0.85rem;
+        transition: all 0.2s;
+    }
+    #tracker-filter-bar input:focus, #tracker-filter-bar select:focus { border-color: #0e7490; box-shadow: 0 0 0 3px rgba(14,116,144,0.15); }
+    #tracker-filter-bar select { cursor: pointer; }
+    
+    /* Control de fechas rápido */
+    .date-control { display: flex; align-items: center; gap: 4px; background: var(--input-bg); border: 1px solid var(--carbon-border); border-radius: 8px; padding: 2px; }
+    .date-nav-btn { background: var(--carbon-light); border: none; color: var(--text-main); font-size: 0.8rem; padding: 6px 10px; cursor: pointer; border-radius: 6px; transition: background 0.2s; }
+    .date-nav-btn:hover { background: var(--carbon-border); }
+    #filter-date { border: none !important; background: transparent !important; padding: 6px 8px !important; }
+
+    .btn-primary {
+        background: var(--primary); color: white; border: none; border-radius: 8px;
+        padding: 10px 18px; font-size: 0.82rem; font-weight: 600; cursor: pointer;
+        font-family: 'Lexend', sans-serif; transition: all 0.2s;
+        box-shadow: 0 2px 6px rgba(155, 34, 34, 0.3);
+    }
+    .btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
+    .btn-secondary { background: transparent; border: 1px solid var(--carbon-border); color: var(--text-dim); box-shadow: none; }
+    .btn-secondary:hover { background: var(--carbon-border); color: var(--text-main); }
+    .btn-danger { background: transparent; color: var(--bad); border: 1px solid var(--bad); box-shadow: none; }
+    .btn-danger:hover { background: var(--bad); color: white; }
+    .btn-good { background: transparent; color: var(--good); border: 1px solid var(--good); box-shadow: none; }
+    .btn-good:hover { background: var(--good); color: white; }
+    
+    .btn-inject { background: #0c4a6e; color: #38bdf8; border: 1px solid #0284c7; box-shadow: none; font-size: 0.8rem; }
+    .btn-inject:hover { background: #0284c7; color: white; transform: translateY(-1px); }
+
+    .btn-inject-dev { background: #450a0a; color: #fca5a5; border: 1px solid var(--bad); box-shadow: none; font-size: 0.8rem; }
+    .btn-inject-dev:hover { background: var(--bad); color: white; transform: translateY(-1px); }
+
+    .btn-count-badge {
+        display: inline-block; margin-left: 8px; background: rgba(255,255,255,0.15);
+        padding: 1px 8px; border-radius: 999px; font-weight: 700; font-size: 0.78rem;
+    }
+
+    /* Selector de periodo de fecha */
+    .date-range-control { position: relative; display: flex; align-items: center; gap: 4px; }
+    .date-range-popup {
+        position: absolute; top: calc(100% + 6px); left: 0; z-index: 50;
+        background: var(--carbon-card); border: 1px solid var(--carbon-border); border-radius: 10px;
+        padding: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); display: flex; flex-direction: column; gap: 8px;
+        min-width: 220px;
+    }
+    .date-range-popup label { font-size: 0.72rem; color: var(--text-dim); font-weight: 600; }
+    .date-range-popup input[type="date"] {
+        background: var(--input-bg); color: var(--text-main); border: 1px solid var(--carbon-border);
+        border-radius: 8px; padding: 8px 10px; font-family: 'Lexend', sans-serif; font-size: 0.85rem; width: 100%;
+    }
+    .date-range-popup-actions { display: flex; justify-content: space-between; gap: 8px; margin-top: 6px; }
+    .date-range-popup-actions .btn-primary { padding: 8px 12px; font-size: 0.78rem; flex: 1; }
+
+    /* ---- Barra de edición masiva ---- */
+    #bulk-bar {
+        display: none; flex-wrap: wrap; gap: 10px; align-items: center;
+        background: #251616; border: 1px solid var(--primary);
+    }
+    #bulk-bar select, #bulk-bar input[type="date"] { 
+        min-width: 140px; background: #120707; border: 1px solid #541d1d; color: var(--text-main); border-radius: 6px; padding: 8px; font-family: 'Lexend'; font-size: 0.8rem; 
+    }
+    #bulk-bar .bulk-count { font-size: 0.82rem; color: var(--accent); font-weight: 600; margin-right: 8px; }
+
+    /* ---- Tabla ---- */
+    .table-wrap { overflow-x: auto; margin-top: 4px; }
+    table { width: 100%; border-collapse: separate; border-spacing: 0; min-width: 760px; }
+    th { text-align: left; padding: 12px 10px; font-size: 0.72rem; color: var(--text-dim); border-bottom: 1px solid var(--carbon-border); white-space: nowrap; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    td { padding: 10px 10px; border-bottom: 1px solid var(--border-subtle); font-size: 0.8rem; vertical-align: middle; white-space: nowrap; transition: background 0.15s; }
+    tr:hover td { background: var(--table-row-hover); }
+    .guia-container { display: flex; align-items: center; gap: 8px; }
+    .guia-text { font-weight: 700; color: var(--text-main); font-size: 0.85rem; letter-spacing: 0.5px; }
+    
+    /* Contador de Repeticiones Individual */
+    .guia-badge-count {
+        background: rgba(255, 193, 7, 0.12);
+        color: var(--accent);
+        font-size: 0.65rem;
+        font-weight: 700;
+        padding: 2px 6px;
+        border-radius: 20px;
+        border: 1px solid rgba(255, 193, 7, 0.25);
+    }
+    
+    .cell-btn { background: none; border: none; cursor: pointer; font-size: 1.1rem; padding: 4px 8px; border-radius: 4px; transition: background 0.2s; color: var(--text-main); }
+    .cell-btn:hover { background: rgba(255,255,255,0.05); }
+    body.theme-light .cell-btn:hover { background: rgba(0,0,0,0.06); }
+    .cell-btn.edit { color: var(--accent); }
+    .cell-btn.del { color: var(--bad); }
+
+    /* ---- Modal de edición individual ---- */
+    #edit-modal-bg {
+        display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 2500;
+        align-items: center; justify-content: center; padding: 16px; backdrop-filter: blur(4px);
+    }
+    #edit-modal {
+        background: var(--card-bg); border: 1px solid var(--carbon-border); border-radius: 14px;
+        padding: 20px; width: 100%; max-width: 380px; display: flex; flex-direction: column; gap: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    #edit-modal label { font-size: 0.72rem; color: var(--text-dim); display: block; margin-bottom: 4px; font-weight: 600; text-transform: uppercase; }
+    #edit-modal select, #edit-modal input {
+        width: 100%; background: var(--input-bg); color: var(--text-main); border: 1px solid var(--carbon-border);
+        border-radius: 8px; padding: 10px; font-family: 'Lexend', sans-serif; font-size: 0.85rem;
+    }
+    #edit-modal input[disabled] { color: var(--text-dim); background: var(--carbon-card); cursor: not-allowed; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 8px; }
+    .modal-actions button { flex: 1; padding: 12px; }
+
+    .empty-msg { text-align: center; padding: 30px 20px; color: var(--text-dim); font-size: 0.9rem; }
+    .form-row { display: flex; flex-wrap: wrap; gap: 10px; }
+    .form-row > * { flex: 1; min-width: 140px; }
+    .form-row input, .form-row select {
+        background: var(--input-bg); color: var(--text-main); border: 1px solid var(--carbon-border);
+        border-radius: 8px; padding: 10px 12px; font-family: 'Lexend', sans-serif; font-size: 0.85rem;
+        transition: all 0.2s;
+    }
+    .form-row input:focus, .form-row select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--glow); }
+    .form-row select { cursor: pointer; }
+    .form-row .btn-primary { flex: 0 0 auto; min-width: 150px; }
+
+    /* ---- Mini calendario (mover fecha) ---- */
+    .mini-calendar-popup {
+        display: none; position: absolute; top: calc(100% + 8px); left: 0; z-index: 3200;
+        background: var(--card-bg); border: 1px solid var(--carbon-border); border-radius: 12px;
+        padding: 12px; width: 250px; box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    }
+    .mini-calendar-popup.open { display: block; }
+    .mc-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .mc-header button { background: transparent; border: 1px solid var(--carbon-border); color: var(--text-main); width: 24px; height: 24px; border-radius: 6px; cursor: pointer; font-size: 0.7rem; padding: 0; }
+    .mc-header button:hover { background: var(--carbon-border); }
+    .mc-title { font-size: 0.78rem; font-weight: 700; color: var(--text-main); text-transform: capitalize; }
+    .mc-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+    .mc-dow { font-size: 0.58rem; color: var(--text-dim); text-align: center; font-weight: 700; padding-bottom: 4px; }
+    .mc-day {
+        position: relative; aspect-ratio: 1/1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+        border-radius: 6px; cursor: pointer; font-size: 0.68rem; color: var(--text-main); border: 1px solid transparent;
+        background: rgba(255,255,255,0.02); transition: all 0.15s; gap: 1px;
+    }
+    .mc-day:hover { background: var(--carbon-border); }
+    .mc-day.mc-empty { visibility: hidden; cursor: default; }
+    .mc-day.mc-today { border-color: var(--accent); }
+    .mc-day.mc-selected { background: var(--primary); color: #fff; font-weight: 700; }
+    .mc-day-badge { font-size: 0.5rem; font-weight: 800; color: var(--accent); line-height: 1; }
+    .mc-day.mc-selected .mc-day-badge { color: #ffe9a8; }
+    .mc-footer { display: flex; justify-content: space-between; gap: 6px; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--carbon-border); }
+    .mc-footer button { flex: 1; font-size: 0.65rem; padding: 5px 8px; }
+
+    /* ============================================== */
+    /* ---- ESTILOS RESTAURADOS DE CUADRATURA ---- */
+    /* ============================================== */
+    .c-flex-between { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .c-flex-center { display: flex; align-items: center; gap: 8px; }
+    .c-grid-3 { display: grid; grid-template-columns: 1fr 3fr; gap: 16px; }
+    @media(max-width: 900px) { .c-grid-3 { grid-template-columns: 1fr; } }
+    
+    .loading-spinner { animation: spin 1s linear infinite; }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    
+    th.sortable { cursor: pointer; transition: all 0.2s; position: relative; }
+    th.sortable:hover { background-color: var(--carbon-border); color: var(--text-main); }
+    
+    .c-badge { padding: 3px 8px; border-radius: 6px; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; }
+    .c-badge.no-ent { background: rgba(239, 68, 68, 0.15); color: var(--bad); border: 1px solid rgba(239, 68, 68, 0.3); }
+    .c-badge.no-emb { background: rgba(249, 115, 22, 0.15); color: #f97316; border: 1px solid rgba(249, 115, 22, 0.3); }
+    .c-badge.no-rec { background: rgba(234, 179, 8, 0.15); color: #eab308; border: 1px solid rgba(234, 179, 8, 0.3); }
+    .c-badge.ruta { background: rgba(22, 163, 74, 0.15); color: #16a34a; border: 1px solid rgba(22, 163, 74, 0.3); }
+
+    .c-label { font-size: 0.7rem; color: var(--text-dim); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .c-num-box { text-align: center; background: rgba(0,0,0,0.2); border: 1px solid var(--carbon-border); border-radius: 8px; padding: 10px 8px; }
+    body.theme-light .c-num-box { background: rgba(0,0,0,0.04); }
+    .c-sub-val { font-size: 0.72rem; color: var(--text-dim); display: flex; justify-content: space-between; margin-top: 4px; padding-top: 4px; border-top: 1px solid rgba(255,255,255,0.05); }
+    body.theme-light .c-sub-val { border-top-color: rgba(0,0,0,0.08); }
+
+    /* Fila resaltada para búsqueda masiva */
+    tr.search-hit td { background: rgba(255, 193, 7, 0.07) !important; }
+    body.theme-light tr.search-hit td { background: rgba(255, 193, 7, 0.15) !important; }
 </style>
 </head>
 <body>
-<div class="app" id="app-container">
 
-  <div class="brand">
-    <div class="brand-mark">
-      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2 3 6v6c0 5 3.8 8.7 9 10 5.2-1.3 9-5 9-10V6l-9-4Z" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/><path d="M8.5 12.3l2.4 2.4 4.8-4.9" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </div>
-    <div class="brand-text">
-      <div class="t1">Control de Horarios</div>
-      <div class="t2">REDPACK · OPERACIONES EN TIEMPO REAL</div>
-    </div>
-  </div>
-
-  <!-- ===================== LOGIN ===================== -->
-  <div id="screen-login" class="card">
-    <div class="headline">Registra tu asistencia</div>
-    <div class="sub">Inicia sesión con tu cuenta de Gmail para checar tu entrada o salida de turno. Tu correo queda validado automáticamente.</div>
-    <div class="g-wrap"><div id="gsi-button"></div></div>
-    <div class="login-hint">Solo correos previamente autorizados por un administrador podrán checar.</div>
-    <div id="login-status" class="login-status"></div>
-  </div>
-
-  <!-- ===================== ONBOARDING ===================== -->
-  <div id="screen-onboard" class="card hidden">
-    <div class="headline">Confirma tu nombre</div>
-    <div class="sub">Este nombre es el que verán los administradores en los registros activos.</div>
-    <div class="email-pill"><img id="ob-avatar" src="" alt=""><span id="ob-email"></span></div>
-    <label for="ob-name">Nombre completo</label>
-    <input type="text" id="ob-name" placeholder="Ej. Juan Pérez">
-    <button class="btn btn-primary" id="ob-continue" style="margin-top:16px;">Continuar</button>
-    <button class="btn btn-ghost" id="ob-logout">Cerrar sesión</button>
-  </div>
-
-  <!-- ===================== MAIN ===================== -->
-  <div id="screen-main" class="card hidden">
-    <div class="topbar">
-      <div class="who">
-        <img id="m-avatar" src="" alt="">
-        <div>
-          <div class="name" id="m-name">—</div>
-          <div class="role" id="m-role"></div>
-        </div>
-      </div>
-      <div style="display:flex;gap:8px;">
-        <div class="icon-btn hidden" id="btn-admin" title="Panel de administrador">⚙</div>
-        <div class="icon-btn" id="btn-logout" title="Cerrar sesión">⏻</div>
-      </div>
+    <div id="login-screen">
+        <h1>GUIAS - ADMIN</h1>
+        <p>Inicia sesión con tu cuenta de Google para administrar las guías</p>
+        <button id="btn-google-login" onclick="signInWithGoogle()">
+            <svg width="18" height="18" viewBox="0 0 18 18" style="margin-right:2px;"><path fill="#4285F4" d="M17.64 9.2c0-.63-.06-1.25-.16-1.84H9v3.47h4.84c-.21 1.12-.84 2.07-1.79 2.7v2.25h2.91c1.7-1.56 2.68-3.86 2.68-6.58z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.22l-2.91-2.25c-.8.54-1.83.86-3.05.86-2.35 0-4.34-1.58-5.05-3.71H1.02V13c1.48 2.94 4.53 4.96 8.02 4.96z"/><path fill="#FBBC05" d="M3.95 10.68c-.18-.54-.28-1.12-.28-1.72s.1-1.18.28-1.72V4.99H1.02A8.97 8.97 0 0 0 0 9c0 1.49.36 2.92 1.02 4.21l2.93-2.53z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35L15 2.4A8.99 8.99 0 0 0 1.02 5l2.93 2.53c.71-2.13 2.7-3.71 5.05-3.71z"/></svg>
+            Iniciar sesión con Google
+        </button>
+        <div id="login-status"></div>
     </div>
 
-    <div class="clock" id="clock">00:00:00</div>
-    <div class="date" id="date-label">—</div>
+    <div id="app-root">
 
-    <div class="radar-wrap">
-      <div class="radar">
-        <div class="radar-fill"></div>
-        <div class="radar-ring"></div>
-        <div class="radar-ring r2"></div>
-        <div class="radar-ring r3"></div>
-        <div class="radar-dot" id="radar-dot"></div>
-        <div class="radar-core">
-          <div class="dist" id="radar-dist">—</div>
-          <div class="lbl">del punto</div>
-        </div>
-      </div>
-      <div class="geo-status" id="geo-status">Ubicando…</div>
-    </div>
-
-    <div class="actions">
-      <button class="btn btn-in" id="btn-entrada" disabled>
-        <span class="btn-icon">↗</span>Marcar entrada
-      </button>
-      <button class="btn btn-out" id="btn-salida" disabled>
-        <span class="btn-icon">↘</span>Marcar salida
-      </button>
-    </div>
-
-    <div class="feed">
-      <h3>Tus checadas · últimos 7 días <span class="hist-refresh" id="hist-refresh">⟳ actualizar</span></h3>
-      <div class="hist-head"><span>Entrada</span><span>Salida</span></div>
-      <div id="feed-list"><div class="hist-loading">Cargando historial…</div></div>
-    </div>
-
-    <div class="foot-note">La ubicación se valida en el servidor. Los intentos fuera del radio permitido o repetidos antes de 1 hora serán bloqueados automáticamente.</div>
-  </div>
-
-  <!-- ===================== ADMIN PANEL (EXTENDED UI) ===================== -->
-  <div id="screen-admin" class="card hidden">
-    <div class="back-link" id="admin-back">← Volver al Panel Personal</div>
-    <div class="headline">Consola de Control de Operaciones <span id="admin-count" style="font-family:var(--font-mono);font-size:11px;color:var(--ink-faint);"></span></div>
-    
-    <div class="admin-grid">
-      <!-- Sidebar de Controles y Filtros -->
-      <div class="admin-sidebar">
-        <div class="panel-section">
-          <h4>Filtros de Búsqueda</h4>
-          <div class="filters">
-            <input type="text" id="admin-search" placeholder="Buscar operador o correo…">
-            <div class="date-range-container">
-              <input type="date" id="admin-date-start" title="Fecha Inicial">
-              <span style="font-size:11px;color:var(--ink-faint)">a</span>
-              <input type="date" id="admin-date-end" title="Fecha Final">
+        <!-- ================= BARRA SUPERIOR UNIFICADA ================= -->
+        <div id="top-nav" class="admin-mode">
+            
+            <div class="header-left-group">
+                <div id="header-title-text" class="header-dynamic-title">
+                    <i class="fas fa-boxes-stacked"></i> Panel de administración de guías
+                </div>
+                
+                <div class="top-nav-tabs">
+                    <button class="nav-tab-btn active" onclick="switchTab('admin-tab', this)" title="Administrador de Guías">
+                        <i class="fas fa-boxes-stacked"></i>
+                        <span>Admin.<br>Guías</span>
+                    </button>
+                    <button class="nav-tab-btn" onclick="switchTab('cuadratura-tab', this)" title="Cuadratura">
+                        <i class="fas fa-list-check"></i>
+                        <span>Cuadratura</span>
+                    </button>
+                    <button class="nav-tab-btn" onclick="switchTab('tracker-tab', this)" title="Tracker">
+                        <i class="fas fa-magnifying-glass"></i>
+                        <span>Tracker</span>
+                    </button>
+                </div>
             </div>
-          </div>
+
+            <div class="top-nav-search">
+                <div id="search-wrap-admin" class="nav-search-group active">
+                    <span class="search-icon"><i class="fas fa-magnifying-glass"></i></span>
+                    <div class="search-bulk-wrap">
+                        <input type="text" id="search-universal" placeholder="Buscar guía... (límite: 15 días)" oninput="render()" onkeydown="if(event.key==='Enter'){event.preventDefault();render();}">
+                        <div class="search-actions">
+                            <button type="button" class="search-action-btn" onclick="toggleBulkSearchPanel(event)" title="Búsqueda masiva">
+                                <i class="fas fa-list"></i> Masiva
+                            </button>
+                            <button type="button" class="search-action-btn copy-btn" onclick="copySearchResults()" title="Copiar resultados en formato tabla">
+                                <i class="fas fa-copy"></i> Copiar
+                            </button>
+                        </div>
+                        <div id="bulk-search-panel">
+                            <div class="bs-info"><i class="fas fa-info-circle"></i> Pega uno o varios números de guía (uno por línea o separados por espacio). Se buscarán en el historial de los últimos 15 días.</div>
+                            <textarea id="bulk-search-textarea" placeholder="21856841&#10;21852351&#10;21852716&#10;21854308&#10;..."></textarea>
+                            <div class="bs-actions">
+                                <button type="button" class="btn-primary btn-secondary" onclick="closeBulkSearchPanel()">CANCELAR</button>
+                                <button type="button" class="btn-primary" onclick="applyBulkSearch()"><i class="fas fa-search" style="margin-right:6px;"></i>BUSCAR</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="search-wrap-cuadratura" class="nav-search-group">
+                    <span class="search-icon"><i class="fas fa-magnifying-glass"></i></span>
+                    <input type="text" id="smart-search" placeholder="Buscar guía, chofer o viaje..." oninput="smartFilter()">
+                    <select id="filter-proveedor" onchange="smartFilter()">
+                        <option value="ROMBO" selected>ROMBO</option>
+                        <option value="QP">QP</option>
+                    </select>
+                </div>
+                <div id="search-wrap-tracker" class="nav-search-group">
+                    <span class="search-icon"><i class="fas fa-magnifying-glass"></i></span>
+                    <input type="text" id="tracker-guia" placeholder="Buscar guía dentro del periodo filtrado..." oninput="renderTracker()">
+                </div>
+            </div>
+
+            <div class="search-limit-info" id="search-limit-info">
+                <i class="fas fa-clock"></i> <span id="limit-days-text">15</span> días
+            </div>
+
+            <div class="top-nav-user">
+                <span id="user-email"></span>
+                <button id="btn-logout" onclick="logout()" title="Cerrar sesión"><i class="fas fa-right-from-bracket"></i></button>
+            </div>
+
+            <button id="btn-theme-toggle" onclick="toggleTheme()" title="Cambiar tema (Dark/Light)">
+                <i class="fas fa-sun" id="theme-icon"></i>
+            </button>
         </div>
 
-        <div class="panel-section">
-          <h4>Filtrado de Operadores Gráfica</h4>
-          <div style="font-size:11px; color:var(--ink-faint); margin-bottom:6px;">Selecciona para incluir en estadísticas corporativas:</div>
-          <div class="user-select-list" id="admin-user-checkboxes">
-            <!-- Dinámico -->
-          </div>
+        <!-- ================= PESTAÑA 1: ADMINISTRADOR DE GUIAS ================= -->
+        <div id="admin-tab" class="tab-content active">
+
+            <div id="stats-panel" class="card">
+                <div class="stat-box stat-today"><div class="stat-num" id="stat-hoy">0</div><div class="stat-label">ESCANEADAS HOY</div></div>
+                <div class="stat-box"><div class="stat-num" id="stat-semana">0</div><div class="stat-label">ESCANEADAS ESTA SEMANA</div></div>
+                <div class="stat-box"><div class="stat-num" id="stat-tr2">0</div><div class="stat-label">NO EMBARCADO TR2</div></div>
+                <div class="stat-box"><div class="stat-num" id="stat-dev">0</div><div class="stat-label">DEVOLUCIÓN</div></div>
+                <div class="stat-box"><div class="stat-num" id="stat-rojos">0</div><div class="stat-label">PAQUETES ROJOS NM</div></div>
+            </div>
+
+            <div id="filter-bar" class="card">
+                <div class="filter-group">
+                    <div class="date-range-control">
+                        <button class="date-nav-btn" onclick="stepPeriod(-1)" title="Periodo anterior">◀</button>
+                        <button class="btn-primary btn-secondary" id="btn-fecha-toggle" onclick="toggleDateRangePopup(event)">
+                            <i class="fas fa-calendar-days"></i> <span id="fecha-label-text">Fecha</span>
+                        </button>
+                        <button class="date-nav-btn" onclick="stepPeriod(1)" title="Periodo siguiente">▶</button>
+                        <div id="date-range-popup" class="date-range-popup" style="display:none;">
+                            <label>Desde</label>
+                            <input type="date" id="filter-date-from">
+                            <label>Hasta</label>
+                            <input type="date" id="filter-date-to">
+                            <div class="date-range-popup-actions">
+                                <button type="button" class="btn-primary btn-secondary" onclick="clearDateFilter()">Ver todas</button>
+                                <button type="button" class="btn-primary" onclick="applyDateRange()">Aplicar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn-primary btn-inject" onclick="injectGuidesCopy()">⚡ INYECTAR GUÍAS (COPIAR)<span class="btn-count-badge" id="count-inyeccion">0</span></button>
+                <button class="btn-primary btn-inject-dev" onclick="injectDevolucionCopy()">🔴 DEV ORIGEN (COPIAR)<span class="btn-count-badge" id="count-devolucion">0</span></button>
+
+                <div class="filter-group" style="margin-left:auto;">
+                    <label style="font-size:0.75rem; color:var(--text-dim); font-weight:600;">Orden:</label>
+                    <select id="sort-order" onchange="render()">
+                        <option value="desc">Más reciente primero</option>
+                        <option value="asc">Más antiguo primero</option>
+                    </select>
+                    <span id="total-count" style="font-size:0.75rem; color:var(--text-dim); font-weight:600; background: rgba(255,255,255,0.05); padding:6px 12px; border-radius:6px; border:1px solid var(--carbon-border);"></span>
+                </div>
+            </div>
+
+            <div id="bulk-bar" class="card">
+                <span class="bulk-count"><span id="bulk-count-num">0</span> seleccionadas</span>
+
+                <select id="bulk-accion" onchange="onBulkAccionChange()">
+                    <option value="__NOCHANGE__">Acción: no cambiar</option>
+                    <option value="INYECCIÓN">INYECCIÓN</option>
+                    <option value="DEVOLUCIÓN A ORIGEN">DEVOLUCIÓN A ORIGEN</option>
+                </select>
+
+                <select id="bulk-categoria">
+                    <option value="__NOCHANGE__">Categoría: no cambiar</option>
+                </select>
+
+                <select id="bulk-prov">
+                    <option value="__NOCHANGE__">Proveedor: no cambiar</option>
+                    <option value="ROMBO">ROMBO</option>
+                    <option value="QP">QP</option>
+                    <option value="EMISSARY">EMISSARY</option>
+                    <option value="OTRO">OTRO</option>
+                </select>
+
+                <select id="bulk-tipo">
+                    <option value="__NOCHANGE__">Tipo: no cambiar</option>
+                    <option value="NO EMBARCADO TR2">NO EMBARCADO TR2</option>
+                    <option value="DEVOLUCIÓN">DEVOLUCIÓN</option>
+                    <option value="PAQUETES ROJOS NM">PAQUETES ROJOS NM</option>
+                </select>
+
+                <div style="display: flex; align-items: center; gap: 6px; position: relative;">
+                    <label style="font-size:0.7rem; color:var(--accent); font-weight:600;">Mover fecha:</label>
+                    <button type="button" id="bulk-date-trigger" class="btn-primary btn-secondary" style="padding:7px 12px; font-size:0.75rem; display:flex; align-items:center; gap:6px;" onclick="toggleMiniCalendar(event)">
+                        <i class="fas fa-calendar-alt"></i><span id="bulk-date-label">Elegir fecha</span>
+                    </button>
+                    <input type="date" id="bulk-date" style="display:none;">
+                    <div id="mini-calendar-popup" class="mini-calendar-popup"></div>
+                </div>
+
+                <button class="btn-primary" onclick="applyBulkEdit()">APLICAR</button>
+                <button class="btn-primary btn-danger" onclick="deleteBulk()">ELIMINAR</button>
+            </div>
+
+            <div class="card">
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 40px;"><input type="checkbox" id="check-all" onchange="toggleSelectAll(this)"></th>
+                                <th>GUÍA</th>
+                                <th>FECHA</th>
+                                <th>ACCIÓN</th>
+                                <th>CATEGORÍA</th>
+                                <th>PROVEEDOR</th>
+                                <th>TIPO</th>
+                                <th>HORA ESCANEO</th>
+                                <th>OPERADOR</th>
+                                <th style="width: 80px; text-align: center;">ACCIONES</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body"></tbody>
+                    </table>
+                </div>
+                <div id="empty-msg" class="empty-msg" style="display:none;">No hay guías para este filtro o búsqueda.</div>
+            </div>
+
+            <div class="card">
+                <div style="font-size:0.85rem; font-weight:600; color:var(--accent); margin-bottom:12px; letter-spacing: 0.5px;">AGREGAR GUÍA MANUALMENTE</div>
+                <div class="form-row">
+                    <input type="text" id="new-guia" placeholder="Número de guía">
+                    <select id="new-accion">
+                        <option value="INYECCIÓN">INYECCIÓN</option>
+                        <option value="DEVOLUCIÓN A ORIGEN">DEVOLUCIÓN A ORIGEN</option>
+                    </select>
+                    <select id="new-categoria"></select>
+                </div>
+                <div class="form-row" style="margin-top:10px;">
+                    <select id="new-prov">
+                        <option value="ROMBO">ROMBO</option>
+                        <option value="QP">QP</option>
+                        <option value="EMISSARY">EMISSARY</option>
+                        <option value="OTRO">OTRO</option>
+                    </select>
+                    <select id="new-tipo">
+                        <option value="NO EMBARCADO TR2">NO EMBARCADO TR2</option>
+                        <option value="DEVOLUCIÓN">DEVOLUCIÓN</option>
+                        <option value="PAQUETES ROJOS NM">PAQUETES ROJOS NM</option>
+                    </select>
+                    <button class="btn-primary" onclick="addGuiaManual()">AGREGAR GUÍA</button>
+                </div>
+            </div>
         </div>
 
-        <div class="kpi-row">
-          <div class="kpi-card">
-            <div class="val" id="kpi-avg-time">0.0h</div>
-            <div class="lbl">Tiempo Promedio / Turno</div>
-          </div>
-        </div>
-      </div>
+        <!-- ================= PESTAÑA 2: CUADRATURA ================= -->
+        <div id="cuadratura-tab" class="tab-content">
+            
+            <div class="card c-flex-between">
+                <div class="c-flex-center">
+                    <input type="file" id="fileViajes" style="display:none;" accept=".xlsx, .xls">
+                    <label for="fileViajes" class="btn-primary btn-secondary" style="padding: 8px 14px; font-size: 0.75rem; font-weight: 700; cursor:pointer;">
+                        <i class="fas fa-file-excel" style="margin-right: 6px;"></i>SUBIR ARCHIVO
+                    </label>
+                    <button id="btn-process" class="btn-primary" onclick="processAllData()" style="padding: 8px 14px; font-size:0.75rem;">
+                        PROCESAR <i id="btn-loader" class="fas fa-circle-notch loading-spinner" style="display:none; margin-left:6px;"></i>
+                    </button>
+                    <button id="btn-umbral-dias" onclick="cambiarUmbralDias()" title="Cambiar umbral de días para la cuadratura" class="btn-primary btn-secondary" style="padding: 8px 14px; font-size:0.75rem; font-weight:700;">
+                        <i class="fas fa-calendar-day" style="margin-right: 6px;"></i>UMBRAL: <span id="umbral-dias-label">2</span> DÍAS
+                    </button>
+                </div>
 
-      <!-- Dashboard Principal Analítico y Monitoreo Real-Time -->
-      <div class="admin-main-panel">
-        <div class="chart-container">
-          <h4>Horas Laboradas Reales (Periodo Seleccionado)</h4>
-          <svg class="chart-svg" id="analytics-chart" viewBox="0 0 400 140" preserveAspectRatio="none">
-            <!-- Ejes y barras generadas dinámicamente -->
-          </svg>
-        </div>
+                <div id="info-display" style="display:none;" class="c-flex-center">
+                    <div class="stat-box" style="padding: 6px 12px; min-width: 90px;"><div class="stat-num" id="display-fecha" style="font-size:1.1rem;">--</div><div class="stat-label">FECHA EXCEL</div></div>
+                    <div class="stat-box" style="padding: 6px 12px; min-width: 90px;"><div class="stat-num" id="display-total-guias" style="font-size:1.1rem; color:var(--primary);">0</div><div class="stat-label">TOTAL GUIAS</div></div>
+                </div>
+            </div>
 
-        <h4>Estatus y Registro Operativo de Usuarios</h4>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Operador</th>
-                <th>Rol</th>
-                <th>Último Check</th>
-                <th>Hora</th>
-                <th>Resultado</th>
-              </tr>
-            </thead>
-            <tbody id="admin-tbody">
-              <!-- Registros dinámicos divididos -->
-            </tbody>
-          </table>
+            <div id="stats-panel" class="card" style="grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));">
+                <div class="c-num-box" style="border-left: 4px solid var(--primary);">
+                    <div class="c-label" style="font-size: 0.65rem;">Faltan Escanear</div>
+                    <div class="stat-num" id="total-pending-count" style="color:var(--bad); font-size:1.5rem; margin:4px 0;">0</div>
+                    <div class="c-sub-val"><span>No Emb: <strong id="sub-pending-no-emb" style="color:var(--text-main);">0</strong></span><span>No Ent: <strong id="sub-pending-no-ent" style="color:var(--text-main);">0</strong></span></div>
+                </div>
+                <div class="c-num-box" style="border-left: 4px solid #f97316;">
+                    <div class="c-label" style="font-size: 0.65rem;">No Emb. TR2</div>
+                    <div class="stat-num" id="count-no-emb" style="color:#f97316; font-size:1.5rem; margin:4px 0;">0</div>
+                    <div class="c-sub-val"><span>Amz: <strong id="sub-no-emb-amz" style="color:var(--text-main);">0</strong></span><span>Same: <strong id="sub-no-emb-same" style="color:var(--text-main);">0</strong></span></div>
+                </div>
+                <div class="c-num-box" style="border-left: 4px solid #eab308;">
+                    <div class="c-label" style="font-size: 0.65rem;">No Recibido</div>
+                    <div class="stat-num" id="count-no-rec" style="color:#eab308; font-size:1.5rem; margin:4px 0;">0</div>
+                    <div class="c-sub-val"><span>Amz: <strong id="sub-no-rec-amz" style="color:var(--text-main);">0</strong></span><span>Same: <strong id="sub-no-rec-same" style="color:var(--text-main);">0</strong></span></div>
+                </div>
+                <div class="c-num-box" style="border-left: 4px solid #2563eb;">
+                    <div class="c-label" style="font-size: 0.65rem;">No Entregado</div>
+                    <div class="stat-num" id="count-no-ent" style="color:#2563eb; font-size:1.5rem; margin:4px 0;">0</div>
+                    <div class="c-sub-val"><span>Amz: <strong id="sub-no-ent-amz" style="color:var(--text-main);">0</strong></span><span>Same: <strong id="sub-no-ent-same" style="color:var(--text-main);">0</strong></span></div>
+                </div>
+                <div class="c-num-box" style="border-left: 4px solid #16a34a;">
+                    <div class="c-label" style="font-size: 0.65rem;">Total en Ruta</div>
+                    <div class="stat-num" id="count-in-route" style="color:#16a34a; font-size:1.5rem; margin:4px 0;">0</div>
+                    <div class="c-sub-val"><span>Amz: <strong id="sub-ruta-amz" style="color:var(--text-main);">0</strong></span><span>Same: <strong id="sub-ruta-same" style="color:var(--text-main);">0</strong></span></div>
+                </div>
+                <div class="c-num-box" style="border-left: 4px solid #9333ea;">
+                    <div class="c-label" style="font-size: 0.65rem;">Choferes Ruta</div>
+                    <div class="stat-num" id="count-drivers-route" style="color:#9333ea; font-size:1.5rem; margin:4px 0;">0</div>
+                    <div class="c-sub-val"><span>Amz: <strong id="sub-chofer-amz" style="color:var(--text-main);">0</strong></span><span>Same: <strong id="sub-chofer-same" style="color:var(--text-main);">0</strong></span></div>
+                </div>
+            </div>
+
+            <div class="c-grid-3">
+                <div class="card" style="display:flex; flex-direction:column; justify-content: space-between;">
+                    <div class="c-flex-between" style="border-bottom: 1px solid var(--carbon-border); padding-bottom:8px; margin-bottom:8px;">
+                        <span class="c-label">Rendimiento Choferes</span>
+                        <button onclick="copyDriverSummary()" class="cell-btn edit" style="font-size:0.75rem; font-weight:700;">COPIAR</button>
+                    </div>
+                    <div style="height: 120px; margin-bottom: 10px;"><canvas id="chart-pendientes"></canvas></div>
+                    <div id="driver-summary-list" style="max-height: 180px; overflow-y:auto;"></div>
+                </div>
+
+                <div class="card">
+                    <div class="c-flex-between" style="border-bottom: 1px solid var(--carbon-border); padding-bottom:8px; margin-bottom:8px;">
+                        <span class="c-label">Listado de Pendientes (No Escaneadas en <span id="umbral-dias-label-2">2</span> Días)</span>
+                        <button onclick="copyTableToSheets()" class="btn-primary" style="padding:6px 12px; font-size:0.7rem;">COPIAR SHEETS</button>
+                    </div>
+                    <div class="table-wrap" style="max-height: 320px; overflow-y: auto;">
+                        <table id="table-pending">
+                            <thead>
+                                <tr>
+                                    <th class="sortable" onclick="sortTable(0)">Cat <i class="fas fa-sort ml-1 opacity-30"></i></th>
+                                    <th class="sortable" onclick="sortTable(1)">Viaje <i class="fas fa-sort ml-1 opacity-30"></i></th>
+                                    <th class="sortable" onclick="sortTable(2)">Conductor <i class="fas fa-sort ml-1 opacity-30"></i></th>
+                                    <th class="sortable" onclick="sortTable(3)">Guía <i class="fas fa-sort ml-1 opacity-30"></i></th>
+                                    <th class="sortable" onclick="sortTable(4)">Estado <i class="fas fa-sort ml-1 opacity-30"></i></th>
+                                </tr>
+                            </thead>
+                            <tbody id="pending-list-body">
+                                <tr><td colspan="5" class="empty-msg">Sube un archivo de viajes y presiona Procesar.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="c-flex-between" style="border-bottom: 1px solid var(--carbon-border); padding-bottom:8px; margin-bottom:12px;">
+                    <div class="c-flex-center">
+                        <span class="c-label">Filtro de Paquetes por Estado</span>
+                        <span id="statusMsg" style="font-size: 0.72rem; color:var(--text-dim); margin-left:6px;">Sube un archivo de viajes para comenzar.</span>
+                    </div>
+                    <div class="c-flex-center">
+                        <select id="estadoFilter" onchange="filterAndRenderTable()" disabled style="background:var(--input-bg); color:var(--text-main); border:1px solid var(--carbon-border); border-radius:8px; padding:6px 12px; font-family:'Lexend'; font-size:0.75rem;">
+                            <option value="">-- Selecciona un archivo primero --</option>
+                        </select>
+                        <button id="copyBtn" onclick="copyToClipboard()" disabled class="btn-primary" style="padding:6px 12px; font-size:0.72rem;">
+                            COPIAR ESTADOS
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="table-wrap" style="max-height: 350px; overflow-y: auto;">
+                    <table id="dataTable">
+                        <thead>
+                            <tr>
+                                <th>Estado</th>
+                                <th>IdViaje</th>
+                                <th>Pedido Referencia externa</th>
+                                <th>Última Categoría (<span id="umbral-dias-label-3">2</span> días)</th>
+                                <th>Fecha</th>
+                                <th>Tracking</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <tr>
+                                <td colspan="6" class="empty-msg">No hay datos cargados</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div><!-- /#cuadratura-tab -->
+
+        <!-- ================= PESTAÑA 3: TRACKER ================= -->
+        <div id="tracker-tab" class="tab-content">
+
+            <div id="tracker-filter-bar" class="card" style="display:flex; flex-wrap:wrap; gap:12px; align-items:center;">
+                <div class="filter-group">
+                    <label style="font-size:0.75rem; color:var(--text-dim); font-weight:600;">Periodo:</label>
+                    <div class="date-control">
+                        <input type="date" id="tracker-date-from" onchange="renderTracker()" style="border:none !important; background:transparent !important; padding:6px 6px !important;">
+                        <span style="color:var(--text-dim); padding:0 2px;">→</span>
+                        <input type="date" id="tracker-date-to" onchange="renderTracker()" style="border:none !important; background:transparent !important; padding:6px 6px !important;">
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <label style="font-size:0.75rem; color:var(--text-dim); font-weight:600;">Acción:</label>
+                    <select id="tracker-accion" onchange="onTrackerAccionChange()">
+                        <option value="">Todas</option>
+                        <option value="INYECCIÓN">INYECCIÓN</option>
+                        <option value="DEVOLUCIÓN A ORIGEN" selected>DEVOLUCIÓN A ORIGEN</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label style="font-size:0.75rem; color:var(--text-dim); font-weight:600;">Categoría:</label>
+                    <select id="tracker-categoria" onchange="renderTracker()"></select>
+                </div>
+
+                <div class="filter-group">
+                    <label style="font-size:0.75rem; color:var(--text-dim); font-weight:600;">Proveedor:</label>
+                    <select id="tracker-proveedor" onchange="renderTracker()">
+                        <option value="">Todos</option>
+                        <option value="ROMBO" selected>ROMBO</option>
+                        <option value="QP">QP</option>
+                        <option value="EMISSARY">EMISSARY</option>
+                        <option value="OTRO">OTRO</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label style="font-size:0.75rem; color:var(--text-dim); font-weight:600;">Tipo:</label>
+                    <select id="tracker-tipo" onchange="renderTracker()">
+                        <option value="">Todos</option>
+                        <option value="NO EMBARCADO TR2" selected>NO EMBARCADO TR2</option>
+                        <option value="DEVOLUCIÓN">DEVOLUCIÓN</option>
+                        <option value="PAQUETES ROJOS NM">PAQUETES ROJOS NM</option>
+                    </select>
+                </div>
+
+                <button class="btn-primary btn-secondary" onclick="resetTrackerFilters()" style="margin-left:auto;">
+                    <i class="fas fa-rotate-left" style="margin-right:6px;"></i>RESTABLECER FILTROS
+                </button>
+            </div>
+
+            <div class="card">
+                <div class="c-flex-between" style="border-bottom: 1px solid var(--carbon-border); padding-bottom:8px; margin-bottom:2px;">
+                    <span class="c-label"><i class="fas fa-chart-area" style="margin-right:6px; color:var(--accent);"></i>Paquetes por día (periodo seleccionado)</span>
+                </div>
+                <div style="text-align:center; padding: 8px 0 2px;">
+                    <div id="tracker-chart-total-num" style="font-size:2.4rem; font-weight:800; color:#22d3ee; text-shadow:0 0 18px rgba(34,211,238,0.35); line-height:1;">0</div>
+                    <div style="font-size:0.65rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:1.2px; font-weight:700; margin-top:4px;">Total de paquetes en el periodo</div>
+                </div>
+                <div style="height:260px; margin-top:10px;"><canvas id="tracker-chart"></canvas></div>
+            </div>
+
+            <div class="card">
+                <div class="c-flex-between" style="border-bottom: 1px solid var(--carbon-border); padding-bottom:8px; margin-bottom:12px;">
+                    <span class="c-label">Guías encontradas</span>
+                    <div class="c-flex-center">
+                        <span id="tracker-total-count" style="font-size:0.75rem; color:var(--text-dim); font-weight:600;"></span>
+                        <button class="btn-primary" onclick="copyTrackerToSheets()" style="padding:6px 12px; font-size:0.72rem;">
+                            <i class="fas fa-copy" style="margin-right:6px;"></i>COPIAR PARA SHEETS
+                        </button>
+                    </div>
+                </div>
+                <div class="table-wrap" style="max-height:420px; overflow-y:auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>GUÍA</th>
+                                <th>FECHA</th>
+                                <th>ACCIÓN</th>
+                                <th>CATEGORÍA</th>
+                                <th>PROVEEDOR</th>
+                                <th>TIPO</th>
+                                <th style="text-align:center;">VECES ESCANEADA</th>
+                                <th>PRIMERA FECHA RECIBIDA</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tracker-table-body"></tbody>
+                    </table>
+                </div>
+                <div id="tracker-empty-msg" class="empty-msg" style="display:none;">No hay guías para este filtro.</div>
+            </div>
+
+        </div><!-- /#tracker-tab -->
+
+    </div><!-- /#app-root -->
+
+    <div id="edit-modal-bg">
+        <div id="edit-modal">
+            <div style="font-weight:700; font-size:1.1rem; color:var(--text-main); border-bottom:1px solid var(--carbon-border); padding-bottom:10px;">Editar guía</div>
+            <div>
+                <label>Número de guía (no editable)</label>
+                <input type="text" id="edit-guia" disabled>
+            </div>
+            <div>
+                <label>Acción</label>
+                <select id="edit-accion" onchange="onEditAccionChange()">
+                    <option value="INYECCIÓN">INYECCIÓN</option>
+                    <option value="DEVOLUCIÓN A ORIGEN">DEVOLUCIÓN A ORIGEN</option>
+                </select>
+            </div>
+            <div>
+                <label>Categoría</label>
+                <select id="edit-categoria"></select>
+            </div>
+            <div>
+                <label>Proveedor</label>
+                <select id="edit-prov">
+                    <option value="ROMBO">ROMBO</option>
+                    <option value="QP">QP</option>
+                    <option value="EMISSARY">EMISSARY</option>
+                    <option value="OTRO">OTRO</option>
+                </select>
+            </div>
+            <div>
+                <label>Tipo</label>
+                <select id="edit-tipo">
+                    <option value="NO EMBARCADO TR2">NO EMBARCADO TR2</option>
+                    <option value="DEVOLUCIÓN">DEVOLUCIÓN</option>
+                    <option value="PAQUETES ROJOS NM">PAQUETES ROJOS NM</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-primary btn-secondary" onclick="closeEditModal()">CANCELAR</button>
+                <button class="btn-primary" onclick="saveEdit()">GUARDAR</button>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
-
-</div>
-
-<div class="toast" id="toast"></div>
 
 <script>
-const CONFIG = {
-  GOOGLE_CLIENT_ID: "972622378238-r9c9jse3rp3c3isf68dq8u08gv5c3u7s.apps.googleusercontent.com",
-  APPS_SCRIPT_URL:  "https://script.google.com/macros/s/AKfycbztYh2rwGuDZkUaV7Y6Hgju8rh6TM3I1JUtwqCT2M_Dpz3-KZ228j0vzA_FhYomb_XLLw/exec",
-  TARGET_LAT: 25.68614677355663, 
-  TARGET_LNG: -100.26226455117553,
-  RADIUS_M: 90,
-  MAX_ACCURACY_M: 200
-};
-
-const SESSION_KEY = 'redpack_session_v1';
-const SESSION_TTL_MS = 10 * 60 * 60 * 1000; // 10 horas
-
-let session = { idToken:null, email:null, name:null, picture:null, rol:'empleado' };
-let lastFix = null;
-let currentFix = null;
-let watchId = null;
-let autoLogoutTimer = null;
-let historyRows = [];
-let adminRows = []; 
-let selectedUsersForChart = new Set(); 
-
-const $ = (id) => document.getElementById(id);
-
-const show = (id) => { 
-  ['screen-login','screen-onboard','screen-main','screen-admin'].forEach(s=>$(s).classList.add('hidden')); 
-  $(id).classList.remove('hidden');
-  if(id === 'screen-admin') {
-    $('app-container').classList.add('expanded');
-  } else {
-    $('app-container').classList.remove('expanded');
-  }
-};
-
-function toast(msg, kind){
-  const t = $('toast'); t.textContent = msg; t.className = 'toast show ' + (kind||'');
-  clearTimeout(t._h); t._h = setTimeout(()=>t.classList.remove('show'), 3200);
-}
-
-/* ---------------- Persistencia de sesión (10 horas) ---------------- */
-function saveSession(){
-  const record = Object.assign({}, session, { expiresAt: Date.now() + SESSION_TTL_MS });
-  try { localStorage.setItem(SESSION_KEY, JSON.stringify(record)); } catch(e){}
-  scheduleAutoLogout(SESSION_TTL_MS);
-}
-
-function loadSession(){
-  let raw;
-  try { raw = localStorage.getItem(SESSION_KEY); } catch(e){ return null; }
-  if (!raw) return null;
-  let data;
-  try { data = JSON.parse(raw); } catch(e){ return null; }
-  if (!data || !data.expiresAt || Date.now() >= data.expiresAt || !data.idToken || !data.email){
-    try { localStorage.removeItem(SESSION_KEY); } catch(e){}
-    return null;
-  }
-  return data;
-}
-
-function clearSession(){
-  try { localStorage.removeItem(SESSION_KEY); } catch(e){}
-  if (autoLogoutTimer) { clearTimeout(autoLogoutTimer); autoLogoutTimer = null; }
-}
-
-function scheduleAutoLogout(msFromNow){
-  if (autoLogoutTimer) clearTimeout(autoLogoutTimer);
-  autoLogoutTimer = setTimeout(() => {
-    toast('Tu sesión expiró tras 10 horas, inicia sesión de nuevo.', 'bad');
-    doLogout();
-  }, msFromNow);
-}
-
-/* ---------------- Reloj Operativo ---------------- */
-window.onload = () => {
-  google.accounts.id.initialize({
-    client_id: CONFIG.GOOGLE_CLIENT_ID,
-    callback: onGoogleCredential,
-    auto_select: false
-  });
-  google.accounts.id.renderButton($('gsi-button'), { theme:'filled_black', size:'large', shape:'pill', text:'signin_with', width:280 });
-  tickClock();
-  setInterval(tickClock, 1000);
-  initAdminDateRange();
-
-  // Restaurar sesión activa (evita re-login y evita que el historial "desaparezca" al volver)
-  const saved = loadSession();
-  if (saved){
-    session = { idToken:saved.idToken, email:saved.email, name:saved.name, picture:saved.picture, rol:saved.rol || 'empleado' };
-    scheduleAutoLogout(saved.expiresAt - Date.now());
-    enterMain();
-  }
-};
-
-function decodeJwt(token){
-  try { return JSON.parse(decodeURIComponent(atob(token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')).split('').map(c=>'%'+('00'+c.charCodeAt(0).toString(16)).slice(-2)).join(''))); }
-  catch(e){ return null; }
-}
-
-function onGoogleCredential(resp){
-  const payload = decodeJwt(resp.credential);
-  if (!payload || !payload.email){ $('login-status').textContent = 'No se pudo leer tu cuenta de Google.'; return; }
-  session.idToken = resp.credential;
-  session.email = payload.email.toLowerCase();
-  session.name = payload.name || '';
-  session.picture = payload.picture || '';
-  $('login-status').textContent = 'Verificando…';
-
-  callApi('login', { nombre: session.name }).then(res=>{
-    if (!res.ok){ toast(res.error || 'No se pudo iniciar sesión.', 'bad'); $('login-status').textContent = res.error || ''; return; }
-    session.rol = res.rol;
-    session.name = res.nombre || session.name;
-    $('ob-avatar').src = session.picture;
-    $('ob-email').textContent = session.email;
-    $('ob-name').value = session.name;
-    show('screen-onboard');
-  }).catch(()=> $('login-status').textContent = 'No se pudo conectar con el servidor.');
-}
-
-$('ob-continue').onclick = () => {
-  const nombre = $('ob-name').value.trim();
-  if (!nombre){ toast('Escribe tu nombre.', 'bad'); return; }
-  session.name = nombre;
-  callApi('login', { nombre }).then(res=>{
-    if(!res.ok){ toast(res.error||'Error al guardar.', 'bad'); return; }
-    session.rol = res.rol || session.rol;
-    saveSession();
-    enterMain();
-  });
-};
-$('ob-logout').onclick = doLogout;
-$('btn-logout').onclick = doLogout;
-
-function doLogout(){
-  google.accounts.id.disableAutoSelect();
-  if (watchId) navigator.geolocation.clearWatch(watchId);
-  clearSession();
-  historyRows = [];
-  session = { idToken:null, email:null, name:null, picture:null, rol:'empleado' };
-  show('screen-login');
-}
-
-function enterMain(){
-  $('m-avatar').src = session.picture;
-  $('m-name').textContent = session.name;
-  $('m-role').textContent = session.rol === 'admin' ? 'Administrador' : 'Colaborador';
-  $('btn-admin').classList.toggle('hidden', session.rol !== 'admin');
-  show('screen-main');
-  startGeo();
-  fetchHistorial();
-}
-
-$('btn-admin').onclick = openAdmin;
-$('admin-back').onclick = () => show('screen-main');
-
-function tickClock(){
-  const d = new Date();
-  $('clock').textContent = d.toLocaleTimeString('es-MX', {hour12:false});
-  $('date-label').textContent = d.toLocaleDateString('es-MX', {weekday:'long', day:'numeric', month:'long'});
-}
-
-/* ---------------- Geolocalización / Geocerca ---------------- */
-function haversine(lat1,lon1,lat2,lon2){
-  const R=6371000, toRad = d=>d*Math.PI/180;
-  const dLat=toRad(lat2-lat1), dLon=toRad(lon2-lon1);
-  const a=Math.sin(dLat/2)**2 + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
-  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
-}
-
-function startGeo(){
-  if (!navigator.geolocation){ $('geo-status').textContent = 'Tu navegador no soporta ubicación.'; return; }
-  watchId = navigator.geolocation.watchPosition(onGeo, onGeoError, { enableHighAccuracy:true, maximumAge:0, timeout:15000 });
-}
-
-function onGeoError(err){
-  $('geo-status').textContent = 'No se pudo obtener tu ubicación. Revisa permisos de GPS.';
-  $('btn-entrada').disabled = true; $('btn-salida').disabled = true;
-  setDot('bad');
-}
-
-function onGeo(pos){
-  const c = pos.coords;
-  const fix = { lat:c.latitude, lng:c.longitude, accuracy:c.accuracy, t:Date.now() };
-
-  let sospechoso = null;
-  if (lastFix){
-    const dt = (fix.t - lastFix.t)/1000;
-    const dd = haversine(lastFix.lat, lastFix.lng, fix.lat, fix.lng);
-    if (dt > 0.4 && dt < 20){
-      const speed = dd/dt;
-      if (speed > 55) sospechoso = 'salto de ubicación implausible';
-    }
-  }
-  lastFix = fix;
-  currentFix = fix;
-  if (fix.accuracy && fix.accuracy > CONFIG.MAX_ACCURACY_M) sospechoso = sospechoso || 'precisión GPS insuficiente';
-  currentFix.sospechoso = sospechoso;
-
-  const dist = haversine(fix.lat, fix.lng, CONFIG.TARGET_LAT, CONFIG.TARGET_LNG);
-  currentFix.distancia = dist;
-
-  $('radar-dist').textContent = Math.round(dist) + ' m';
-  const dentro = dist <= CONFIG.RADIUS_M && !sospechoso;
-  setDot(dentro ? 'ok' : 'bad');
-
-  if (sospechoso){
-    $('geo-status').textContent = '⚠ ' + (sospechoso === 'precisión GPS insuficiente' ? 'Precisión GPS baja, espera unos segundos.' : 'Ubicación sospechosa detectada.');
-  } else if (dentro){
-    $('geo-status').textContent = 'Dentro del rango permitido · ±' + Math.round(fix.accuracy) + 'm';
-  } else {
-    $('geo-status').textContent = 'Fuera del rango permitido (' + CONFIG.RADIUS_M + 'm) · ±' + Math.round(fix.accuracy) + 'm';
-  }
-
-  $('btn-entrada').disabled = false;
-  $('btn-salida').disabled = false;
-}
-
-function setDot(state){
-  const dot = $('radar-dot');
-  dot.className = 'radar-dot ' + (state==='ok'?'ok':state==='bad'?'bad':'');
-}
-
-/* ---------------- Restricción Operativa (1 hora) y Envío ---------------- */
-function checkLockout(tipo) {
-  const lastCheckTime = localStorage.getItem(`last_success_check_${session.email}`);
-  if (lastCheckTime) {
-    const diff = Date.now() - parseInt(lastCheckTime, 10);
-    if (diff < 3600000) { 
-      const minsLeft = Math.ceil((3600000 - diff) / 60000);
-      toast(`Bloqueo de seguridad: No puedes volver a registrar por al menos ${minsLeft} min de diferencia.`, 'bad');
-      return true;
-    }
-  }
-  return false;
-}
-
-$('btn-entrada').onclick = () => { if(!checkLockout('Entrada')) marcar('Entrada'); };
-$('btn-salida').onclick = () => { if(!checkLockout('Salida')) marcar('Salida'); };
-
-function marcar(tipo){
-  if (!currentFix){ toast('Esperando ubicación…', 'bad'); return; }
-  $('btn-entrada').disabled = true; $('btn-salida').disabled = true;
-
-  callApi('registrar', {
-    tipo, nombre: session.name,
-    lat: currentFix.lat, lng: currentFix.lng, accuracy: currentFix.accuracy,
-    sospechoso: currentFix.sospechoso || '',
-    dispositivo: navigator.userAgent
-  }).then(res=>{
-    $('btn-entrada').disabled = false; $('btn-salida').disabled = false;
-    if (res.ok){
-      toast(tipo + ' registrada con éxito · ' + res.distancia + 'm del punto', 'ok');
-      localStorage.setItem(`last_success_check_${session.email}`, Date.now().toString());
-      fetchHistorial(); // refresca desde Sheets, así el historial nunca queda desfasado
-    } else {
-      toast(res.motivo || res.error || 'Registro rechazado', 'bad');
-    }
-  }).catch(()=>{
-    $('btn-entrada').disabled = false; $('btn-salida').disabled = false;
-    toast('No se pudo conectar con el servidor.', 'bad');
-  });
-}
-
-/* ---------------- Historial inteligente de checadas (últimos 7 días) ---------------- */
-$('hist-refresh').onclick = () => fetchHistorial();
-
-function fetchHistorial(){
-  const list = $('feed-list');
-  list.innerHTML = '<div class="hist-loading">Cargando historial…</div>';
-  callApi('historial', { dias: 7 }).then(res=>{
-    if (!res.ok){
-      list.innerHTML = '<div class="empty">No se pudo cargar tu historial.</div>';
-      return;
-    }
-    // Filtro defensivo: solo Aceptados y solo de este usuario, por si el backend regresa de más
-    historyRows = (res.registros || []).filter(r =>
-      r.Resultado === 'Aceptado' && (r.Correo || '').toLowerCase() === session.email
-    );
-    renderHistorial();
-  }).catch(()=>{
-    list.innerHTML = '<div class="empty">No se pudo conectar con el servidor.</div>';
-  });
-}
-
-// Empareja Entrada→Salida de forma cronológica, permitiendo turnos que cruzan la medianoche
-// (ej. entra 10/07 7:35pm y sale 11/07 1:30am se muestran como un solo turno).
-function buildShifts(records){
-  const sorted = [...records].sort((a,b)=> new Date(a.Timestamp) - new Date(b.Timestamp));
-  const shifts = [];
-  let openEntrada = null;
-
-  sorted.forEach(r => {
-    if (r.Tipo === 'Entrada'){
-      if (openEntrada) shifts.push({ entrada: openEntrada, salida: null }); // turno anterior quedó sin cerrar
-      openEntrada = r;
-    } else if (r.Tipo === 'Salida'){
-      if (openEntrada){
-        shifts.push({ entrada: openEntrada, salida: r });
-        openEntrada = null;
-      } else {
-        shifts.push({ entrada: null, salida: r }); // salida sin entrada previa registrada
-      }
-    }
-  });
-  if (openEntrada) shifts.push({ entrada: openEntrada, salida: null }); // turno en curso
-
-  return shifts.reverse(); // más reciente arriba
-}
-
-function fmtDate(iso){
-  const d = new Date(iso);
-  return d.toLocaleDateString('es-MX', { day:'2-digit', month:'2-digit' });
-}
-function fmtTime(iso){
-  const d = new Date(iso);
-  return d.toLocaleTimeString('es-MX', { hour:'2-digit', minute:'2-digit', hour12:true }).toLowerCase();
-}
-
-function renderHistorial(){
-  const list = $('feed-list');
-  const shifts = buildShifts(historyRows);
-
-  if (!shifts.length){ list.innerHTML = '<div class="empty">Aún no tienes registros en los últimos 7 días.</div>'; return; }
-
-  list.innerHTML = shifts.map(s => {
-    const crossesDay = s.entrada && s.salida && fmtDate(s.entrada.Timestamp) !== fmtDate(s.salida.Timestamp);
-    const isOpen = s.entrada && !s.salida;
-
-    const inCol = s.entrada
-      ? `<div class="hist-col in"><div class="hc-top"><span class="hc-icon">↗</span><span class="hc-time">${fmtTime(s.entrada.Timestamp)}</span></div><div class="hc-date">${fmtDate(s.entrada.Timestamp)}</div></div>`
-      : `<div class="hist-col in"><div class="hc-empty">—</div></div>`;
-
-    const outCol = s.salida
-      ? `<div class="hist-col out"><div class="hc-top"><span class="hc-icon">↘</span><span class="hc-time">${fmtTime(s.salida.Timestamp)}</span></div><div class="hc-date">${fmtDate(s.salida.Timestamp)}${crossesDay ? ' · +1 día' : ''}</div></div>`
-      : `<div class="hist-col out"><div class="hc-empty">${isOpen ? 'En curso' : '—'}</div></div>`;
-
-    let durationHTML = '';
-    if (s.entrada && s.salida){
-      const hrs = (new Date(s.salida.Timestamp) - new Date(s.entrada.Timestamp)) / 3600000;
-      if (hrs > 0){
-        durationHTML = `<div class="hist-dur"><span>Duración del turno</span><span>${hrs.toFixed(1)} h</span></div>`;
-      }
-    } else if (isOpen){
-      durationHTML = `<div class="hist-dur"><span class="badge-open">● Turno abierto</span><span>—</span></div>`;
-    }
-
-    return `<div class="hist-row ${isOpen?'open':''}">${inCol}${outCol}${durationHTML}</div>`;
-  }).join('');
-}
-
-/* ---------------- Consola Administrativa Avanzada ---------------- */
-function initAdminDateRange(){
-  const today = new Date();
-  const past6Days = new Date();
-  past6Days.setDate(today.getDate() - 6);
-  
-  $('admin-date-end').value = today.toISOString().split('T')[0];
-  $('admin-date-start').value = past6Days.toISOString().split('T')[0];
-
-  $('admin-date-start').onchange = () => filterAndProcessAdminData();
-  $('admin-date-end').onchange = () => filterAndProcessAdminData();
-}
-
-function openAdmin(){
-  show('screen-admin');
-  $('admin-tbody').innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--ink-faint);">Sincronizando flujo de datos en tiempo real…</td></tr>';
-  callApi('listado', {}).then(res=>{
-    if (!res.ok){ toast(res.error||'Sin permisos asignados', 'bad'); show('screen-main'); return; }
-    
-    adminRows = res.registros || [];
-    
-    // Identificar todos los usuarios únicos para la lista de selección por defecto
-    const uniqueUsers = [...new Set(adminRows.map(r => r.Nombre || r.Correo))].filter(Boolean);
-    selectedUsersForChart = new Set(uniqueUsers); 
-    
-    renderUserCheckboxes(uniqueUsers);
-    filterAndProcessAdminData();
-  });
-}
-
-function renderUserCheckboxes(users) {
-  const container = $('admin-user-checkboxes');
-  if(!users.length) { container.innerHTML = '<div style="color:var(--ink-faint); font-size:11px;">No hay usuarios</div>'; return;}
-  
-  container.innerHTML = users.map(u => `
-    <label class="user-select-item">
-      <input type="checkbox" value="${u}" checked onchange="toggleUserChartSelection('${u}', this.checked)">
-      <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${u}</span>
-    </label>
-  `).join('');
-}
-
-function toggleUserChartSelection(user, isChecked) {
-  if(isChecked) selectedUsersForChart.add(user);
-  else selectedUsersForChart.delete(user);
-  calculateStatsAndRenderChart();
-}
-
-function filterAndProcessAdminData() {
-  const q = $('admin-search').value.toLowerCase();
-  const startDate = new Date($('admin-date-start').value + 'T00:00:00');
-  const endDate = new Date($('admin-date-end').value + 'T23:59:59');
-
-  // Filtrado general por rango de fechas del calendario y query
-  let filtered = adminRows.filter(r => {
-    const rDate = new Date(r.Timestamp);
-    const matchesDate = rDate >= startDate && rDate <= endDate;
-    const matchesQuery = (r.Nombre||'').toLowerCase().includes(q) || (r.Correo||'').toLowerCase().includes(q);
-    return matchesDate && matchesQuery;
-  });
-
-  $('admin-count').textContent = ' · ' + filtered.length + ' en rango';
-
-  // Obtener estado en tiempo real (basado en el último estado histórico de cada usuario en el sistema)
-  const usersStatusMap = {};
-  
-  // Ordenar cronológicamente para determinar el estatus real más reciente
-  const sortedChronological = [...adminRows].sort((a,b) => new Date(a.Timestamp) - new Date(b.Timestamp));
-  
-  sortedChronological.forEach(r => {
-    const uid = r.Correo || r.Nombre;
-    if(r.Resultado === 'Aceptado') {
-      usersStatusMap[uid] = {
-        name: r.Nombre || r.Correo,
-        rol: r.Rol || 'empleado',
-        tipo: r.Tipo,
-        timestamp: r.Timestamp,
-        resultado: r.Resultado
-      };
-    }
-  });
-
-  // Dividir e imprimir la tabla estructurada: Administradores arriba, colaboradores abajo
-  const adminUsersHTML = [];
-  const normalUsersHTML = [];
-
-  for(let id in usersStatusMap) {
-    const user = usersStatusMap[id];
-    const isEnTurno = user.tipo === 'Entrada';
-    const ledClass = isEnTurno ? 'led on' : 'led off';
-    const rowClass = isEnTurno ? 'tr-active' : '';
-
-    const htmlString = `
-      <tr class="${rowClass}">
-        <td><span class="${ledClass}"></span>${user.name}</td>
-        <td>${user.rol === 'admin' ? 'Administrador' : 'Colaborador'}</td>
-        <td>${user.tipo || 'Ninguno'}</td>
-        <td>${new Date(user.timestamp).toLocaleTimeString('es-MX',{hour12:false})}</td>
-        <td style="color:${isEnTurno ? 'var(--ok)': 'var(--ink-faint)'}">${isEnTurno ? 'Operando' : 'Fuera de turno'}</td>
-      </tr>
-    `;
-
-    if(user.rol === 'admin') adminUsersHTML.push(htmlString);
-    else normalUsersHTML.push(htmlString);
-  }
-
-  let finalTableHTML = '';
-  if(adminUsersHTML.length > 0) {
-    finalTableHTML += adminUsersHTML.join('');
-  }
-  if(normalUsersHTML.length > 0) {
-    finalTableHTML += `<tr><td colspan="5" class="rt-separator">Personal Operativo / Colaboradores</td></tr>`;
-    finalTableHTML += normalUsersHTML.join('');
-  }
-  
-  $('admin-tbody').innerHTML = finalTableHTML || '<tr><td colspan="5" style="text-align:center;color:var(--ink-faint);">Sin registros de operaciones activas en este rango.</td></tr>';
-
-  calculateStatsAndRenderChart();
-}
-
-$('admin-search').oninput = () => filterAndProcessAdminData();
-
-/* ---------------- Análisis Avanzado de Turnos y Gráfica SVG Nativa ---------------- */
-function calculateStatsAndRenderChart() {
-  const startDateStr = $('admin-date-start').value;
-  const endDateStr = $('admin-date-end').value;
-  
-  const start = new Date(startDateStr + 'T00:00:00');
-  const end = new Date(endDateStr + 'T23:59:59');
-
-  // Generar mapeo de los días solicitados en el rango interactivo
-  const daysMap = {};
-  let currentLoopDate = new Date(start);
-  while(currentLoopDate <= end) {
-    const dateKey = currentLoopDate.toISOString().split('T')[0];
-    daysMap[dateKey] = { totalHours: 0, shiftCount: 0 };
-    currentLoopDate.setDate(currentLoopDate.getDate() + 1);
-  }
-
-  // Agrupar marcas aceptadas por usuario y por orden cronológico
-  const validRecords = adminRows.filter(r => r.Resultado === 'Aceptado' && selectedUsersForChart.has(r.Nombre || r.Correo));
-  const userShifts = {};
-
-  validRecords.sort((a,b) => new Date(a.Timestamp) - new Date(b.Timestamp)).forEach(r => {
-    const uid = r.Correo || r.Nombre;
-    if(!userShifts[uid]) userShifts[uid] = [];
-    userShifts[uid].push(r);
-  });
-
-  let totalAggregatedHours = 0;
-  let totalValidShifts = 0;
-
-  // Analizar parámetros lógicos para turnos cruzados (día siguiente) y omitir olvidos de salida
-  for (let uid in userShifts) {
-    const records = userShifts[uid];
-    for (let i = 0; i < records.length; i++) {
-      if (records[i].Tipo === 'Entrada') {
-        // Buscar su salida correspondiente
-        let nextRecord = records[i+1];
-        
-        if (nextRecord && nextRecord.Tipo === 'Salida') {
-          const tIn = new Date(records[i].Timestamp);
-          const tOut = new Date(nextRecord.Timestamp);
-          const durationHours = (tOut - tIn) / 3600000;
-
-          // Parámetro de validación: si el turno supera las 18 horas, asumimos olvido de chequeo de salida y no se contabiliza
-          if (durationHours > 0 && durationHours <= 18) {
-            const dateKey = records[i].Timestamp.split('T')[0];
-            if (daysMap[dateKey] !== undefined) {
-              daysMap[dateKey].totalHours += durationHours;
-              daysMap[dateKey].shiftCount++;
-            }
-            totalAggregatedHours += durationHours;
-            totalValidShifts++;
-          }
-          i++; // Brincar el registro de salida procesado
+    // ============ CONFIGURACIÓN DE FIREBASE ============
+    const firebaseConfig = {
+        apiKey: "AIzaSyCg9mMvEg4tKa8Qpi3CVx_oTN0GSgO_iJ0",
+        authDomain: "rpkmty.firebaseapp.com",
+        projectId: "rpkmty",
+        storageBucket: "rpkmty.firebasestorage.app",
+        messagingSenderId: "414713465217",
+        appId: "1:414713465217:web:fb642bcfa7cffb665d4080",
+        measurementId: "G-NWBSKBZ2FB"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    const categoriasPorAccion = {
+        "INYECCIÓN": ["NO MANIFESTADO", "MAL PUNTEADO", "ANDEN INCORRECTO", "REINTENTO", "NEGOCIO CERRADO", "MAL ETIQUETADO"],
+        "DEVOLUCIÓN A ORIGEN": ["NO MANIFESTADO", "MAL PUNTEADO", "SIN CONTENIDO", "PAQUETE DAÑADO", "EXCESO DE DIMENSIONES", "FUERA DE COBERTURA", "3 INTENTOS", "MAL ENTREGADO", "NEGOCIO CERRADO", "MAL ETIQUETADO", "DOMICILIO INCORRECTO", "RECHAZO"]
+    };
+
+    // ============ LÍMITE DE DÍAS PARA BÚSQUEDA GLOBAL ============
+    const LIMITE_DIAS_BUSQUEDA = 15;
+
+    let allGuias = [];
+    let selectedIds = new Set();
+    let unsubscribe = null;
+    let editingId = null;
+
+    // IDs de guías que coinciden con la búsqueda masiva actual (para resaltar)
+    let bulkSearchHits = new Set();
+
+    // ============ TEMA DARK / LIGHT ============
+    function toggleTheme() {
+        const body = document.body;
+        const icon = document.getElementById('theme-icon');
+        const isLight = body.classList.toggle('theme-light');
+        if (isLight) {
+            icon.className = 'fas fa-moon';
+            localStorage.setItem('theme', 'light');
         } else {
-          // Parámetro detectado: Olvidó checar salida (No se contabiliza al no tener par ordenado)
-          continue;
+            icon.className = 'fas fa-sun';
+            localStorage.setItem('theme', 'dark');
         }
-      }
     }
-  }
+    function loadTheme() {
+        const saved = localStorage.getItem('theme');
+        if (saved === 'light') {
+            document.body.classList.add('theme-light');
+            const icon = document.getElementById('theme-icon');
+            if (icon) icon.className = 'fas fa-moon';
+        }
+    }
 
-  // Calcular KPI de tiempo promedio real por turno
-  const avgHours = totalValidShifts > 0 ? (totalAggregatedHours / totalValidShifts) : 0;
-  $('kpi-avg-time').textContent = avgHours.toFixed(1) + 'h';
+    // ============ CONTROL DE PESTAÑAS ============
+    function switchTab(tabId, btn) {
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.nav-tab-btn').forEach(b => b.classList.remove('active'));
+        
+        document.getElementById(tabId).classList.add('active');
+        btn.classList.add('active');
 
-  // Renderizar Gráfica SVG Dinámica
-  renderSVGChart(daysMap);
-}
+        document.querySelectorAll('.nav-search-group').forEach(g => g.classList.remove('active'));
+        const searchIds = { 'admin-tab': 'search-wrap-admin', 'cuadratura-tab': 'search-wrap-cuadratura', 'tracker-tab': 'search-wrap-tracker' };
+        document.getElementById(searchIds[tabId]).classList.add('active');
+        
+        const topNav = document.getElementById('top-nav');
+        const headerTitleText = document.getElementById('header-title-text');
+        const limitInfo = document.getElementById('search-limit-info');
 
-function renderSVGChart(daysMap) {
-  const chart = $('analytics-chart');
-  chart.innerHTML = ''; // Limpiar lienzo
+        if (tabId === 'admin-tab') {
+            topNav.style.background = 'var(--bg-header-admin)';
+            topNav.style.borderColor = 'var(--border-header-admin)';
+            topNav.className = 'admin-mode';
+            headerTitleText.innerHTML = '<i class="fas fa-boxes-stacked"></i> Panel de administración de guías';
+            if (limitInfo) limitInfo.style.display = 'flex';
+        } else if (tabId === 'tracker-tab') {
+            topNav.style.background = 'var(--bg-header-tracker)';
+            topNav.style.borderColor = 'var(--border-header-tracker)';
+            topNav.className = 'tracker-mode';
+            headerTitleText.innerHTML = '<i class="fas fa-magnifying-glass"></i> TRACKER DE GUÍAS';
+            if (limitInfo) limitInfo.style.display = 'none';
+        } else {
+            topNav.style.background = 'var(--bg-header-cuadratura)';
+            topNav.style.borderColor = 'var(--border-header-cuadratura)';
+            topNav.className = 'cuadratura-mode';
+            headerTitleText.innerHTML = '<i class="fas fa-list-check"></i> CUADRATURA';
+            if (limitInfo) limitInfo.style.display = 'none';
+        }
 
-  const keys = Object.keys(daysMap).sort();
-  if(!keys.length) return;
+        if (tabId === 'cuadratura-tab' && chartInstance) chartInstance.resize();
+        if (tabId === 'tracker-tab' && trackerChartInstance) trackerChartInstance.resize();
+    }
 
-  const maxHours = Math.max(...keys.map(k => daysMap[k].totalHours), 8); // Escalado dinámico base de 8 horas
-  const padding = 30;
-  const chartHeight = 110;
-  const chartWidth = 360;
-  const barWidth = Math.max(12, (chartWidth / keys.length) - 10);
-  const stepX = chartWidth / keys.length;
+    document.addEventListener("DOMContentLoaded", () => {
+        loadTheme();
+        const hoyStr = new Date().toLocaleDateString('sv-SE');
+        document.getElementById('filter-date-from').value = hoyStr;
+        document.getElementById('filter-date-to').value = hoyStr;
+        updateFechaLabel();
+        resetTrackerFilters();
+        document.getElementById('limit-days-text').textContent = LIMITE_DIAS_BUSQUEDA;
+    });
 
-  // Renderizar Ejes de Referencia Líneas de Fondo
-  for(let l = 0; l <= 4; l++) {
-    const yVal = padding + (chartHeight / 4) * l;
-    const hourLabel = (maxHours - (maxHours / 4) * l).toFixed(1);
-    
-    chart.innerHTML += `<line x1="${padding}" y1="${yVal}" x2="${padding + chartWidth}" y2="${yVal}" stroke="#26262a" stroke-dasharray="2,2"/>`;
-    chart.innerHTML += `<text x="${padding - 8}" y="${yVal + 3}" fill="var(--ink-faint)" font-size="8" font-family="var(--font-mono)" text-anchor="end">${hourLabel}h</text>`;
-  }
+    // ============ LOGIN ============
+    const CORREOS_AUTORIZADOS = ["s4muelmonreal@gmail.com", "chronoalex666@gmail.com", "franciscoantoniomartinezrasgad@gmail.com","antonio.serratosl@gmail.com"];
 
-  // Dibujar Barras de Datos por Día Real
-  keys.forEach((key, index) => {
-    const dayData = daysMap[key];
-    const barHeight = (dayData.totalHours / maxHours) * chartHeight;
-    const x = padding + (stepX * index) + (stepX - barWidth) / 2;
-    const y = padding + chartHeight - barHeight;
+    function signInWithGoogle() {
+        document.getElementById('login-status').textContent = "Abriendo ventana de Google...";
+        auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(err => {
+            document.getElementById('login-status').textContent = "Error: " + err.message;
+        });
+    }
+    function logout() {
+        if (unsubscribe) { unsubscribe(); unsubscribe = null; }
+        auth.signOut();
+    }
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            const correoUsuario = (user.email || "").toLowerCase().trim();
+            const autorizado = CORREOS_AUTORIZADOS.includes(correoUsuario);
 
-    // Formatear etiqueta de fecha corta para el eje X (MM-DD)
-    const labelDate = key.substring(5);
+            if (!autorizado) {
+                if (unsubscribe) { unsubscribe(); unsubscribe = null; }
+                allGuias = [];
+                document.getElementById('app-root').style.display = 'none';
+                document.getElementById('login-screen').style.display = 'flex';
+                document.getElementById('login-status').style.color = 'var(--bad)';
+                document.getElementById('login-status').textContent = `Acceso denegado: ${user.email || 'este correo'} no está autorizado.`;
+                auth.signOut();
+                return;
+            }
 
-    // Renderizar barra
-    chart.innerHTML += `
-      <rect class="chart-bar" x="${x}" y="${y}" width="${barWidth}" height="${barHeight}" rx="3" title="${key}: ${dayData.totalHours.toFixed(1)} horas">
-        <title>Fecha: ${key}\nHoras Totales: ${dayData.totalHours.toFixed(1)}h\nTurnos: ${dayData.shiftCount}</title>
-      </rect>
-      <text class="chart-text" x="${x + barWidth/2}" y="${padding + chartHeight + 14}">${labelDate}</text>
-    `;
-  });
+            document.getElementById('login-status').style.color = 'var(--accent)';
+            document.getElementById('login-status').textContent = '';
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('app-root').style.display = 'flex';
+            document.getElementById('user-email').textContent = user.email || user.displayName || '';
+            iniciarListener();
+        } else {
+            if (unsubscribe) { unsubscribe(); unsubscribe = null; }
+            allGuias = [];
+            document.getElementById('app-root').style.display = 'none';
+            document.getElementById('login-screen').style.display = 'flex';
+        }
+    });
 
-  // Línea base del eje X
-  chart.innerHTML += `<line x1="${padding}" y1="${padding + chartHeight}" x2="${padding + chartWidth}" y2="${padding + chartHeight}" stroke="var(--carbon-line)"/>`;
-}
+    // ============ LISTENER ============
+    function iniciarListener() {
+        if (unsubscribe) unsubscribe();
+        unsubscribe = db.collection('guias').onSnapshot(snapshot => {
+            allGuias = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+            selectedIds.forEach(id => { if (!allGuias.some(g => g.id === id)) selectedIds.delete(id); });
+            render();
+            updateStats();
+            renderTracker();
+        });
+    }
 
-/* ---------------- API Bridge ---------------- */
-function callApi(action, extra){
-  const body = Object.assign({ action, idToken: session.idToken }, extra || {});
-  return fetch(CONFIG.APPS_SCRIPT_URL, {
-    method:'POST',
-    headers:{ 'Content-Type':'text/plain;charset=utf-8' },
-    body: JSON.stringify(body)
-  }).then(r => r.json());
-}
+    // ============ AUXILIARES DE FECHAS ============
+    function formatHoraMonterrey(timestamp) {
+        if (!timestamp) return '';
+        try {
+            return new Intl.DateTimeFormat('es-MX', {
+                timeZone: 'America/Monterrey',
+                hour: '2-digit', minute: '2-digit', hour12: false
+            }).format(new Date(timestamp));
+        } catch (e) { return ''; }
+    }
+    function inputDateToDateKey(value) {
+        if (!value) return null;
+        const [y, m, d] = value.split('-');
+        return `${parseInt(d)}/${parseInt(m)}/${y}`;
+    }
+    function formatDateKeyDisplay(val) {
+        if (!val) return '';
+        const [y, m, d] = val.split('-');
+        return `${d}/${m}/${y}`;
+    }
+    function updateFechaLabel() {
+        const fromVal = document.getElementById('filter-date-from').value;
+        const toVal = document.getElementById('filter-date-to').value;
+        const label = document.getElementById('fecha-label-text');
+        if (!fromVal && !toVal) label.textContent = 'Fecha: Todas';
+        else if (fromVal && toVal && fromVal === toVal) label.textContent = formatDateKeyDisplay(fromVal);
+        else if (fromVal && toVal) label.textContent = `${formatDateKeyDisplay(fromVal)} - ${formatDateKeyDisplay(toVal)}`;
+        else if (fromVal) label.textContent = `Desde ${formatDateKeyDisplay(fromVal)}`;
+        else label.textContent = `Hasta ${formatDateKeyDisplay(toVal)}`;
+    }
+    function toggleDateRangePopup(evt) {
+        if (evt) evt.stopPropagation();
+        const popup = document.getElementById('date-range-popup');
+        popup.style.display = popup.style.display === 'none' ? 'flex' : 'none';
+    }
+    document.addEventListener('click', (evt) => {
+        const popup = document.getElementById('date-range-popup');
+        const control = document.querySelector('.date-range-control');
+        if (popup && popup.style.display !== 'none' && control && !control.contains(evt.target)) {
+            popup.style.display = 'none';
+        }
+    });
+    function applyDateRange() {
+        const fromEl = document.getElementById('filter-date-from');
+        const toEl = document.getElementById('filter-date-to');
+        if (fromEl.value && toEl.value && fromEl.value > toEl.value) {
+            alert('La fecha "Desde" no puede ser posterior a la fecha "Hasta".');
+            return;
+        }
+        if (fromEl.value && !toEl.value) toEl.value = fromEl.value;
+        if (!fromEl.value && toEl.value) fromEl.value = toEl.value;
+        updateFechaLabel();
+        document.getElementById('date-range-popup').style.display = 'none';
+        render();
+    }
+    function clearDateFilter() {
+        document.getElementById('filter-date-from').value = '';
+        document.getElementById('filter-date-to').value = '';
+        updateFechaLabel();
+        document.getElementById('date-range-popup').style.display = 'none';
+        render();
+    }
+    function stepPeriod(days) {
+        const fromEl = document.getElementById('filter-date-from');
+        const toEl = document.getElementById('filter-date-to');
+        const todayStr = new Date().toLocaleDateString('sv-SE');
+        if (!fromEl.value && !toEl.value) {
+            fromEl.value = todayStr; toEl.value = todayStr;
+        } else {
+            if (fromEl.value) {
+                const d = new Date(fromEl.value + 'T00:00:00');
+                d.setDate(d.getDate() + days);
+                fromEl.value = d.toLocaleDateString('sv-SE');
+            }
+            if (toEl.value) {
+                const d = new Date(toEl.value + 'T00:00:00');
+                d.setDate(d.getDate() + days);
+                toEl.value = d.toLocaleDateString('sv-SE');
+            }
+        }
+        updateFechaLabel();
+        render();
+    }
+    function getDateRangeBounds() {
+        const fromVal = document.getElementById('filter-date-from').value;
+        const toVal = document.getElementById('filter-date-to').value;
+        if (!fromVal && !toVal) return null;
+        const start = fromVal ? new Date(fromVal + 'T00:00:00').getTime() : -Infinity;
+        const end = toVal ? new Date(toVal + 'T23:59:59.999').getTime() : Infinity;
+        return { start, end };
+    }
+    function getDateRangeFilteredList() {
+        const bounds = getDateRangeBounds();
+        if (!bounds) return allGuias.slice();
+        return allGuias.filter(g => g.timestamp >= bounds.start && g.timestamp <= bounds.end);
+    }
+
+    // ============ BÚSQUEDA MASIVA ============
+    function toggleBulkSearchPanel(evt) {
+        if (evt) evt.stopPropagation();
+        const panel = document.getElementById('bulk-search-panel');
+        panel.classList.toggle('open');
+        if (panel.classList.contains('open')) {
+            document.getElementById('bulk-search-textarea').focus();
+        }
+    }
+    function closeBulkSearchPanel() {
+        document.getElementById('bulk-search-panel').classList.remove('open');
+    }
+    function applyBulkSearch() {
+        const raw = document.getElementById('bulk-search-textarea').value;
+        // Separar por líneas, espacios, comas, punto y coma, tabs
+        const terminos = raw.split(/[\s,;]+/).map(t => t.trim()).filter(t => t.length > 0);
+        if (terminos.length === 0) {
+            alert('Pega al menos un número de guía.');
+            return;
+        }
+        // Guardar los términos en el buscador principal y hacer la búsqueda
+        document.getElementById('search-universal').value = terminos.join(', ');
+        closeBulkSearchPanel();
+        render();
+    }
+    // Detectar si el buscador contiene múltiples términos (búsqueda masiva)
+    function parseSearchQuery() {
+        const raw = document.getElementById('search-universal').value.trim();
+        if (!raw) return { isBulk: false, terms: [] };
+        const parts = raw.split(/[\s,;]+/).map(t => t.trim()).filter(t => t.length > 0);
+        if (parts.length > 1) {
+            return { isBulk: true, terms: parts };
+        }
+        return { isBulk: false, terms: [raw] };
+    }
+
+    // Copiar resultados de la búsqueda actual en formato tabla (fuente Lexend 10)
+    function copySearchResults() {
+        const list = getFilteredSorted();
+        if (!list || list.length === 0) {
+            alert('No hay resultados para copiar.');
+            return;
+        }
+        // Verificar si es búsqueda masiva o normal para encabezado
+        const queryInfo = parseSearchQuery();
+        let header = "GUÍA\tFECHA\tACCIÓN\tCATEGORÍA\tPROVEEDOR\tTIPO\tHORA ESCANEO\tOPERADOR\tREPETICIONES\n";
+        let text = header;
+        list.forEach(g => {
+            const count = getGuiaRepetitionCount(g.guia);
+            text += [
+                g.guia || '',
+                g.dateKey || '',
+                g.accion || '',
+                g.categoria || '',
+                g.prov || '',
+                g.tipo || '',
+                formatHoraMonterrey(g.timestamp),
+                g.operador || '',
+                count
+            ].join('\t') + '\n';
+        });
+
+        // Crear un elemento temporal con el texto formateado para copiar
+        const copyHandler = () => {
+            navigator.clipboard.writeText(text).then(() => {
+                alert(`¡Se copiaron ${list.length} guía(s) en formato tabla, listas para pegar en Google Sheets!\n\n${queryInfo.isBulk ? 'Búsqueda masiva: ' + queryInfo.terms.length + ' términos' : ''}`);
+            }).catch(err => {
+                const tempInput = document.createElement("textarea");
+                tempInput.value = text;
+                document.body.appendChild(tempInput);
+                tempInput.select();
+                document.execCommand("copy");
+                document.body.removeChild(tempInput);
+                alert(`¡Copiado! (Fallback) ${list.length} guía(s) listas.`);
+            });
+        };
+        copyHandler();
+    }
+
+    // Cerrar panel masivo al hacer clic fuera
+    document.addEventListener('click', (e) => {
+        const panel = document.getElementById('bulk-search-panel');
+        const wrap = document.querySelector('.search-bulk-wrap');
+        if (panel && panel.classList.contains('open') && wrap && !wrap.contains(e.target)) {
+            panel.classList.remove('open');
+        }
+    });
+
+    // ============ CONTADOR DE REPETICIONES ============
+    function getGuiaRepetitionCount(guiaNum) {
+        return allGuias.filter(g => g.guia === guiaNum).length;
+    }
+
+    // ============ FILTRADO (CON LÍMITE DE 15 DÍAS) ============
+    function getFilteredSorted() {
+        const rawQuery = document.getElementById('search-universal').value.trim();
+        const queryInfo = parseSearchQuery();
+        let list;
+
+        if (rawQuery) {
+            // LÍMITE: solo buscar en los últimos LIMITE_DIAS_BUSQUEDA días
+            const limiteMs = LIMITE_DIAS_BUSQUEDA * 24 * 60 * 60 * 1000;
+            const ahora = Date.now();
+            const minTimestamp = ahora - limiteMs;
+
+            if (queryInfo.isBulk) {
+                // Búsqueda masiva: coincidencia exacta (contains) con cualquiera de los términos
+                // y dentro del límite de días
+                const termsLower = queryInfo.terms.map(t => t.toLowerCase());
+                bulkSearchHits = new Set();
+                list = allGuias.filter(g => {
+                    if (!g.timestamp || g.timestamp < minTimestamp) return false;
+                    const guiaLower = (g.guia || '').toLowerCase();
+                    const hit = termsLower.some(t => guiaLower === t || guiaLower.includes(t));
+                    if (hit) bulkSearchHits.add(g.id);
+                    return hit;
+                });
+            } else {
+                // Búsqueda simple
+                const q = rawQuery.toLowerCase();
+                list = allGuias.filter(g => {
+                    if (!g.timestamp || g.timestamp < minTimestamp) return false;
+                    return g.guia && g.guia.toLowerCase().includes(q);
+                });
+                bulkSearchHits.clear();
+            }
+        } else {
+            list = getDateRangeFilteredList();
+            bulkSearchHits.clear();
+        }
+
+        const order = document.getElementById('sort-order').value;
+        list.sort((a, b) => (order === 'asc' ? (a.timestamp || 0) - (b.timestamp || 0) : (b.timestamp || 0) - (a.timestamp || 0)));
+        return list;
+    }
+
+    // ============ INYECTORES ============
+    function copyTextWithFeedback(formattedText, count, label) {
+        navigator.clipboard.writeText(formattedText).then(() => {
+            alert(`¡Se copiaron ${count} guías (${label}) al portapapeles con éxito!\nFormato: "GUIA; "`);
+        }).catch(err => {
+            console.error("Error al copiar: ", err);
+            const tempInput = document.createElement("textarea");
+            tempInput.value = formattedText;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+            alert(`¡Copiado! (Fallback) ${count} guías (${label}) listas.`);
+        });
+    }
+    function injectGuidesCopy() {
+        const bounds = getDateRangeBounds();
+        if (!bounds) { alert("Por favor selecciona un periodo de fecha para inyectar guías."); return; }
+        const guiasInyeccion = getDateRangeFilteredList().filter(g => g.accion === "INYECCIÓN");
+        if (guiasInyeccion.length === 0) { alert(`No se encontraron guías con la acción "INYECCIÓN" para el periodo seleccionado.`); return; }
+        const formattedText = guiasInyeccion.map(g => `${g.guia}; `).join('');
+        copyTextWithFeedback(formattedText, guiasInyeccion.length, "INYECCIÓN");
+    }
+    function injectDevolucionCopy() {
+        const bounds = getDateRangeBounds();
+        if (!bounds) { alert("Por favor selecciona un periodo de fecha para inyectar guías."); return; }
+        const guiasDevolucion = getDateRangeFilteredList().filter(g => g.accion === "DEVOLUCIÓN A ORIGEN");
+        if (guiasDevolucion.length === 0) { alert(`No se encontraron guías con la acción "DEVOLUCIÓN A ORIGEN" para el periodo seleccionado.`); return; }
+        const formattedText = guiasDevolucion.map(g => `${g.guia}; `).join('');
+        copyTextWithFeedback(formattedText, guiasDevolucion.length, "DEVOLUCIÓN A ORIGEN");
+    }
+    function updateInjectCounts() {
+        const list = getDateRangeFilteredList();
+        const inj = list.filter(g => g.accion === "INYECCIÓN").length;
+        const dev = list.filter(g => g.accion === "DEVOLUCIÓN A ORIGEN").length;
+        const injEl = document.getElementById('count-inyeccion');
+        const devEl = document.getElementById('count-devolucion');
+        if (injEl) injEl.textContent = inj;
+        if (devEl) devEl.textContent = dev;
+    }
+
+    // ============ RENDER TABLA ============
+    function render() {
+        const list = getFilteredSorted();
+        document.getElementById('total-count').textContent = `${list.length} guía(s)`;
+        const tbody = document.getElementById('table-body');
+        document.getElementById('empty-msg').style.display = list.length ? 'none' : 'block';
+
+        tbody.innerHTML = list.map(g => {
+            const count = getGuiaRepetitionCount(g.guia);
+            const badgeHTML = count > 1 ? `<span class="guia-badge-count" title="Esta guía se ha registrado ${count} veces en el historial">${count}x</span>` : '';
+            const isHit = bulkSearchHits.has(g.id);
+            return `
+                <tr class="${isHit ? 'search-hit' : ''}">
+                    <td><input type="checkbox" data-id="${g.id}" ${selectedIds.has(g.id) ? 'checked' : ''} onchange="toggleSelect('${g.id}', this.checked)"></td>
+                    <td>
+                        <div class="guia-container">
+                            <span class="guia-text">${g.guia}</span>
+                            ${badgeHTML}
+                        </div>
+                    </td>
+                    <td>${g.dateKey || ''}</td>
+                    <td>${g.accion || ''}</td>
+                    <td>${g.categoria || ''}</td>
+                    <td>${g.prov || ''}</td>
+                    <td>${g.tipo || ''}</td>
+                    <td style="font-size:0.72rem; color:var(--text-dim);">${formatHoraMonterrey(g.timestamp)}</td>
+                    <td style="font-size:0.68rem; color:var(--text-dim);">${g.operador || ''}</td>
+                    <td style="text-align: center;">
+                        <button class="cell-btn edit" onclick="openEditModal('${g.id}')">✎</button>
+                        <button class="cell-btn del" onclick="deleteSingle('${g.id}')">✕</button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+
+        document.getElementById('check-all').checked = list.length > 0 && list.every(g => selectedIds.has(g.id));
+        updateBulkBar();
+        updateInjectCounts();
+    }
+
+    function toggleSelect(id, checked) {
+        if (checked) selectedIds.add(id); else selectedIds.delete(id);
+        updateBulkBar();
+        document.getElementById('check-all').checked = getFilteredSorted().every(g => selectedIds.has(g.id));
+    }
+    function toggleSelectAll(checkbox) {
+        const list = getFilteredSorted();
+        if (checkbox.checked) list.forEach(g => selectedIds.add(g.id));
+        else list.forEach(g => selectedIds.delete(g.id));
+        render();
+    }
+    function updateBulkBar() {
+        const bar = document.getElementById('bulk-bar');
+        document.getElementById('bulk-count-num').textContent = selectedIds.size;
+        bar.style.display = selectedIds.size > 0 ? 'flex' : 'none';
+    }
+
+    // ============ ESTADÍSTICAS ============
+    function getMondayOfCurrentWeek() {
+        const now = new Date();
+        const day = now.getDay(); 
+        const offset = (day === 0) ? -6 : (1 - day);
+        const monday = new Date(now);
+        monday.setDate(now.getDate() + offset);
+        monday.setHours(0, 0, 0, 0);
+        return monday;
+    }
+    function updateStats() {
+        const todayStr = inputDateToDateKey(new Date().toLocaleDateString('sv-SE'));
+        const monday = getMondayOfCurrentWeek();
+        const sunday = new Date(monday);
+        sunday.setDate(monday.getDate() + 6);
+        sunday.setHours(23, 59, 59, 999);
+
+        const hoyGuias = allGuias.filter(g => g.dateKey === todayStr);
+        const semana = allGuias.filter(g => g.timestamp >= monday.getTime() && g.timestamp <= sunday.getTime());
+
+        document.getElementById('stat-hoy').textContent = hoyGuias.length;
+        document.getElementById('stat-semana').textContent = semana.length;
+        document.getElementById('stat-tr2').textContent = semana.filter(g => g.tipo === 'NO EMBARCADO TR2').length;
+        document.getElementById('stat-dev').textContent = semana.filter(g => g.tipo === 'DEVOLUCIÓN').length;
+        document.getElementById('stat-rojos').textContent = semana.filter(g => g.tipo === 'PAQUETES ROJOS NM').length;
+    }
+
+    // ============ EDICIÓN MASIVA ============
+    function fillCategoriaSelect(selectEl, accion, includeNoChange) {
+        const opciones = accion === '__NOCHANGE__' || !accion
+            ? [...new Set([...categoriasPorAccion["INYECCIÓN"], ...categoriasPorAccion["DEVOLUCIÓN A ORIGEN"]])]
+            : (categoriasPorAccion[accion] || []);
+        let html = includeNoChange ? `<option value="__NOCHANGE__">Categoría: no cambiar</option>` : '';
+        html += opciones.map(c => `<option value="${c}">${c}</option>`).join('');
+        selectEl.innerHTML = html;
+    }
+    function onBulkAccionChange() {
+        const accion = document.getElementById('bulk-accion').value;
+        fillCategoriaSelect(document.getElementById('bulk-categoria'), accion, true);
+    }
+    fillCategoriaSelect(document.getElementById('bulk-categoria'), '__NOCHANGE__', true);
+
+    // ============ MINI CALENDARIO ============
+    let miniCalendarViewDate = new Date();
+    function pad2(n) { return String(n).padStart(2, '0'); }
+    function dateToInputVal(d) { return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`; }
+    function dateToKey(d) { return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`; }
+
+    function toggleMiniCalendar(e) {
+        e.stopPropagation();
+        const popup = document.getElementById('mini-calendar-popup');
+        if (popup.classList.contains('open')) { popup.classList.remove('open'); return; }
+        const currentVal = document.getElementById('bulk-date').value;
+        miniCalendarViewDate = currentVal ? new Date(currentVal + 'T00:00:00') : new Date();
+        renderMiniCalendar();
+        popup.classList.add('open');
+    }
+    function changeMiniCalendarMonth(delta) {
+        miniCalendarViewDate.setMonth(miniCalendarViewDate.getMonth() + delta);
+        renderMiniCalendar();
+    }
+    function renderMiniCalendar() {
+        const popup = document.getElementById('mini-calendar-popup');
+        const year = miniCalendarViewDate.getFullYear();
+        const month = miniCalendarViewDate.getMonth();
+        const today = new Date();
+        const todayKey = dateToKey(today);
+        const selectedVal = document.getElementById('bulk-date').value;
+        const selectedKey = selectedVal ? dateToKey(new Date(selectedVal + 'T00:00:00')) : null;
+
+        const injCounts = {};
+        allGuias.forEach(g => {
+            if (g.accion === 'INYECCIÓN' && g.dateKey) injCounts[g.dateKey] = (injCounts[g.dateKey] || 0) + 1;
+        });
+
+        const firstDay = new Date(year, month, 1);
+        const startOffset = (firstDay.getDay() + 6) % 7;
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const monthLabel = miniCalendarViewDate.toLocaleDateString('es-MX', { month: 'long', year: 'numeric' });
+        const dows = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
+
+        let cellsHtml = '';
+        for (let i = 0; i < startOffset; i++) cellsHtml += `<div class="mc-day mc-empty"></div>`;
+        for (let day = 1; day <= daysInMonth; day++) {
+            const cellDate = new Date(year, month, day);
+            const cellKey = dateToKey(cellDate);
+            const cellVal = dateToInputVal(cellDate);
+            const count = injCounts[cellKey] || 0;
+            const classes = ['mc-day'];
+            if (cellKey === todayKey) classes.push('mc-today');
+            if (cellKey === selectedKey) classes.push('mc-selected');
+            cellsHtml += `<div class="${classes.join(' ')}" onclick="selectMiniCalendarDate('${cellVal}')" title="${count} guía(s) INYECCIÓN">
+                <span>${day}</span>
+                ${count > 0 ? `<span class="mc-day-badge">${count}</span>` : ''}
+            </div>`;
+        }
+
+        popup.innerHTML = `
+            <div class="mc-header">
+                <button type="button" onclick="changeMiniCalendarMonth(-1)">◀</button>
+                <span class="mc-title">${monthLabel}</span>
+                <button type="button" onclick="changeMiniCalendarMonth(1)">▶</button>
+            </div>
+            <div class="mc-grid">
+                ${dows.map(d => `<div class="mc-dow">${d}</div>`).join('')}
+                ${cellsHtml}
+            </div>
+            <div class="mc-footer">
+                <button type="button" class="btn-primary btn-secondary" onclick="selectMiniCalendarDate('${dateToInputVal(today)}')">HOY</button>
+                <button type="button" class="btn-primary btn-secondary" onclick="clearMiniCalendarDate()">LIMPIAR</button>
+            </div>
+        `;
+    }
+    function selectMiniCalendarDate(val) {
+        document.getElementById('bulk-date').value = val;
+        const d = new Date(val + 'T00:00:00');
+        document.getElementById('bulk-date-label').textContent = d.toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' });
+        document.getElementById('mini-calendar-popup').classList.remove('open');
+    }
+    function clearMiniCalendarDate() {
+        document.getElementById('bulk-date').value = '';
+        document.getElementById('bulk-date-label').textContent = 'Elegir fecha';
+        document.getElementById('mini-calendar-popup').classList.remove('open');
+    }
+    document.addEventListener('click', (e) => {
+        const popup = document.getElementById('mini-calendar-popup');
+        const trigger = document.getElementById('bulk-date-trigger');
+        if (popup && popup.classList.contains('open') && !popup.contains(e.target) && e.target !== trigger && !trigger.contains(e.target)) {
+            popup.classList.remove('open');
+        }
+    });
+
+    async function applyBulkEdit() {
+        if (selectedIds.size === 0) return;
+        const accion = document.getElementById('bulk-accion').value;
+        const category = document.getElementById('bulk-categoria').value;
+        const prov = document.getElementById('bulk-prov').value;
+        const tipo = document.getElementById('bulk-tipo').value;
+        const bulkDateVal = document.getElementById('bulk-date').value;
+
+        if (accion === '__NOCHANGE__' && category === '__NOCHANGE__' && prov === '__NOCHANGE__' && tipo === '__NOCHANGE__' && !bulkDateVal) {
+            alert("No seleccionaste ningún cambio a aplicar.");
+            return;
+        }
+        if (!confirm(`¿Aplicar estos cambios a ${selectedIds.size} guía(s) seleccionada(s)?`)) return;
+
+        const ids = Array.from(selectedIds);
+        const chunkSize = 450;
+        let newDateKey = null, newTimestamp = null;
+        if (bulkDateVal) {
+            newDateKey = inputDateToDateKey(bulkDateVal);
+            newTimestamp = new Date(bulkDateVal + 'T00:00:00').getTime();
+        }
+
+        for (let i = 0; i < ids.length; i += chunkSize) {
+            const chunk = ids.slice(i, i + chunkSize);
+            const batch = db.batch();
+            chunk.forEach(id => {
+                const current = allGuias.find(g => g.id === id) || {};
+                const update = {};
+                if (accion !== '__NOCHANGE__') update.accion = accion;
+                if (category !== '__NOCHANGE__') update.categoria = category;
+                if (prov !== '__NOCHANGE__') update.prov = prov;
+                if (tipo !== '__NOCHANGE__') update.tipo = tipo;
+                if (newDateKey) { update.dateKey = newDateKey; update.timestamp = newTimestamp; }
+                const finalAccion = update.accion || current.accion;
+                const finalCategoria = update.categoria || current.categoria;
+                if (update.accion || update.categoria) update.listKey = `${finalAccion} - ${finalCategoria}`;
+                batch.update(db.collection('guias').doc(id), update);
+            });
+            await batch.commit();
+        }
+        selectedIds.clear();
+        document.getElementById('bulk-date').value = '';
+        document.getElementById('bulk-date-label').textContent = 'Elegir fecha';
+        render();
+    }
+
+    async function deleteBulk() {
+        if (selectedIds.size === 0) return;
+        if (!confirm(`¿ELIMINAR PERMANENTEMENTE ${selectedIds.size} guía(s) seleccionada(s)?`)) return;
+        const ids = Array.from(selectedIds);
+        const chunkSize = 450;
+        for (let i = 0; i < ids.length; i += chunkSize) {
+            const chunk = ids.slice(i, i + chunkSize);
+            const batch = db.batch();
+            chunk.forEach(id => batch.delete(db.collection('guias').doc(id)));
+            await batch.commit();
+        }
+        selectedIds.clear();
+    }
+
+    function deleteSingle(id) {
+        if (!confirm(`¿Eliminar esta guía del registro?`)) return;
+        db.collection('guias').doc(id).delete();
+        selectedIds.delete(id);
+    }
+
+    // ============ EDICIÓN INDIVIDUAL ============
+    function openEditModal(id) {
+        const g = allGuias.find(x => x.id === id);
+        if (!g) return;
+        editingId = id;
+        document.getElementById('edit-guia').value = g.guia;
+        document.getElementById('edit-accion').value = g.accion;
+        fillCategoriaSelect(document.getElementById('edit-categoria'), g.accion, false);
+        document.getElementById('edit-categoria').value = g.categoria;
+        document.getElementById('edit-prov').value = g.prov;
+        document.getElementById('edit-tipo').value = g.tipo;
+        document.getElementById('edit-modal-bg').style.display = 'flex';
+    }
+    function onEditAccionChange() {
+        fillCategoriaSelect(document.getElementById('edit-categoria'), document.getElementById('edit-accion').value, false);
+    }
+    function closeEditModal() {
+        editingId = null;
+        document.getElementById('edit-modal-bg').style.display = 'none';
+    }
+    function saveEdit() {
+        if (!editingId) return;
+        const accion = document.getElementById('edit-accion').value;
+        const categoria = document.getElementById('edit-categoria').value;
+        const prov = document.getElementById('edit-prov').value;
+        const tipo = document.getElementById('edit-tipo').value;
+        db.collection('guias').doc(editingId).update({
+            accion, categoria, prov, tipo,
+            listKey: `${accion} - ${categoria}`
+        });
+        closeEditModal();
+    }
+
+    // ============ AGREGAR GUÍA MANUAL ============
+    document.getElementById('new-accion').addEventListener('change', () => {
+        fillCategoriaSelect(document.getElementById('new-categoria'), document.getElementById('new-accion').value, false);
+    });
+    fillCategoriaSelect(document.getElementById('new-categoria'), 'INYECCIÓN', false);
+
+    async function addGuiaManual() {
+        const guia = document.getElementById('new-guia').value.trim();
+        if (!guia) { alert("Escribe un número de guía."); return; }
+        const now = new Date();
+        const dateKey = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
+        const yaExisteHoy = allGuias.some(g => g.guia === guia && g.dateKey === dateKey);
+        if (yaExisteHoy) { alert(`La guía "${guia}" ya fue registrada el día de hoy (${dateKey}).`); return; }
+        const accion = document.getElementById('new-accion').value;
+        const categoria = document.getElementById('new-categoria').value;
+        const prov = document.getElementById('new-prov').value;
+        const tipo = document.getElementById('new-tipo').value;
+        await db.collection('guias').add({
+            guia, accion, categoria, prov, tipo,
+            dateKey, listKey: `${accion} - ${categoria}`,
+            timestamp: Date.now(),
+            operador: auth.currentUser ? (auth.currentUser.email || auth.currentUser.displayName) : null
+        });
+        document.getElementById('new-guia').value = '';
+    }
+
+    // =========================================================================
+    // ============ CUADRATURA ============
+    // =========================================================================
+    let dataViajes = [], dataParadas = [], dataGuiasEscaneadas = new Set(), rawProcessedStats = [];
+    let umbralDiasCuadratura = 2;
+    let rawDataFilter = []; 
+    let chartInstance = null;
+    let trackerChartInstance = null;
+    let currentSortCol = -1;
+    let sortAsc = true;
+
+    function cambiarUmbralDias() {
+        umbralDiasCuadratura = umbralDiasCuadratura >= 4 ? 2 : umbralDiasCuadratura + 1;
+        document.querySelectorAll('#umbral-dias-label, #umbral-dias-label-2, #umbral-dias-label-3').forEach(el => el.innerText = umbralDiasCuadratura);
+        if (dataViajes.length) processAllData();
+    }
+
+    document.getElementById('fileViajes').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const statusMsg = document.getElementById('statusMsg');
+        statusMsg.innerText = "Procesando archivo...";
+        statusMsg.style.color = "#aaa";
+
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+            try {
+                const wb = XLSX.read(evt.target.result, { type: 'binary' });
+                dataViajes = XLSX.utils.sheet_to_json(wb.Sheets["Viajes"]) || [];
+                const targetSheetName = wb.SheetNames.find(name => name.trim().toLowerCase() === 'paradas');
+                if (!targetSheetName) {
+                    statusMsg.innerText = "Error: No se encontró la hoja 'Paradas'.";
+                    statusMsg.style.color = "#ff6b6b";
+                    return;
+                }
+                dataParadas = XLSX.utils.sheet_to_json(wb.Sheets[targetSheetName]) || [];
+                const jornadaRaw = dataViajes[0]?.Jornada || "";
+                const dateMatch = jornadaRaw.match(/\d{2}\/\d{2}\/\d{4}/);
+                const fechaExcelCuadratura = dateMatch ? dateMatch[0] : "S/F";
+                document.getElementById('display-fecha').innerText = fechaExcelCuadratura;
+                document.getElementById('info-display').style.display = 'flex';
+                if (dataParadas.length === 0) {
+                    statusMsg.innerText = "La hoja 'Paradas' está vacía.";
+                    statusMsg.style.color = "#ff6b6b";
+                    return;
+                }
+                rawDataFilter = dataParadas.map(row => ({
+                    estado: row['Estado'] !== undefined ? String(row['Estado']).trim() : '',
+                    idViaje: row['IdViaje'] !== undefined ? String(row['IdViaje']).trim() : '',
+                    referencia: row['Pedido Referencia externa'] !== undefined ? String(row['Pedido Referencia externa']).trim() : '',
+                    fecha: fechaExcelCuadratura
+                }));
+                statusMsg.innerText = `Archivo cargado. ${rawDataFilter.length} registros en 'Paradas'.`;
+                statusMsg.style.color = "var(--good)"; 
+                populateEstadoFilter();
+            } catch (error) {
+                console.error(error);
+                statusMsg.innerText = "Error al leer el archivo Excel.";
+                statusMsg.style.color = "#ff6b6b";
+            }
+        };
+        reader.readAsBinaryString(file);
+    });
+
+    async function fetchFirebase3DaysData() {
+        try {
+            const tempGuias = new Set();
+            const calculoFecha = (diasAtras) => {
+                const d = new Date();
+                d.setDate(d.getDate() - diasAtras);
+                return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
+            };
+            const diasPermitidos = Array.from({ length: umbralDiasCuadratura }, (_, i) => calculoFecha(i));
+            allGuias.forEach(g => {
+                if (g.guia && diasPermitidos.includes(g.dateKey)) tempGuias.add(String(g.guia).trim());
+            });
+            return tempGuias;
+        } catch (error) { 
+            console.error("Error filtrando Firebase", error);
+            return new Set(); 
+        }
+    }
+
+    async function processAllData() {
+        if (!dataViajes.length) return alert("Sube el archivo primero.");
+        document.getElementById('btn-loader').style.display = 'inline-block';
+        dataGuiasEscaneadas = await fetchFirebase3DaysData();
+        rawProcessedStats = []; 
+        const viajeConductorMap = {};
+        dataViajes.forEach(v => {
+            viajeConductorMap[v.ID] = { 
+                conductor: v.Conductor ? String(v.Conductor).trim() : "", 
+                estadoViaje: v.Estado ? String(v.Estado).trim() : "", 
+                categoriaViaje: v.Categoría ? String(v.Categoría).trim() : "" 
+            };
+        });
+        dataParadas.forEach(p => {
+            const infoViaje = viajeConductorMap[p.IdViaje];
+            if (!infoViaje || infoViaje.conductor === "COP MTY") return;
+            const guia = String(p["Pedido Referencia externa"] || "").split('|')[0].trim();
+            const estadoPaquete = String(p.Estado || "").trim();
+            const proveedor = (infoViaje.conductor === "CONDUCTOR QP CONDUCTOR QP") ? "QP" : "ROMBO";
+            rawProcessedStats.push({
+                proveedor, ...infoViaje, 
+                categoria: String(p.Varchar5 || "").trim(),
+                estado: estadoPaquete, guia, viaje: p.IdViaje
+            });
+        });
+        renderUI();
+        filterAndRenderTable();
+        document.getElementById('btn-loader').style.display = 'none';
+    }
+
+    function renderUI() {
+        const query = document.getElementById('smart-search').value.toLowerCase();
+        const provSel = document.getElementById('filter-proveedor').value;
+        let stats = {
+            noEmb: { t: 0, a: 0, s: 0 }, noRec: { t: 0, a: 0, s: 0 },
+            noEnt: { t: 0, a: 0, s: 0 }, ruta: { t: 0, a: 0, s: 0 },
+            choferes: { t: new Set(), a: new Set(), s: new Set() },
+            guiasUnicas: new Set(),
+            totalGuias: 0, pendNoEmb: 0, pendNoEnt: 0
+        };
+        let tableHtml = "";
+        let pendientesCount = 0;
+        const driverNoEntregados = {};
+
+        rawProcessedStats.forEach(item => {
+            if (item.proveedor !== provSel) return;
+            if (item.estado !== 'No Recibido CEDIS') {
+                const guiaNum = parseFloat(item.guia);
+                if (!isNaN(guiaNum) && guiaNum > 0) stats.guiasUnicas.add(item.guia);
+            }
+            const esAmz = item.categoria === "Amazon";
+            const esSame = item.categoria === "Amazon_SameDay";
+            if (item.estado === 'No Embarcado TR2') { stats.noEmb.t++; if(esAmz) stats.noEmb.a++; if(esSame) stats.noEmb.s++; }
+            if (item.estado === 'No Recibido CEDIS') { stats.noRec.t++; if(esAmz) stats.noRec.a++; if(esSame) stats.noRec.s++; }
+            if (item.estado === 'No Entregado') { stats.noEnt.t++; if(esAmz) stats.noEnt.a++; if(esSame) stats.noEnt.s++; }
+            if (item.estado === 'En Ruta de Entrega') { stats.ruta.t++; if(esAmz) stats.ruta.a++; if(esSame) stats.ruta.s++; }
+            if (item.estadoViaje === "En Ruta de Entrega") {
+                stats.choferes.t.add(item.conductor);
+                if (item.categoriaViaje === "Visible ASIGNADO") stats.choferes.a.add(item.conductor);
+                else if (item.categoriaViaje === "Amazon Same Day") stats.choferes.s.add(item.conductor);
+            }
+            const estadosRetorno = ['Fin de Carga', 'No Embarcado TR2', 'No Entregado', 'No Recibido CEDIS'];
+            if (estadosRetorno.includes(item.estado) && !dataGuiasEscaneadas.has(item.guia) && item.estado !== 'No Recibido CEDIS') {
+                if (item.estado === 'No Embarcado TR2') stats.pendNoEmb++;
+                if (item.estado === 'No Entregado') stats.pendNoEnt++;
+                const match = item.guia.toLowerCase().includes(query) || item.conductor.toLowerCase().includes(query) || String(item.viaje).includes(query);
+                if (match) {
+                    pendientesCount++;
+                    const badgeClass = item.estado === 'No Entregado' ? 'c-badge no-ent' : 'c-badge no-emb';
+                    tableHtml += `
+                        <tr class="master-row">
+                            <td style="color:var(--text-dim); font-style: italic;">${item.categoria}</td>
+                            <td style="font-weight:700;">${item.viaje}</td>
+                            <td style="color:var(--text-dim);">${item.conductor}</td>
+                            <td style="font-weight:700; color:var(--bad);">${item.guia}</td>
+                            <td><span class="${badgeClass}">${item.estado}</span></td>
+                        </tr>`;
+                    if(item.estado === 'No Entregado') driverNoEntregados[item.conductor] = (driverNoEntregados[item.conductor] || 0) + 1;
+                }
+            }
+        });
+
+        stats.totalGuias = stats.guiasUnicas.size;
+        document.getElementById('display-total-guias').innerText = stats.totalGuias;
+        document.getElementById('total-pending-count').innerText = pendientesCount;
+        document.getElementById('sub-pending-no-emb').innerText = stats.pendNoEmb;
+        document.getElementById('sub-pending-no-ent').innerText = stats.pendNoEnt;
+        document.getElementById('count-no-emb').innerText = stats.noEmb.t;
+        document.getElementById('sub-no-emb-amz').innerText = stats.noEmb.a;
+        document.getElementById('sub-no-emb-same').innerText = stats.noEmb.s;
+        document.getElementById('count-no-rec').innerText = stats.noRec.t;
+        document.getElementById('sub-no-rec-amz').innerText = stats.noRec.a;
+        document.getElementById('sub-no-rec-same').innerText = stats.noRec.s;
+        document.getElementById('count-no-ent').innerText = stats.noEnt.t;
+        document.getElementById('sub-no-ent-amz').innerText = stats.noEnt.a;
+        document.getElementById('sub-no-ent-same').innerText = stats.noEnt.s;
+        document.getElementById('count-in-route').innerText = stats.ruta.t;
+        document.getElementById('sub-ruta-amz').innerText = stats.ruta.a;
+        document.getElementById('sub-ruta-same').innerText = stats.ruta.s;
+        document.getElementById('count-drivers-route').innerText = stats.choferes.t.size;
+        document.getElementById('sub-chofer-amz').innerText = stats.choferes.a.size;
+        document.getElementById('sub-chofer-same').innerText = stats.choferes.s.size;
+        document.getElementById('pending-list-body').innerHTML = tableHtml || `<tr><td colspan="5" class="empty-msg">Sin resultados o todas escaneadas dentro de los últimos ${umbralDiasCuadratura} días.</td></tr>`;
+
+        const sorted = Object.entries(driverNoEntregados).sort((a,b) => b[1]-a[1]);
+        renderChart(sorted.slice(0, 5));
+        document.getElementById('driver-summary-list').innerHTML = sorted.map(([n, c]) => `
+            <div style="display:flex; justify-content:space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.03);">
+                <span style="max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-transform:uppercase; font-size:0.72rem; color:var(--text-dim);">${n}</span>
+                <span style="background: rgba(239, 68, 68, 0.1); padding: 2px 6px; border-radius:4px; font-weight:800; color:var(--bad); font-size:0.75rem;">${c}</span>
+            </div>
+        `).join('');
+    }
+
+    function smartFilter() { renderUI(); }
+
+    function renderChart(data) {
+        const ctx = document.getElementById('chart-pendientes').getContext('2d');
+        if (chartInstance) chartInstance.destroy();
+        chartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: data.map(i => i[0].split(' ')[0]),
+                datasets: [{ data: data.map(i => i[1]), backgroundColor: '#9b2222', borderRadius: 2 }]
+            },
+            options: {
+                indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { beginAtZero: true, grid: { display: false }, ticks: { color: '#666', font: { size: 8 } } },
+                    y: { grid: { display: false }, ticks: { color: '#999', font: { size: 8 } } }
+                }
+            }
+        });
+    }
+
+    // ============ TRACKER ============
+    function dateKeyToDate(dateKey) {
+        if (!dateKey) return null;
+        const parts = dateKey.split('/');
+        if (parts.length !== 3) return null;
+        const d = parseInt(parts[0]), m = parseInt(parts[1]), y = parseInt(parts[2]);
+        if (isNaN(d) || isNaN(m) || isNaN(y)) return null;
+        return new Date(y, m - 1, d);
+    }
+    function getGuiaFirstDate(guiaNum) {
+        let earliestDate = null, earliestKey = '';
+        allGuias.forEach(g => {
+            if (g.guia !== guiaNum) return;
+            const d = dateKeyToDate(g.dateKey);
+            if (d && (!earliestDate || d < earliestDate)) { earliestDate = d; earliestKey = g.dateKey; }
+        });
+        return earliestKey;
+    }
+    function fillTrackerCategoriaSelect(accion, preserveSelection) {
+        const sel = document.getElementById('tracker-categoria');
+        const prevValue = preserveSelection ? sel.value : null;
+        const opciones = accion
+            ? (categoriasPorAccion[accion] || [])
+            : [...new Set([...categoriasPorAccion["INYECCIÓN"], ...categoriasPorAccion["DEVOLUCIÓN A ORIGEN"]])];
+        let html = `<option value="">Todas</option>`;
+        html += opciones.map(c => `<option value="${c}">${c}</option>`).join('');
+        sel.innerHTML = html;
+        if (prevValue && opciones.includes(prevValue)) sel.value = prevValue;
+    }
+    function onTrackerAccionChange() {
+        fillTrackerCategoriaSelect(document.getElementById('tracker-accion').value, false);
+        renderTracker();
+    }
+    function resetTrackerFilters() {
+        const today = new Date();
+        const from = new Date(today);
+        from.setDate(from.getDate() - 6);
+        document.getElementById('tracker-date-from').value = from.toLocaleDateString('sv-SE');
+        document.getElementById('tracker-date-to').value = today.toLocaleDateString('sv-SE');
+        document.getElementById('tracker-guia').value = '';
+        document.getElementById('tracker-accion').value = 'DEVOLUCIÓN A ORIGEN';
+        fillTrackerCategoriaSelect('DEVOLUCIÓN A ORIGEN', false);
+        document.getElementById('tracker-categoria').value = 'MAL PUNTEADO';
+        document.getElementById('tracker-proveedor').value = 'ROMBO';
+        document.getElementById('tracker-tipo').value = 'NO EMBARCADO TR2';
+        renderTracker();
+    }
+    function getTrackerFiltered() {
+        const guiaQuery = document.getElementById('tracker-guia').value.trim().toLowerCase();
+        const fromVal = document.getElementById('tracker-date-from').value;
+        const toVal = document.getElementById('tracker-date-to').value;
+        const accion = document.getElementById('tracker-accion').value;
+        const categoria = document.getElementById('tracker-categoria').value;
+        const prov = document.getElementById('tracker-proveedor').value;
+        const tipo = document.getElementById('tracker-tipo').value;
+        const fromDate = fromVal ? new Date(fromVal + 'T00:00:00') : null;
+        const toDate = toVal ? new Date(toVal + 'T23:59:59') : null;
+
+        return allGuias.filter(g => {
+            if (guiaQuery && !(g.guia && g.guia.toLowerCase().includes(guiaQuery))) return false;
+            if (accion && g.accion !== accion) return false;
+            if (categoria && g.categoria !== categoria) return false;
+            if (prov && g.prov !== prov) return false;
+            if (tipo && g.tipo !== tipo) return false;
+            if (fromDate || toDate) {
+                const gd = dateKeyToDate(g.dateKey);
+                if (!gd) return false;
+                if (fromDate && gd < fromDate) return false;
+                if (toDate && gd > toDate) return false;
+            }
+            return true;
+        });
+    }
+    function renderTrackerTable(list) {
+        const tbody = document.getElementById('tracker-table-body');
+        if (!tbody) return;
+        document.getElementById('tracker-total-count').textContent = `${list.length} guía(s)`;
+        document.getElementById('tracker-empty-msg').style.display = list.length ? 'none' : 'block';
+        const sorted = list.slice().sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+        tbody.innerHTML = sorted.map(g => {
+            const timesScanned = getGuiaRepetitionCount(g.guia);
+            const firstDate = getGuiaFirstDate(g.guia);
+            return `
+                <tr>
+                    <td><span class="guia-text">${g.guia || ''}</span></td>
+                    <td>${g.dateKey || ''}</td>
+                    <td>${g.accion || ''}</td>
+                    <td>${g.categoria || ''}</td>
+                    <td>${g.prov || ''}</td>
+                    <td>${g.tipo || ''}</td>
+                    <td style="text-align:center; font-weight:700; color:${timesScanned > 1 ? 'var(--accent)' : 'var(--text-dim)'};">${timesScanned}</td>
+                    <td style="color:var(--text-dim);">${firstDate}</td>
+                </tr>
+            `;
+        }).join('');
+    }
+    function renderTrackerChart(list) {
+        const canvas = document.getElementById('tracker-chart');
+        if (!canvas) return;
+        const fromVal = document.getElementById('tracker-date-from').value;
+        const toVal = document.getElementById('tracker-date-to').value;
+        const counts = {};
+        list.forEach(g => { if (g.dateKey) counts[g.dateKey] = (counts[g.dateKey] || 0) + 1; });
+        let labels = [];
+        if (fromVal && toVal) {
+            let cur = new Date(fromVal + 'T00:00:00');
+            const end = new Date(toVal + 'T00:00:00');
+            let guard = 0;
+            while (cur <= end && guard < 370) {
+                labels.push(`${cur.getDate()}/${cur.getMonth() + 1}/${cur.getFullYear()}`);
+                cur.setDate(cur.getDate() + 1);
+                guard++;
+            }
+        } else {
+            labels = Object.keys(counts).sort((a, b) => dateKeyToDate(a) - dateKeyToDate(b));
+        }
+        const data = labels.map(l => counts[l] || 0);
+        const totalCount = data.reduce((a, b) => a + b, 0);
+        const totalEl = document.getElementById('tracker-chart-total-num');
+        if (totalEl) totalEl.textContent = totalCount;
+        const ctx = canvas.getContext('2d');
+        const gradient = ctx.createLinearGradient(0, 0, 0, 260);
+        gradient.addColorStop(0, 'rgba(34, 211, 238, 0.45)');
+        gradient.addColorStop(1, 'rgba(34, 211, 238, 0.02)');
+        if (trackerChartInstance) trackerChartInstance.destroy();
+        trackerChartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels.map(l => l.split('/').slice(0, 2).join('/')),
+                datasets: [{
+                    label: 'Paquetes', data, fill: true, backgroundColor: gradient,
+                    borderColor: '#22d3ee', borderWidth: 2.5, tension: 0.35,
+                    pointRadius: 3.5, pointHoverRadius: 6,
+                    pointBackgroundColor: '#0b0b0c', pointBorderColor: '#22d3ee', pointBorderWidth: 2,
+                }]
+            },
+            plugins: (typeof ChartDataLabels !== 'undefined') ? [ChartDataLabels] : [],
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                layout: { padding: { top: 26, left: 4, right: 4 } },
+                interaction: { intersect: false, mode: 'index' },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { backgroundColor: '#1d1d21', titleColor: '#fff', bodyColor: '#22d3ee', borderColor: '#2d2d34', borderWidth: 1, padding: 10, displayColors: false },
+                    datalabels: {
+                        align: 'top', anchor: 'end', offset: 4, color: '#e5faff',
+                        font: { size: 10, weight: '700', family: 'Lexend' },
+                        formatter: (value) => value > 0 ? value : '',
+                        backgroundColor: 'rgba(14,116,144,0.55)', borderRadius: 4,
+                        padding: { top: 2, bottom: 2, left: 5, right: 5 },
+                    }
+                },
+                scales: {
+                    x: { grid: { display: false }, ticks: { color: '#999', font: { size: 9 } } },
+                    y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#999', font: { size: 9 }, precision: 0 }, suggestedMax: Math.max(...data, 0) + Math.ceil((Math.max(...data, 0) || 1) * 0.25) }
+                }
+            }
+        });
+    }
+    function renderTracker() {
+        if (!document.getElementById('tracker-tab')) return;
+        const list = getTrackerFiltered();
+        renderTrackerTable(list);
+        renderTrackerChart(list);
+    }
+    function copyTrackerToSheets() {
+        const rows = document.querySelectorAll('#tracker-table-body tr');
+        if (!rows.length) { alert('No hay guías para copiar con este filtro.'); return; }
+        let text = "GUÍA\tFECHA\tACCIÓN\tCATEGORÍA\tPROVEEDOR\tTIPO\tVECES ESCANEADA\tPRIMERA FECHA RECIBIDA\n";
+        rows.forEach(r => {
+            const cells = r.querySelectorAll('td');
+            text += Array.from(cells).map(c => c.innerText.trim()).join('\t') + '\n';
+        });
+        navigator.clipboard.writeText(text).then(() => {
+            alert(`¡Se copiaron ${rows.length} guía(s) en formato tabla, listas para pegar en Google Sheets!`);
+        }).catch(err => {
+            const tempInput = document.createElement("textarea");
+            tempInput.value = text;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+            alert(`¡Copiado! (Fallback) ${rows.length} guía(s) listas.`);
+        });
+    }
+
+    // ============ ORDENACIÓN ============
+    function sortTable(n) {
+        const tableBody = document.getElementById("pending-list-body");
+        const rows = Array.from(tableBody.querySelectorAll(".master-row"));
+        if (rows.length === 0) return;
+        if (currentSortCol === n) sortAsc = !sortAsc;
+        else { sortAsc = true; currentSortCol = n; }
+        const sortedRows = rows.sort((a, b) => {
+            const valA = a.cells[n].innerText.trim().toLowerCase();
+            const valB = b.cells[n].innerText.trim().toLowerCase();
+            const numA = parseFloat(valA), numB = parseFloat(valB);
+            if (!isNaN(numA) && !isNaN(numB)) return sortAsc ? numA - numB : numB - numA;
+            return sortAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
+        });
+        const fragment = document.createDocumentFragment();
+        sortedRows.forEach(row => fragment.appendChild(row));
+        tableBody.innerHTML = "";
+        tableBody.appendChild(fragment);
+        updateSortIcons(n);
+    }
+    function updateSortIcons(n) {
+        const headers = document.querySelectorAll("th.sortable i");
+        headers.forEach((icon, index) => {
+            if (index === n) {
+                icon.className = sortAsc ? "fas fa-sort-up ml-1" : "fas fa-sort-down ml-1";
+                icon.parentElement.classList.add("text-white");
+                icon.classList.remove("opacity-30");
+            } else {
+                icon.className = "fas fa-sort ml-1 opacity-30";
+                icon.parentElement.classList.remove("text-white");
+            }
+        });
+    }
+    function copyDriverSummary() {
+        let text = "CHOFER\tCANT\n";
+        document.querySelectorAll('#driver-summary-list > div').forEach(r => { text += `${r.children[0].innerText}\t${r.children[1].innerText}\n`; });
+        navigator.clipboard.writeText(text).then(() => alert("Copiado."));
+    }
+    function copyTableToSheets() {
+        let text = "CAT\tVIAJE\tCHOFER\tGUIA\tESTADO\n";
+        document.querySelectorAll('.master-row').forEach(r => { 
+            text += `${r.cells[0].innerText}\t${r.cells[1].innerText}\t${r.cells[2].innerText}\t${r.cells[3].innerText}\t${r.cells[4].innerText}\n`; 
+        });
+        navigator.clipboard.writeText(text).then(() => alert("Copiado."));
+    }
+    function populateEstadoFilter() {
+        const filterSelect = document.getElementById('estadoFilter');
+        const estados = [...new Set(rawDataFilter.map(item => item.estado))].filter(e => e !== '');
+        filterSelect.innerHTML = '<option value="TODOS">-- TODOS LOS ESTADOS --</option>';
+        estados.forEach(estado => {
+            const option = document.createElement('option');
+            option.value = estado;
+            option.innerText = estado;
+            filterSelect.appendChild(option);
+        });
+        filterSelect.disabled = false;
+        document.getElementById('copyBtn').disabled = false;
+    }
+    function filterAndRenderTable() {
+        const selectedEstado = document.getElementById('estadoFilter').value;
+        const tableBody = document.getElementById('tableBody');
+        tableBody.innerHTML = '';
+        if (rawDataFilter.length === 0) return;
+        let filtered = [...rawDataFilter];
+        if (selectedEstado && selectedEstado !== 'TODOS') filtered = rawDataFilter.filter(item => item.estado === selectedEstado);
+        filtered.sort((a, b) => {
+            const isA_TR2 = a.estado.toLowerCase() === 'no embarcado tr2';
+            const isB_TR2 = b.estado.toLowerCase() === 'no embarcado tr2';
+            if (isA_TR2 && !isB_TR2) return -1;
+            if (!isA_TR2 && isB_TR2) return 1;
+            const numA = parseFloat(a.idViaje) || 0, numB = parseFloat(b.idViaje) || 0;
+            return numA - numB;
+        });
+        if (filtered.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="6" class="empty-msg">Ningún dato coincide con el filtro</td></tr>';
+            return;
+        }
+        filtered.forEach(item => {
+            const tr = document.createElement('tr');
+            const isTR2 = item.estado.toLowerCase() === 'no embarcado tr2';
+            const colorStyle = isTR2 ? 'style="font-weight:bold; color:#f97316;"' : 'style="color:var(--text-dim);"';
+            let catCellHtml;
+            if (isTR2) {
+                const cat = getUltimaCategoriaTR2(item.referencia);
+                const esFaltante = cat === 'Faltante';
+                const catStyle = esFaltante ? 'color:var(--bad); font-weight:700;' : 'color:var(--good); font-weight:700;';
+                catCellHtml = `<td style="${catStyle}">${cat}</td>`;
+            } else {
+                catCellHtml = `<td style="color:var(--text-dim);">—</td>`;
+            }
+            const trackingUrl = `https://redpack.unigis.com/tracking/Shipment/Index?id=${item.idViaje}`;
+            tr.innerHTML = `
+                <td ${colorStyle}>${item.estado}</td>
+                <td style="font-weight:bold;">${item.idViaje}</td>
+                <td style="color:var(--text-main);">${item.referencia}</td>
+                ${catCellHtml}
+                <td style="color:var(--text-dim);">${item.fecha || ''}</td>
+                <td data-copy-value="${trackingUrl}"><a href="${trackingUrl}" target="_blank" rel="noopener" class="cell-btn edit" style="text-decoration:none; display:inline-block; padding:3px 8px;" title="${trackingUrl}">Ver <i class="fas fa-arrow-up-right-from-square" style="font-size:0.65rem;"></i></a></td>
+            `;
+            tableBody.appendChild(tr);
+        });
+    }
+    function calcularDiasPermitidos() {
+        const calc = (diasAtras) => {
+            const d = new Date();
+            d.setDate(d.getDate() - diasAtras);
+            return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
+        };
+        return Array.from({ length: umbralDiasCuadratura }, (_, i) => calc(i));
+    }
+    function getUltimaCategoriaTR2(referenciaRaw) {
+        const guiaNum = String(referenciaRaw || '').split('|')[0].trim();
+        if (!guiaNum) return 'Faltante';
+        const diasPermitidos = calcularDiasPermitidos();
+        const matches = allGuias.filter(g => g.guia === guiaNum && diasPermitidos.includes(g.dateKey));
+        if (matches.length === 0) return 'Faltante';
+        matches.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+        return matches[0].categoria || 'Faltante';
+    }
+    function copyToClipboard() {
+        const table = document.getElementById('dataTable');
+        let tsvString = '';
+        const rows = table.querySelectorAll('tr');
+        rows.forEach(row => {
+            const cols = row.querySelectorAll('th, td');
+            const rowData = [];
+            cols.forEach(col => {
+                let text = col.dataset && col.dataset.copyValue ? col.dataset.copyValue : col.innerText.replace(/\n/g, " ");
+                rowData.push(text);
+            });
+            tsvString += rowData.join('\t') + '\n';
+        });
+        navigator.clipboard.writeText(tsvString).then(() => {
+            const copyBtn = document.getElementById('copyBtn');
+            const originalText = copyBtn.innerText;
+            copyBtn.innerText = '¡COPIADO!';
+            copyBtn.style.backgroundColor = '#10b981'; 
+            setTimeout(() => {
+                copyBtn.innerText = originalText;
+                copyBtn.style.backgroundColor = 'var(--primary)';
+            }, 2000);
+        }).catch(err => alert('No se pudo copiar automáticamente: ', err));
+    }
 </script>
 </body>
 </html>
