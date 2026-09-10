@@ -106,37 +106,16 @@
     body.theme-light .mc-day.mc-selected { background: var(--primary); color: #fff; }
     body.theme-light .mc-day.mc-today { border-color: var(--accent); }
 
-    /* ============ PANEL DE BÚSQUEDA MASIVA (TEMA) ============ */
-    #bulk-search-panel {
-        background: var(--card-bg);
-        border-color: var(--carbon-border);
-        color: var(--text-main);
-    }
-    #bulk-search-panel textarea {
-        background: var(--input-bg);
-        color: var(--text-main);
-        border-color: var(--carbon-border);
-    }
-    body.theme-light #bulk-search-panel textarea {
-        background: #ffffff;
-        color: #1f2937;
-        border-color: #d1d5db;
-    }
-    #bulk-search-panel .bs-info { color: var(--text-dim); }
-
     /* ============ HEADER: TÍTULOS E ICONOS SIEMPRE CON CONTRASTE ============ */
-    /* El título dinámico y sus iconos siempre blancos sobre el gradiente del header */
     .header-dynamic-title {
         color: #ffffff !important;
     }
     .header-dynamic-title i {
         color: #ffffff !important;
     }
-    /* El icono dentro de cada botón de pestaña siempre con su color de acento */
     .nav-tab-btn i {
         color: var(--accent) !important;
     }
-    /* El icono de la pestaña activa toma el color del header correspondiente (ya definido abajo) */
     #top-nav.admin-mode .nav-tab-btn.active i { color: #1e3a8a !important; }
     #top-nav.cuadratura-mode .nav-tab-btn.active i { color: #4a0e0e !important; }
     #top-nav.tracker-mode .nav-tab-btn.active i { color: #0e7490 !important; }
@@ -198,7 +177,6 @@
         transition: background 0.3s ease, border-color 0.3s ease;
     }
     
-    /* Contenedor del título dinámico y los botones */
     .header-left-group {
         display: flex;
         align-items: center;
@@ -230,7 +208,6 @@
     .nav-tab-btn i { font-size: 1.05rem; color: var(--accent); }
     .nav-tab-btn:hover { background: rgba(0,0,0,0.35); color: #ffffff; transform: translateY(-1px); }
     
-    /* Estados activos específicos por tipo de header */
     #top-nav.admin-mode .nav-tab-btn.active {
         background: #ffffff; color: #1e3a8a; border-color: #ffffff;
         box-shadow: 0 4px 12px rgba(0,0,0,0.35);
@@ -265,7 +242,7 @@
         border-radius: 9px; padding: 0 10px; font-family: 'Lexend', sans-serif; font-size: 0.8rem; font-weight: 700; cursor: pointer;
     }
 
-    /* ============ BUSCADOR MASIVO (ADMIN) ============ */
+    /* ============ BUSCADOR ADMIN ============ */
     .search-bulk-wrap {
         position: relative;
         width: 100%;
@@ -277,13 +254,6 @@
         flex: 1;
         min-width: 0;
     }
-    .search-bulk-wrap .search-action-btn {
-        flex: 0 0 auto;
-    }
-    .search-bulk-wrap .search-action-btn.masiva-btn {
-        height: 38px;
-        padding: 0 14px;
-    }
 
     /* Botón de acción del buscador (dentro del header) */
     .search-action-btn {
@@ -291,64 +261,21 @@
         border: 1px solid rgba(255,255,255,0.2);
         color: #fff;
         border-radius: 9px;
-        padding: 0 14px;
+        padding: 0 16px;
+        height: 38px;
         cursor: pointer;
         font-size: 0.78rem;
         font-family: 'Lexend', sans-serif;
-        font-weight: 600;
+        font-weight: 700;
         transition: all 0.2s;
         display: flex;
         align-items: center;
         gap: 6px;
         white-space: nowrap;
+        flex: 0 0 auto;
     }
-    .search-action-btn:hover { background: rgba(255,255,255,0.25); }
-
-    /* Panel de búsqueda masiva (textarea) - se despliega por encima de todo */
-    #bulk-search-panel {
-        display: none;
-        position: fixed;
-        top: 90px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 90vw;
-        max-width: 600px;
-        background: var(--card-bg);
-        border: 1px solid var(--carbon-border);
-        border-radius: 12px;
-        padding: 18px;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.8);
-        z-index: 1500;
-        color: var(--text-main);
-        transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
-    }
-    #bulk-search-panel.open { display: block; }
-    #bulk-search-panel textarea {
-        width: 100%;
-        min-height: 140px;
-        background: var(--input-bg);
-        color: var(--text-main);
-        border: 1px solid var(--carbon-border);
-        border-radius: 8px;
-        padding: 12px;
-        font-family: 'Lexend', monospace;
-        font-size: 0.9rem;
-        resize: vertical;
-        line-height: 1.6;
-        transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-    }
-    #bulk-search-panel textarea::placeholder { color: var(--text-dim); }
-    #bulk-search-panel .bs-actions { display: flex; gap: 10px; margin-top: 14px; justify-content: flex-end; }
-    #bulk-search-panel .bs-info { font-size: 0.78rem; color: var(--text-dim); margin-bottom: 10px; line-height: 1.4; }
-    #bulk-search-overlay {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.6);
-        z-index: 1400;
-        backdrop-filter: blur(2px);
-    }
-    #bulk-search-overlay.open { display: block; }
+    .search-action-btn:hover { background: rgba(255,255,255,0.25); transform: translateY(-1px); }
+    .search-action-btn:active { transform: translateY(0); }
 
     /* Info del límite de días */
     .search-limit-info {
@@ -380,7 +307,6 @@
     }
     .top-nav-user #btn-logout:hover { background: var(--bad); border-color: var(--bad); color: #ffffff; }
 
-    /* Botón de cambio de tema (siempre visible, sin cambiar header) */
     #btn-theme-toggle {
         display: flex; align-items: center; justify-content: center;
         background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff;
@@ -412,7 +338,6 @@
         #dataTable, #table-pending { font-size: 0.68rem; }
         #dataTable th, #dataTable td, #table-pending th, #table-pending td { padding: 6px 8px; white-space: nowrap; }
         .nav-search-group select { max-width: 100px; }
-        #bulk-search-panel { top: 20px; width: 95vw; }
     }
 
     .card {
@@ -456,7 +381,6 @@
     #tracker-filter-bar input:focus, #tracker-filter-bar select:focus { border-color: #0e7490; box-shadow: 0 0 0 3px rgba(14,116,144,0.15); }
     #tracker-filter-bar select { cursor: pointer; }
     
-    /* Control de fechas rápido */
     .date-control { display: flex; align-items: center; gap: 4px; background: var(--input-bg); border: 1px solid var(--carbon-border); border-radius: 8px; padding: 2px; }
     .date-nav-btn { background: var(--carbon-light); border: none; color: var(--text-main); font-size: 0.8rem; padding: 6px 10px; cursor: pointer; border-radius: 6px; transition: background 0.2s; }
     .date-nav-btn:hover { background: var(--carbon-border); }
@@ -482,7 +406,6 @@
     .btn-inject-dev { background: #450a0a; color: #fca5a5; border: 1px solid var(--bad); box-shadow: none; font-size: 0.8rem; }
     .btn-inject-dev:hover { background: var(--bad); color: white; transform: translateY(-1px); }
 
-    /* Botón de copiar resultados (alineado con los otros dos) */
     .btn-copy-search-results {
         background: #064e3b; color: #6ee7b7; border: 1px solid #10b981; box-shadow: none; font-size: 0.8rem;
     }
@@ -493,7 +416,6 @@
         padding: 1px 8px; border-radius: 999px; font-weight: 700; font-size: 0.78rem;
     }
 
-    /* Selector de periodo de fecha */
     .date-range-control { position: relative; display: flex; align-items: center; gap: 4px; }
     .date-range-popup {
         position: absolute; top: calc(100% + 6px); left: 0; z-index: 50;
@@ -509,7 +431,6 @@
     .date-range-popup-actions { display: flex; justify-content: space-between; gap: 8px; margin-top: 6px; }
     .date-range-popup-actions .btn-primary { padding: 8px 12px; font-size: 0.78rem; flex: 1; }
 
-    /* ---- Barra de edición masiva ---- */
     #bulk-bar {
         display: none; flex-wrap: wrap; gap: 10px; align-items: center;
         background: #251616; border: 1px solid var(--primary);
@@ -519,7 +440,6 @@
     }
     #bulk-bar .bulk-count { font-size: 0.82rem; color: var(--accent); font-weight: 600; margin-right: 8px; }
 
-    /* ---- Tabla ---- */
     .table-wrap { overflow-x: auto; margin-top: 4px; }
     table { width: 100%; border-collapse: separate; border-spacing: 0; min-width: 760px; }
     th { text-align: left; padding: 12px 10px; font-size: 0.72rem; color: var(--text-dim); border-bottom: 1px solid var(--carbon-border); white-space: nowrap; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
@@ -528,7 +448,6 @@
     .guia-container { display: flex; align-items: center; gap: 8px; }
     .guia-text { font-weight: 700; color: var(--text-main); font-size: 0.85rem; letter-spacing: 0.5px; }
     
-    /* Contador de Repeticiones Individual */
     .guia-badge-count {
         background: rgba(255, 193, 7, 0.12);
         color: var(--accent);
@@ -545,7 +464,6 @@
     .cell-btn.edit { color: var(--accent); }
     .cell-btn.del { color: var(--bad); }
 
-    /* ---- Modal de edición individual ---- */
     #edit-modal-bg {
         display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 2500;
         align-items: center; justify-content: center; padding: 16px; backdrop-filter: blur(4px);
@@ -576,7 +494,6 @@
     .form-row select { cursor: pointer; }
     .form-row .btn-primary { flex: 0 0 auto; min-width: 150px; }
 
-    /* ---- Mini calendario (mover fecha) ---- */
     .mini-calendar-popup {
         display: none; position: absolute; top: calc(100% + 8px); left: 0; z-index: 3200;
         background: var(--card-bg); border: 1px solid var(--carbon-border); border-radius: 12px;
@@ -603,9 +520,6 @@
     .mc-footer { display: flex; justify-content: space-between; gap: 6px; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--carbon-border); }
     .mc-footer button { flex: 1; font-size: 0.65rem; padding: 5px 8px; }
 
-    /* ============================================== */
-    /* ---- ESTILOS RESTAURADOS DE CUADRATURA ---- */
-    /* ============================================== */
     .c-flex-between { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
     .c-flex-center { display: flex; align-items: center; gap: 8px; }
     .c-grid-3 { display: grid; grid-template-columns: 1fr 3fr; gap: 16px; }
@@ -628,10 +542,6 @@
     body.theme-light .c-num-box { background: rgba(0,0,0,0.04); }
     .c-sub-val { font-size: 0.72rem; color: var(--text-dim); display: flex; justify-content: space-between; margin-top: 4px; padding-top: 4px; border-top: 1px solid rgba(255,255,255,0.05); }
     body.theme-light .c-sub-val { border-top-color: rgba(0,0,0,0.08); }
-
-    /* Fila resaltada para búsqueda masiva */
-    tr.search-hit td { background: rgba(255, 193, 7, 0.07) !important; }
-    body.theme-light tr.search-hit td { background: rgba(255, 193, 7, 0.15) !important; }
 </style>
 </head>
 <body>
@@ -676,9 +586,9 @@
                 <div id="search-wrap-admin" class="nav-search-group active">
                     <span class="search-icon"><i class="fas fa-magnifying-glass"></i></span>
                     <div class="search-bulk-wrap">
-                        <input type="text" id="search-universal" placeholder="Buscar guía... (límite: 15 días)" oninput="render()" onkeydown="if(event.key==='Enter'){event.preventDefault();render();}">
-                        <button type="button" class="search-action-btn masiva-btn" onclick="toggleBulkSearchPanel(event)" title="Búsqueda masiva">
-                            <i class="fas fa-list"></i> Masiva
+                        <input type="text" id="search-universal" placeholder="Buscar guía... (límite: 15 días)" onkeydown="if(event.key==='Enter'){event.preventDefault(); ejecutarBusquedaAdmin();}">
+                        <button type="button" class="search-action-btn" onclick="ejecutarBusquedaAdmin()" title="Buscar">
+                            <i class="fas fa-magnifying-glass"></i> Buscar
                         </button>
                     </div>
                 </div>
@@ -1074,19 +984,6 @@
 
     </div><!-- /#app-root -->
 
-    <!-- Overlay para el panel de búsqueda masiva -->
-    <div id="bulk-search-overlay" onclick="closeBulkSearchPanel()"></div>
-
-    <!-- Panel de búsqueda masiva (fuera del header para evitar problemas de overflow) -->
-    <div id="bulk-search-panel">
-        <div class="bs-info"><i class="fas fa-info-circle"></i> Pega uno o varios números de guía (uno por línea o separados por espacio). Se buscarán en el historial de los últimos 15 días.</div>
-        <textarea id="bulk-search-textarea" placeholder="21856841&#10;21852351&#10;21852716&#10;21854308&#10;..."></textarea>
-        <div class="bs-actions">
-            <button type="button" class="btn-primary btn-secondary" onclick="closeBulkSearchPanel()">CANCELAR</button>
-            <button type="button" class="btn-primary" onclick="applyBulkSearch()"><i class="fas fa-search" style="margin-right:6px;"></i>BUSCAR</button>
-        </div>
-    </div>
-
     <div id="edit-modal-bg">
         <div id="edit-modal">
             <div style="font-weight:700; font-size:1.1rem; color:var(--text-main); border-bottom:1px solid var(--carbon-border); padding-bottom:10px;">Editar guía</div>
@@ -1156,7 +1053,6 @@
     let selectedIds = new Set();
     let unsubscribe = null;
     let editingId = null;
-    let bulkSearchHits = new Set();
 
     // ============ TEMA DARK / LIGHT ============
     function toggleTheme() {
@@ -1206,7 +1102,7 @@
             topNav.style.background = 'var(--bg-header-tracker)';
             topNav.style.borderColor = 'var(--border-header-tracker)';
             topNav.className = 'tracker-mode';
-            headerTitleText.innerHTML = '<i class="fas fa-magnifying-glass"></i> TRACKER DE GUÍAS';
+            headerTitleText.innerHTML = '<i class="fas fa-magnifying-glass"></i> Tracker';
             if (limitInfo) limitInfo.style.display = 'none';
         } else {
             topNav.style.background = 'var(--bg-header-cuadratura)';
@@ -1231,7 +1127,7 @@
     });
 
     // ============ LOGIN ============
-    const CORREOS_AUTORIZADOS = ["s4muelmonreal@gmail.com", "chronoalex666@gmail.com", "franciscoantoniomartinezrasgad@gmail.com","antonio.serratosl@gmail.com"];
+    const CORREOS_AUTORIZADOS = ["s4muelmonreal@gmail.com", "chronoalex666@gmail.com", "franciscoantoniomartinezrasgad@gmail.com","antonio.serratosl@gmail.com","peregrinosilvana90@gmail.com"];
 
     function signInWithGoogle() {
         document.getElementById('login-status').textContent = "Abriendo ventana de Google...";
@@ -1382,32 +1278,11 @@
         return allGuias.filter(g => g.timestamp >= bounds.start && g.timestamp <= bounds.end);
     }
 
-    // ============ BÚSQUEDA MASIVA ============
-    function toggleBulkSearchPanel(evt) {
-        if (evt) evt.stopPropagation();
-        const panel = document.getElementById('bulk-search-panel');
-        const overlay = document.getElementById('bulk-search-overlay');
-        panel.classList.toggle('open');
-        overlay.classList.toggle('open');
-        if (panel.classList.contains('open')) {
-            document.getElementById('bulk-search-textarea').focus();
-        }
-    }
-    function closeBulkSearchPanel() {
-        document.getElementById('bulk-search-panel').classList.remove('open');
-        document.getElementById('bulk-search-overlay').classList.remove('open');
-    }
-    function applyBulkSearch() {
-        const raw = document.getElementById('bulk-search-textarea').value;
-        const terminos = raw.split(/[\s,;]+/).map(t => t.trim()).filter(t => t.length > 0);
-        if (terminos.length === 0) {
-            alert('Pega al menos un número de guía.');
-            return;
-        }
-        document.getElementById('search-universal').value = terminos.join(', ');
-        closeBulkSearchPanel();
+    // ============ BÚSQUEDA (ADMIN) ============
+    function ejecutarBusquedaAdmin() {
         render();
     }
+
     function parseSearchQuery() {
         const raw = document.getElementById('search-universal').value.trim();
         if (!raw) return { isBulk: false, terms: [] };
@@ -1464,13 +1339,10 @@
 
             if (queryInfo.isBulk) {
                 const termsLower = queryInfo.terms.map(t => t.toLowerCase());
-                bulkSearchHits = new Set();
                 list = allGuias.filter(g => {
                     if (!g.timestamp || g.timestamp < minTimestamp) return false;
                     const guiaLower = (g.guia || '').toLowerCase();
-                    const hit = termsLower.some(t => guiaLower === t || guiaLower.includes(t));
-                    if (hit) bulkSearchHits.add(g.id);
-                    return hit;
+                    return termsLower.some(t => guiaLower === t || guiaLower.includes(t));
                 });
             } else {
                 const q = rawQuery.toLowerCase();
@@ -1478,11 +1350,9 @@
                     if (!g.timestamp || g.timestamp < minTimestamp) return false;
                     return g.guia && g.guia.toLowerCase().includes(q);
                 });
-                bulkSearchHits.clear();
             }
         } else {
             list = getDateRangeFilteredList();
-            bulkSearchHits.clear();
         }
 
         const order = document.getElementById('sort-order').value;
@@ -1554,9 +1424,8 @@
         tbody.innerHTML = list.map(g => {
             const count = getGuiaRepetitionCount(g.guia);
             const badgeHTML = count > 1 ? `<span class="guia-badge-count" title="Esta guía se ha registrado ${count} veces en el historial">${count}x</span>` : '';
-            const isHit = bulkSearchHits.has(g.id);
             return `
-                <tr class="${isHit ? 'search-hit' : ''}">
+                <tr>
                     <td><input type="checkbox" data-id="${g.id}" ${selectedIds.has(g.id) ? 'checked' : ''} onchange="toggleSelect('${g.id}', this.checked)"></td>
                     <td>
                         <div class="guia-container">
