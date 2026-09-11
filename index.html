@@ -29,14 +29,12 @@
         --good: #10b981;
         --bad: #ef4444;
         --glow: rgba(155, 34, 34, 0.15);
-        /* Headers dinámicos */
         --bg-header-admin: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
         --border-header-admin: #1d4ed8;
         --bg-header-cuadratura: linear-gradient(135deg, #4a0e0e 0%, #5c0f0f 100%);
         --border-header-cuadratura: #3d0a0a;
         --bg-header-tracker: linear-gradient(135deg, #0f3d3d 0%, #0e7490 100%);
         --border-header-tracker: #0e7490;
-        /* Variables de tema (se sobreescriben en modo light) */
         --body-bg: var(--carbon-dark);
         --card-bg: var(--carbon-light);
         --input-bg: #000;
@@ -44,8 +42,6 @@
         --border-subtle: #1a1a1f;
         --scroll-track: var(--carbon-dark);
     }
-
-    /* ============ TEMA LIGHT ============ */
     body.theme-light {
         --carbon-dark: #f3f4f6;
         --carbon-light: #ffffff;
@@ -106,16 +102,9 @@
     body.theme-light .mc-day.mc-selected { background: var(--primary); color: #fff; }
     body.theme-light .mc-day.mc-today { border-color: var(--accent); }
 
-    /* ============ HEADER: TÍTULOS E ICONOS SIEMPRE CON CONTRASTE ============ */
-    .header-dynamic-title {
-        color: #ffffff !important;
-    }
-    .header-dynamic-title i {
-        color: #ffffff !important;
-    }
-    .nav-tab-btn i {
-        color: var(--accent) !important;
-    }
+    .header-dynamic-title { color: #ffffff !important; }
+    .header-dynamic-title i { color: #ffffff !important; }
+    .nav-tab-btn i { color: var(--accent) !important; }
     #top-nav.admin-mode .nav-tab-btn.active i { color: #1e3a8a !important; }
     #top-nav.cuadratura-mode .nav-tab-btn.active i { color: #4a0e0e !important; }
     #top-nav.tracker-mode .nav-tab-btn.active i { color: #0e7490 !important; }
@@ -164,7 +153,6 @@
         display: flex;
     }
 
-    /* ---- Barra superior unificada (Top Nav) ---- */
     #top-nav {
         display: flex; align-items: center; gap: 20px;
         background: var(--bg-header-admin);
@@ -242,7 +230,6 @@
         border-radius: 9px; padding: 0 10px; font-family: 'Lexend', sans-serif; font-size: 0.8rem; font-weight: 700; cursor: pointer;
     }
 
-    /* ============ BUSCADOR ADMIN ============ */
     .search-bulk-wrap {
         position: relative;
         width: 100%;
@@ -255,7 +242,6 @@
         min-width: 0;
     }
 
-    /* Botón de acción del buscador (dentro del header) */
     .search-action-btn {
         background: rgba(255,255,255,0.12);
         border: 1px solid rgba(255,255,255,0.2);
@@ -277,7 +263,6 @@
     .search-action-btn:hover { background: rgba(255,255,255,0.25); transform: translateY(-1px); }
     .search-action-btn:active { transform: translateY(0); }
 
-    /* Info del límite de días */
     .search-limit-info {
         font-size: 0.65rem;
         color: rgba(255,255,255,0.85);
@@ -325,7 +310,6 @@
         .search-limit-info { display: none; }
     }
 
-    /* ---- Ajustes móviles específicos de CUADRATURA ---- */
     @media (max-width: 640px) {
         #cuadratura-tab .card { padding: 12px; }
         #stats-panel { grid-template-columns: repeat(2, 1fr) !important; gap: 8px; }
@@ -347,7 +331,6 @@
         transition: background 0.3s ease, border-color 0.3s ease;
     }
 
-    /* ---- Estadísticas ---- */
     #stats-panel {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -363,7 +346,6 @@
     .stat-box.stat-today .stat-num { color: var(--good); }
     .stat-box .stat-label { font-size: 0.68rem; color: var(--text-dim); margin-top: 4px; font-weight: 600; letter-spacing: 0.5px; }
 
-    /* ---- Filtros ---- */
     #filter-bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
     .filter-group { display: flex; align-items: center; gap: 6px; }
     #filter-bar input, #filter-bar select {
@@ -405,6 +387,9 @@
 
     .btn-inject-dev { background: #450a0a; color: #fca5a5; border: 1px solid var(--bad); box-shadow: none; font-size: 0.8rem; }
     .btn-inject-dev:hover { background: var(--bad); color: white; transform: translateY(-1px); }
+
+    .btn-inject-sameday { background: #0e7490; color: #67e8f9; border: 1px solid #0891b2; box-shadow: none; font-size: 0.8rem; }
+    .btn-inject-sameday:hover { background: #0891b2; color: white; transform: translateY(-1px); }
 
     .btn-copy-search-results {
         background: #064e3b; color: #6ee7b7; border: 1px solid #10b981; box-shadow: none; font-size: 0.8rem;
@@ -558,7 +543,6 @@
 
     <div id="app-root">
 
-        <!-- ================= BARRA SUPERIOR UNIFICADA ================= -->
         <div id="top-nav" class="admin-mode">
             
             <div class="header-left-group">
@@ -620,7 +604,6 @@
             </button>
         </div>
 
-        <!-- ================= PESTAÑA 1: ADMINISTRADOR DE GUIAS ================= -->
         <div id="admin-tab" class="tab-content active">
 
             <div id="stats-panel" class="card">
@@ -654,6 +637,7 @@
 
                 <button class="btn-primary btn-inject" onclick="injectGuidesCopy()">⚡ INYECTAR GUÍAS (COPIAR)<span class="btn-count-badge" id="count-inyeccion">0</span></button>
                 <button class="btn-primary btn-inject-dev" onclick="injectDevolucionCopy()">🔴 DEV ORIGEN (COPIAR)<span class="btn-count-badge" id="count-devolucion">0</span></button>
+                <button class="btn-primary btn-inject-sameday" onclick="injectSamedayCopy()">📦 INY SAMEDAY (COPIAR)<span class="btn-count-badge" id="count-sameday">0</span></button>
                 <button class="btn-primary btn-copy-search-results" id="btn-copy-search" onclick="copySearchResults()">📋 COPIAR RESULTADOS<span class="btn-count-badge" id="count-search-results">0</span></button>
 
                 <div class="filter-group" style="margin-left:auto;">
@@ -673,6 +657,7 @@
                     <option value="__NOCHANGE__">Acción: no cambiar</option>
                     <option value="INYECCIÓN">INYECCIÓN</option>
                     <option value="DEVOLUCIÓN A ORIGEN">DEVOLUCIÓN A ORIGEN</option>
+                    <option value="INY SAMEDAY">INY SAMEDAY</option>
                 </select>
 
                 <select id="bulk-categoria">
@@ -737,6 +722,7 @@
                     <select id="new-accion">
                         <option value="INYECCIÓN">INYECCIÓN</option>
                         <option value="DEVOLUCIÓN A ORIGEN">DEVOLUCIÓN A ORIGEN</option>
+                        <option value="INY SAMEDAY">INY SAMEDAY</option>
                     </select>
                     <select id="new-categoria"></select>
                 </div>
@@ -757,7 +743,6 @@
             </div>
         </div>
 
-        <!-- ================= PESTAÑA 2: CUADRATURA ================= -->
         <div id="cuadratura-tab" class="tab-content">
             
             <div class="card c-flex-between">
@@ -884,9 +869,8 @@
                 </div>
             </div>
 
-        </div><!-- /#cuadratura-tab -->
+        </div>
 
-        <!-- ================= PESTAÑA 3: TRACKER ================= -->
         <div id="tracker-tab" class="tab-content">
 
             <div id="tracker-filter-bar" class="card" style="display:flex; flex-wrap:wrap; gap:12px; align-items:center;">
@@ -905,6 +889,7 @@
                         <option value="">Todas</option>
                         <option value="INYECCIÓN">INYECCIÓN</option>
                         <option value="DEVOLUCIÓN A ORIGEN" selected>DEVOLUCIÓN A ORIGEN</option>
+                        <option value="INY SAMEDAY">INY SAMEDAY</option>
                     </select>
                 </div>
 
@@ -980,9 +965,9 @@
                 <div id="tracker-empty-msg" class="empty-msg" style="display:none;">No hay guías para este filtro.</div>
             </div>
 
-        </div><!-- /#tracker-tab -->
+        </div>
 
-    </div><!-- /#app-root -->
+    </div>
 
     <div id="edit-modal-bg">
         <div id="edit-modal">
@@ -996,6 +981,7 @@
                 <select id="edit-accion" onchange="onEditAccionChange()">
                     <option value="INYECCIÓN">INYECCIÓN</option>
                     <option value="DEVOLUCIÓN A ORIGEN">DEVOLUCIÓN A ORIGEN</option>
+                    <option value="INY SAMEDAY">INY SAMEDAY</option>
                 </select>
             </div>
             <div>
@@ -1027,7 +1013,6 @@
     </div>
 
 <script>
-    // ============ CONFIGURACIÓN DE FIREBASE ============
     const firebaseConfig = {
         apiKey: "AIzaSyCg9mMvEg4tKa8Qpi3CVx_oTN0GSgO_iJ0",
         authDomain: "rpkmty.firebaseapp.com",
@@ -1044,7 +1029,8 @@
 
     const categoriasPorAccion = {
         "INYECCIÓN": ["NO MANIFESTADO", "MAL PUNTEADO", "ANDEN INCORRECTO", "REINTENTO", "NEGOCIO CERRADO", "MAL ETIQUETADO"],
-        "DEVOLUCIÓN A ORIGEN": ["NO MANIFESTADO", "MAL PUNTEADO", "SIN CONTENIDO", "PAQUETE DAÑADO", "EXCESO DE DIMENSIONES", "FUERA DE COBERTURA", "3 INTENTOS", "MAL ENTREGADO", "NEGOCIO CERRADO", "MAL ETIQUETADO", "DOMICILIO INCORRECTO", "RECHAZO"]
+        "DEVOLUCIÓN A ORIGEN": ["NO MANIFESTADO", "MAL PUNTEADO", "SIN CONTENIDO", "PAQUETE DAÑADO", "EXCESO DE DIMENSIONES", "FUERA DE COBERTURA", "3 INTENTOS", "MAL ENTREGADO", "NEGOCIO CERRADO", "MAL ETIQUETADO", "DOMICILIO INCORRECTO", "RECHAZO"],
+        "INY SAMEDAY": ["MAL PUNTEADO", "NEGOCIO CERRADO"]
     };
 
     const LIMITE_DIAS_BUSQUEDA = 15;
@@ -1054,7 +1040,6 @@
     let unsubscribe = null;
     let editingId = null;
 
-    // ============ TEMA DARK / LIGHT ============
     function toggleTheme() {
         const body = document.body;
         const icon = document.getElementById('theme-icon');
@@ -1076,7 +1061,6 @@
         }
     }
 
-    // ============ CONTROL DE PESTAÑAS ============
     function switchTab(tabId, btn) {
         document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
         document.querySelectorAll('.nav-tab-btn').forEach(b => b.classList.remove('active'));
@@ -1126,7 +1110,6 @@
         document.getElementById('limit-days-text').textContent = LIMITE_DIAS_BUSQUEDA;
     });
 
-    // ============ LOGIN ============
     const CORREOS_AUTORIZADOS = ["s4muelmonreal@gmail.com", "chronoalex666@gmail.com", "franciscoantoniomartinezrasgad@gmail.com","antonio.serratosl@gmail.com","peregrinosilvana90@gmail.com"];
 
     function signInWithGoogle() {
@@ -1169,7 +1152,6 @@
         }
     });
 
-    // ============ LISTENER ============
     function iniciarListener() {
         if (unsubscribe) unsubscribe();
         unsubscribe = db.collection('guias').onSnapshot(snapshot => {
@@ -1181,7 +1163,6 @@
         });
     }
 
-    // ============ AUXILIARES DE FECHAS ============
     function formatHoraMonterrey(timestamp) {
         if (!timestamp) return '';
         try {
@@ -1278,7 +1259,6 @@
         return allGuias.filter(g => g.timestamp >= bounds.start && g.timestamp <= bounds.end);
     }
 
-    // ============ BÚSQUEDA (ADMIN) ============
     function ejecutarBusquedaAdmin() {
         render();
     }
@@ -1321,12 +1301,10 @@
         });
     }
 
-    // ============ CONTADOR DE REPETICIONES ============
     function getGuiaRepetitionCount(guiaNum) {
         return allGuias.filter(g => g.guia === guiaNum).length;
     }
 
-    // ============ FILTRADO (CON LÍMITE DE 15 DÍAS) ============
     function getFilteredSorted() {
         const rawQuery = document.getElementById('search-universal').value.trim();
         const queryInfo = parseSearchQuery();
@@ -1360,7 +1338,6 @@
         return list;
     }
 
-    // ============ INYECTORES ============
     function copyTextWithFeedback(formattedText, count, label) {
         navigator.clipboard.writeText(formattedText).then(() => {
             alert(`¡Se copiaron ${count} guías (${label}) al portapapeles con éxito!\nFormato: "GUIA; "`);
@@ -1390,14 +1367,25 @@
         const formattedText = guiasDevolucion.map(g => `${g.guia}; `).join('');
         copyTextWithFeedback(formattedText, guiasDevolucion.length, "DEVOLUCIÓN A ORIGEN");
     }
+    function injectSamedayCopy() {
+        const bounds = getDateRangeBounds();
+        if (!bounds) { alert("Por favor selecciona un periodo de fecha para inyectar guías."); return; }
+        const guiasSameday = getDateRangeFilteredList().filter(g => g.accion === "INY SAMEDAY");
+        if (guiasSameday.length === 0) { alert(`No se encontraron guías con la acción "INY SAMEDAY" para el periodo seleccionado.`); return; }
+        const formattedText = guiasSameday.map(g => `${g.guia}; `).join('');
+        copyTextWithFeedback(formattedText, guiasSameday.length, "INY SAMEDAY");
+    }
     function updateInjectCounts() {
         const list = getDateRangeFilteredList();
         const inj = list.filter(g => g.accion === "INYECCIÓN").length;
         const dev = list.filter(g => g.accion === "DEVOLUCIÓN A ORIGEN").length;
+        const sameday = list.filter(g => g.accion === "INY SAMEDAY").length;
         const injEl = document.getElementById('count-inyeccion');
         const devEl = document.getElementById('count-devolucion');
+        const samedayEl = document.getElementById('count-sameday');
         if (injEl) injEl.textContent = inj;
         if (devEl) devEl.textContent = dev;
+        if (samedayEl) samedayEl.textContent = sameday;
     }
     function updateCopySearchButton() {
         const rawQuery = document.getElementById('search-universal').value.trim();
@@ -1414,7 +1402,6 @@
         }
     }
 
-    // ============ RENDER TABLA ============
     function render() {
         const list = getFilteredSorted();
         document.getElementById('total-count').textContent = `${list.length} guía(s)`;
@@ -1471,7 +1458,6 @@
         bar.style.display = selectedIds.size > 0 ? 'flex' : 'none';
     }
 
-    // ============ ESTADÍSTICAS ============
     function getMondayOfCurrentWeek() {
         const now = new Date();
         const day = now.getDay(); 
@@ -1498,11 +1484,13 @@
         document.getElementById('stat-rojos').textContent = semana.filter(g => g.tipo === 'PAQUETES ROJOS NM').length;
     }
 
-    // ============ EDICIÓN MASIVA ============
     function fillCategoriaSelect(selectEl, accion, includeNoChange) {
-        const opciones = accion === '__NOCHANGE__' || !accion
-            ? [...new Set([...categoriasPorAccion["INYECCIÓN"], ...categoriasPorAccion["DEVOLUCIÓN A ORIGEN"]])]
-            : (categoriasPorAccion[accion] || []);
+        let opciones;
+        if (accion === '__NOCHANGE__' || !accion) {
+            opciones = [...new Set([...categoriasPorAccion["INYECCIÓN"], ...categoriasPorAccion["DEVOLUCIÓN A ORIGEN"], ...categoriasPorAccion["INY SAMEDAY"]])];
+        } else {
+            opciones = categoriasPorAccion[accion] || [];
+        }
         let html = includeNoChange ? `<option value="__NOCHANGE__">Categoría: no cambiar</option>` : '';
         html += opciones.map(c => `<option value="${c}">${c}</option>`).join('');
         selectEl.innerHTML = html;
@@ -1513,7 +1501,6 @@
     }
     fillCategoriaSelect(document.getElementById('bulk-categoria'), '__NOCHANGE__', true);
 
-    // ============ MINI CALENDARIO ============
     let miniCalendarViewDate = new Date();
     function pad2(n) { return String(n).padStart(2, '0'); }
     function dateToInputVal(d) { return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`; }
@@ -1669,7 +1656,6 @@
         selectedIds.delete(id);
     }
 
-    // ============ EDICIÓN INDIVIDUAL ============
     function openEditModal(id) {
         const g = allGuias.find(x => x.id === id);
         if (!g) return;
@@ -1702,7 +1688,6 @@
         closeEditModal();
     }
 
-    // ============ AGREGAR GUÍA MANUAL ============
     document.getElementById('new-accion').addEventListener('change', () => {
         fillCategoriaSelect(document.getElementById('new-categoria'), document.getElementById('new-accion').value, false);
     });
@@ -1728,9 +1713,6 @@
         document.getElementById('new-guia').value = '';
     }
 
-    // =========================================================================
-    // ============ CUADRATURA ============
-    // =========================================================================
     let dataViajes = [], dataParadas = [], dataGuiasEscaneadas = new Set(), rawProcessedStats = [];
     let umbralDiasCuadratura = 2;
     let rawDataFilter = []; 
@@ -1844,6 +1826,15 @@
     function renderUI() {
         const query = document.getElementById('smart-search').value.toLowerCase();
         const provSel = document.getElementById('filter-proveedor').value;
+
+        // --- Set de guías que YA están entregadas (o en ruta) para excluirlas de pendientes ---
+        const guiasEntregadas = new Set();
+        rawProcessedStats.forEach(item => {
+            if (item.estado === 'Entregado' || item.estado === 'En Ruta de Entrega') {
+                guiasEntregadas.add(item.guia);
+            }
+        });
+
         let stats = {
             noEmb: { t: 0, a: 0, s: 0 }, noRec: { t: 0, a: 0, s: 0 },
             noEnt: { t: 0, a: 0, s: 0 }, ruta: { t: 0, a: 0, s: 0 },
@@ -1873,7 +1864,8 @@
                 else if (item.categoriaViaje === "Amazon Same Day") stats.choferes.s.add(item.conductor);
             }
             const estadosRetorno = ['Fin de Carga', 'No Embarcado TR2', 'No Entregado', 'No Recibido CEDIS'];
-            if (estadosRetorno.includes(item.estado) && !dataGuiasEscaneadas.has(item.guia) && item.estado !== 'No Recibido CEDIS') {
+            // --- CONDICIÓN MODIFICADA: se excluyen guías que ya están entregadas en otra jornada ---
+            if (estadosRetorno.includes(item.estado) && !dataGuiasEscaneadas.has(item.guia) && !guiasEntregadas.has(item.guia) && item.estado !== 'No Recibido CEDIS') {
                 if (item.estado === 'No Embarcado TR2') stats.pendNoEmb++;
                 if (item.estado === 'No Entregado') stats.pendNoEnt++;
                 const match = item.guia.toLowerCase().includes(query) || item.conductor.toLowerCase().includes(query) || String(item.viaje).includes(query);
@@ -1947,7 +1939,6 @@
         });
     }
 
-    // ============ TRACKER ============
     function dateKeyToDate(dateKey) {
         if (!dateKey) return null;
         const parts = dateKey.split('/');
@@ -1968,9 +1959,12 @@
     function fillTrackerCategoriaSelect(accion, preserveSelection) {
         const sel = document.getElementById('tracker-categoria');
         const prevValue = preserveSelection ? sel.value : null;
-        const opciones = accion
-            ? (categoriasPorAccion[accion] || [])
-            : [...new Set([...categoriasPorAccion["INYECCIÓN"], ...categoriasPorAccion["DEVOLUCIÓN A ORIGEN"]])];
+        let opciones;
+        if (accion) {
+            opciones = categoriasPorAccion[accion] || [];
+        } else {
+            opciones = [...new Set([...categoriasPorAccion["INYECCIÓN"], ...categoriasPorAccion["DEVOLUCIÓN A ORIGEN"], ...categoriasPorAccion["INY SAMEDAY"]])];
+        }
         let html = `<option value="">Todas</option>`;
         html += opciones.map(c => `<option value="${c}">${c}</option>`).join('');
         sel.innerHTML = html;
@@ -2133,7 +2127,6 @@
         });
     }
 
-    // ============ ORDENACIÓN ============
     function sortTable(n) {
         const tableBody = document.getElementById("pending-list-body");
         const rows = Array.from(tableBody.querySelectorAll(".master-row"));
