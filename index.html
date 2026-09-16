@@ -509,6 +509,15 @@
     .c-flex-center { display: flex; align-items: center; gap: 8px; }
     .c-grid-3 { display: grid; grid-template-columns: 1fr 3fr; gap: 16px; }
     @media(max-width: 900px) { .c-grid-3 { grid-template-columns: 1fr; } }
+
+    .driver-name { cursor: default; border-bottom: 1px dotted var(--text-dim); }
+    .driver-tip-box {
+        position: fixed; transform: translate(-50%, -100%); margin-top: -8px;
+        background: var(--carbon-card); border: 1px solid var(--carbon-border); border-radius: 6px;
+        padding: 5px 10px; font-size: 0.7rem; font-weight: 700; color: var(--text-main);
+        white-space: nowrap; box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+        z-index: 4000; pointer-events: none; display: none;
+    }
     
     .loading-spinner { animation: spin 1s linear infinite; }
     @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
@@ -523,10 +532,27 @@
     .c-badge.ruta { background: rgba(22, 163, 74, 0.15); color: #16a34a; border: 1px solid rgba(22, 163, 74, 0.3); }
 
     .c-label { font-size: 0.7rem; color: var(--text-dim); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-    .c-num-box { text-align: center; background: rgba(0,0,0,0.2); border: 1px solid var(--carbon-border); border-radius: 8px; padding: 10px 8px; }
+    .c-num-box { text-align: center; background: rgba(0,0,0,0.2); border: 1px solid var(--carbon-border); border-radius: 8px; padding: 10px 8px; transition: box-shadow 0.2s ease, transform 0.15s ease; }
+    .c-num-box:hover { transform: translateY(-1px); }
+    .c-num-box.c-tinted { border-width: 2px; border-style: solid; border-color: var(--box-color); box-shadow: 0 4px 20px rgba(0,0,0,0.35); }
+    .c-num-box.c-tinted:hover { box-shadow: 0 6px 24px rgba(0,0,0,0.45); }
     body.theme-light .c-num-box { background: rgba(0,0,0,0.04); }
     .c-sub-val { font-size: 0.72rem; color: var(--text-dim); display: flex; justify-content: space-between; margin-top: 4px; padding-top: 4px; border-top: 1px solid rgba(255,255,255,0.05); }
     body.theme-light .c-sub-val { border-top-color: rgba(0,0,0,0.08); }
+
+    .flow-separator {
+        width: 1px;
+        height: 28px;
+        background: var(--carbon-border);
+        margin: 0 6px;
+    }
+    .flow-label {
+        font-size: 0.65rem;
+        color: var(--accent);
+        font-weight: 800;
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+    }
 </style>
 </head>
 <body>
@@ -704,7 +730,7 @@
                                 <th>CATEGORÍA</th>
                                 <th>PROVEEDOR</th>
                                 <th>TIPO</th>
-                                <th>HORA ESCANEO</th>
+                                <th style="text-align: center;">HORA ESCANEO</th>
                                 <th>OPERADOR</th>
                                 <th style="width: 80px; text-align: center;">ACCIONES</th>
                             </tr>
@@ -746,14 +772,32 @@
         <div id="cuadratura-tab" class="tab-content">
             
             <div class="card c-flex-between">
-                <div class="c-flex-center">
+                <div class="c-flex-center" style="flex-wrap: wrap; row-gap: 8px;">
+                    <!-- Flujo 1: Viajes -->
+                    <span class="flow-label">Viajes:</span>
                     <input type="file" id="fileViajes" style="display:none;" accept=".xlsx, .xls">
                     <label for="fileViajes" class="btn-primary btn-secondary" style="padding: 8px 14px; font-size: 0.75rem; font-weight: 700; cursor:pointer;">
-                        <i class="fas fa-file-excel" style="margin-right: 6px;"></i>SUBIR ARCHIVO
+                        <i class="fas fa-file-excel" style="margin-right: 6px;"></i>SUBIR VIAJES
                     </label>
                     <button id="btn-process" class="btn-primary" onclick="processAllData()" style="padding: 8px 14px; font-size:0.75rem;">
                         PROCESAR <i id="btn-loader" class="fas fa-circle-notch loading-spinner" style="display:none; margin-left:6px;"></i>
                     </button>
+
+                    <span class="flow-separator"></span>
+
+                    <!-- Flujo 2: Dashboard -->
+                    <span class="flow-label">Dashboard:</span>
+                    <input type="file" id="fileDashboard" style="display:none;" accept=".xlsx, .xls">
+                    <label for="fileDashboard" class="btn-primary btn-secondary" style="padding: 8px 14px; font-size: 0.75rem; font-weight: 700; cursor:pointer;">
+                        <i class="fas fa-file-excel" style="margin-right: 6px;"></i>SUBIR DASHBOARD
+                    </label>
+                    <button id="btn-process-dashboard" class="btn-primary" onclick="processDashboardData()" style="padding: 8px 14px; font-size:0.75rem;">
+                        PROCESAR <i id="btn-loader-dashboard" class="fas fa-circle-notch loading-spinner" style="display:none; margin-left:6px;"></i>
+                    </button>
+
+                    <span class="flow-separator"></span>
+
+                    <!-- Umbral compartido -->
                     <button id="btn-umbral-dias" onclick="cambiarUmbralDias()" title="Cambiar umbral de días para la cuadratura" class="btn-primary btn-secondary" style="padding: 8px 14px; font-size:0.75rem; font-weight:700;">
                         <i class="fas fa-calendar-day" style="margin-right: 6px;"></i>UMBRAL: <span id="umbral-dias-label">2</span> DÍAS
                     </button>
@@ -766,69 +810,58 @@
             </div>
 
             <div id="stats-panel" class="card" style="grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));">
-                <div class="c-num-box" style="border-left: 4px solid var(--primary);">
+                <div class="c-num-box c-tinted" style="--box-color: var(--primary);">
                     <div class="c-label" style="font-size: 0.65rem;">Faltan Escanear</div>
                     <div class="stat-num" id="total-pending-count" style="color:var(--bad); font-size:1.5rem; margin:4px 0;">0</div>
                     <div class="c-sub-val"><span>No Emb: <strong id="sub-pending-no-emb" style="color:var(--text-main);">0</strong></span><span>No Ent: <strong id="sub-pending-no-ent" style="color:var(--text-main);">0</strong></span></div>
                 </div>
-                <div class="c-num-box" style="border-left: 4px solid #f97316;">
+                <div class="c-num-box c-tinted" style="--box-color: #f97316;">
                     <div class="c-label" style="font-size: 0.65rem;">No Emb. TR2</div>
                     <div class="stat-num" id="count-no-emb" style="color:#f97316; font-size:1.5rem; margin:4px 0;">0</div>
                     <div class="c-sub-val"><span>Amz: <strong id="sub-no-emb-amz" style="color:var(--text-main);">0</strong></span><span>Same: <strong id="sub-no-emb-same" style="color:var(--text-main);">0</strong></span></div>
                 </div>
-                <div class="c-num-box" style="border-left: 4px solid #eab308;">
+                <div class="c-num-box c-tinted" style="--box-color: #eab308;">
                     <div class="c-label" style="font-size: 0.65rem;">No Recibido</div>
                     <div class="stat-num" id="count-no-rec" style="color:#eab308; font-size:1.5rem; margin:4px 0;">0</div>
                     <div class="c-sub-val"><span>Amz: <strong id="sub-no-rec-amz" style="color:var(--text-main);">0</strong></span><span>Same: <strong id="sub-no-rec-same" style="color:var(--text-main);">0</strong></span></div>
                 </div>
-                <div class="c-num-box" style="border-left: 4px solid #2563eb;">
+                <div class="c-num-box c-tinted" style="--box-color: #2563eb;">
                     <div class="c-label" style="font-size: 0.65rem;">No Entregado</div>
                     <div class="stat-num" id="count-no-ent" style="color:#2563eb; font-size:1.5rem; margin:4px 0;">0</div>
                     <div class="c-sub-val"><span>Amz: <strong id="sub-no-ent-amz" style="color:var(--text-main);">0</strong></span><span>Same: <strong id="sub-no-ent-same" style="color:var(--text-main);">0</strong></span></div>
                 </div>
-                <div class="c-num-box" style="border-left: 4px solid #16a34a;">
+                <div class="c-num-box c-tinted" style="--box-color: #16a34a;">
                     <div class="c-label" style="font-size: 0.65rem;">Total en Ruta</div>
                     <div class="stat-num" id="count-in-route" style="color:#16a34a; font-size:1.5rem; margin:4px 0;">0</div>
                     <div class="c-sub-val"><span>Amz: <strong id="sub-ruta-amz" style="color:var(--text-main);">0</strong></span><span>Same: <strong id="sub-ruta-same" style="color:var(--text-main);">0</strong></span></div>
                 </div>
-                <div class="c-num-box" style="border-left: 4px solid #9333ea;">
+                <div class="c-num-box c-tinted" style="--box-color: #9333ea;">
                     <div class="c-label" style="font-size: 0.65rem;">Choferes Ruta</div>
                     <div class="stat-num" id="count-drivers-route" style="color:#9333ea; font-size:1.5rem; margin:4px 0;">0</div>
                     <div class="c-sub-val"><span>Amz: <strong id="sub-chofer-amz" style="color:var(--text-main);">0</strong></span><span>Same: <strong id="sub-chofer-same" style="color:var(--text-main);">0</strong></span></div>
                 </div>
             </div>
 
-            <div class="c-grid-3">
-                <div class="card" style="display:flex; flex-direction:column; justify-content: space-between;">
-                    <div class="c-flex-between" style="border-bottom: 1px solid var(--carbon-border); padding-bottom:8px; margin-bottom:8px;">
-                        <span class="c-label">Rendimiento Choferes</span>
-                        <button onclick="copyDriverSummary()" class="cell-btn edit" style="font-size:0.75rem; font-weight:700;">COPIAR</button>
-                    </div>
-                    <div style="height: 120px; margin-bottom: 10px;"><canvas id="chart-pendientes"></canvas></div>
-                    <div id="driver-summary-list" style="max-height: 180px; overflow-y:auto;"></div>
+            <div class="card">
+                <div class="c-flex-between" style="border-bottom: 1px solid var(--carbon-border); padding-bottom:8px; margin-bottom:8px;">
+                    <span class="c-label">Listado de Pendientes (No Escaneadas en <span id="umbral-dias-label-2">2</span> Días)</span>
+                    <button onclick="copyTableToSheets()" class="btn-primary" style="padding:6px 12px; font-size:0.7rem;">COPIAR SHEETS</button>
                 </div>
-
-                <div class="card">
-                    <div class="c-flex-between" style="border-bottom: 1px solid var(--carbon-border); padding-bottom:8px; margin-bottom:8px;">
-                        <span class="c-label">Listado de Pendientes (No Escaneadas en <span id="umbral-dias-label-2">2</span> Días)</span>
-                        <button onclick="copyTableToSheets()" class="btn-primary" style="padding:6px 12px; font-size:0.7rem;">COPIAR SHEETS</button>
-                    </div>
-                    <div class="table-wrap" style="max-height: 320px; overflow-y: auto;">
-                        <table id="table-pending">
-                            <thead>
-                                <tr>
-                                    <th class="sortable" onclick="sortTable(0)">Cat <i class="fas fa-sort ml-1 opacity-30"></i></th>
-                                    <th class="sortable" onclick="sortTable(1)">Viaje <i class="fas fa-sort ml-1 opacity-30"></i></th>
-                                    <th class="sortable" onclick="sortTable(2)">Conductor <i class="fas fa-sort ml-1 opacity-30"></i></th>
-                                    <th class="sortable" onclick="sortTable(3)">Guía <i class="fas fa-sort ml-1 opacity-30"></i></th>
-                                    <th class="sortable" onclick="sortTable(4)">Estado <i class="fas fa-sort ml-1 opacity-30"></i></th>
-                                </tr>
-                            </thead>
-                            <tbody id="pending-list-body">
-                                <tr><td colspan="5" class="empty-msg">Sube un archivo de viajes y presiona Procesar.</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="table-wrap" style="max-height: 420px; overflow-y: auto;">
+                    <table id="table-pending">
+                        <thead>
+                            <tr>
+                                <th class="sortable" onclick="sortTable(0)">Cat <i class="fas fa-sort ml-1 opacity-30"></i></th>
+                                <th class="sortable" onclick="sortTable(1)">Viaje <i class="fas fa-sort ml-1 opacity-30"></i></th>
+                                <th class="sortable" onclick="sortTable(2)">Conductor <i class="fas fa-sort ml-1 opacity-30"></i></th>
+                                <th class="sortable" onclick="sortTable(3)">Guía <i class="fas fa-sort ml-1 opacity-30"></i></th>
+                                <th class="sortable" onclick="sortTable(4)">Estado <i class="fas fa-sort ml-1 opacity-30"></i></th>
+                            </tr>
+                        </thead>
+                        <tbody id="pending-list-body">
+                            <tr><td colspan="5" class="empty-msg">Sube un archivo de viajes y presiona Procesar.</td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
@@ -1013,8 +1046,14 @@
     </div>
 
 <script>
+    // Ofuscación simple para que la key no quede a simple vista en el HTML.
+    // OJO: esto NO es un secreto de servidor; una apiKey de Firebase es un
+    // identificador público por diseño. La protección real se hace con
+    // Firebase Security Rules y restringiendo la key por dominio (HTTP referrer)
+    // en Google Cloud Console > Credenciales.
+    function _dk(s) { return atob(s.split('').reverse().join('')); }
     const firebaseConfig = {
-        apiKey: "AIzaSyCg9mMvEg4tKa8Qpi3CVx_oTN0GSgO_iJ0",
+        apiKey: _dk("woUaf90ZTdEMOR1bfhnVDNTawFFOhtEd0cWR21Ub5c2Q5NVY6lUQ"),
         authDomain: "rpkmty.firebaseapp.com",
         projectId: "rpkmty",
         storageBucket: "rpkmty.firebasestorage.app",
@@ -1096,7 +1135,6 @@
             if (limitInfo) limitInfo.style.display = 'none';
         }
 
-        if (tabId === 'cuadratura-tab' && chartInstance) chartInstance.resize();
         if (tabId === 'tracker-tab' && trackerChartInstance) trackerChartInstance.resize();
     }
 
@@ -1425,7 +1463,7 @@
                     <td>${g.categoria || ''}</td>
                     <td>${g.prov || ''}</td>
                     <td>${g.tipo || ''}</td>
-                    <td style="font-size:0.72rem; color:var(--text-dim);">${formatHoraMonterrey(g.timestamp)}</td>
+                    <td style="font-size:0.72rem; color:var(--text-dim); text-align:center;">${formatHoraMonterrey(g.timestamp)}</td>
                     <td style="font-size:0.68rem; color:var(--text-dim);">${g.operador || ''}</td>
                     <td style="text-align: center;">
                         <button class="cell-btn edit" onclick="openEditModal('${g.id}')">✎</button>
@@ -1716,10 +1754,12 @@
     let dataViajes = [], dataParadas = [], dataGuiasEscaneadas = new Set(), rawProcessedStats = [];
     let umbralDiasCuadratura = 2;
     let rawDataFilter = []; 
-    let chartInstance = null;
     let trackerChartInstance = null;
     let currentSortCol = -1;
     let sortAsc = true;
+
+    // Flujo Dashboard (archivo Estatus_Entregas_Motivo)
+    let rawDashboardRows = [];
 
     function cambiarUmbralDias() {
         umbralDiasCuadratura = umbralDiasCuadratura >= 4 ? 2 : umbralDiasCuadratura + 1;
@@ -1727,11 +1767,14 @@
         if (dataViajes.length) processAllData();
     }
 
+    // ============================================================
+    //  FLUJO 1: VIAJES (Excel con hojas "Viajes" + "Paradas")
+    // ============================================================
     document.getElementById('fileViajes').addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (!file) return;
         const statusMsg = document.getElementById('statusMsg');
-        statusMsg.innerText = "Procesando archivo...";
+        statusMsg.innerText = "Procesando archivo de Viajes...";
         statusMsg.style.color = "#aaa";
 
         const reader = new FileReader();
@@ -1762,39 +1805,20 @@
                     referencia: row['Pedido Referencia externa'] !== undefined ? String(row['Pedido Referencia externa']).trim() : '',
                     fecha: fechaExcelCuadratura
                 }));
-                statusMsg.innerText = `Archivo cargado. ${rawDataFilter.length} registros en 'Paradas'.`;
+                statusMsg.innerText = `Viajes cargado. ${rawDataFilter.length} registros en 'Paradas'.`;
                 statusMsg.style.color = "var(--good)"; 
                 populateEstadoFilter();
             } catch (error) {
                 console.error(error);
-                statusMsg.innerText = "Error al leer el archivo Excel.";
+                statusMsg.innerText = "Error al leer el archivo Excel de Viajes.";
                 statusMsg.style.color = "#ff6b6b";
             }
         };
         reader.readAsBinaryString(file);
     });
 
-    async function fetchFirebase3DaysData() {
-        try {
-            const tempGuias = new Set();
-            const calculoFecha = (diasAtras) => {
-                const d = new Date();
-                d.setDate(d.getDate() - diasAtras);
-                return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
-            };
-            const diasPermitidos = Array.from({ length: umbralDiasCuadratura }, (_, i) => calculoFecha(i));
-            allGuias.forEach(g => {
-                if (g.guia && diasPermitidos.includes(g.dateKey)) tempGuias.add(String(g.guia).trim());
-            });
-            return tempGuias;
-        } catch (error) { 
-            console.error("Error filtrando Firebase", error);
-            return new Set(); 
-        }
-    }
-
     async function processAllData() {
-        if (!dataViajes.length) return alert("Sube el archivo primero.");
+        if (!dataViajes.length) return alert("Sube el archivo de Viajes primero.");
         document.getElementById('btn-loader').style.display = 'inline-block';
         dataGuiasEscaneadas = await fetchFirebase3DaysData();
         rawProcessedStats = []; 
@@ -1823,6 +1847,134 @@
         document.getElementById('btn-loader').style.display = 'none';
     }
 
+    // ============================================================
+    //  FLUJO 2: DASHBOARD (Estatus_Entregas_Motivo)
+    // ============================================================
+    document.getElementById('fileDashboard').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const statusMsg = document.getElementById('statusMsg');
+        statusMsg.innerText = "Procesando archivo Dashboard...";
+        statusMsg.style.color = "#aaa";
+
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+            try {
+                const wb = XLSX.read(evt.target.result, { type: 'binary' });
+                const sheetName = wb.SheetNames.find(n =>
+                    n.trim().toLowerCase().includes('estatus') ||
+                    n.trim().toLowerCase() === 'estatus_entregas_motivo'
+                ) || wb.SheetNames[0];
+
+                rawDashboardRows = XLSX.utils.sheet_to_json(wb.Sheets[sheetName]) || [];
+
+                if (rawDashboardRows.length === 0) {
+                    statusMsg.innerText = "La hoja Dashboard está vacía.";
+                    statusMsg.style.color = "#ff6b6b";
+                    return;
+                }
+
+                const jornadaRaw = rawDashboardRows[0]['Fecha Jornada'] || "";
+                const dateMatch = String(jornadaRaw).match(/\d{2}\/\d{2}\/\d{4}/);
+                const fechaExcelCuadratura = dateMatch ? dateMatch[0] : "S/F";
+
+                document.getElementById('display-fecha').innerText = fechaExcelCuadratura;
+                document.getElementById('info-display').style.display = 'flex';
+
+                rawDataFilter = rawDashboardRows.map(r => ({
+                    estado: r['Descripcion'] !== undefined ? String(r['Descripcion']).trim() : '',
+                    idViaje: r['Id Viaje'] !== undefined ? String(r['Id Viaje']).trim() : '',
+                    referencia: r['Paquete'] !== undefined ? String(r['Paquete']).trim() : '',
+                    fecha: fechaExcelCuadratura,
+                    motivo: r['Motivo'] !== undefined ? String(r['Motivo']).trim() : ''
+                }));
+
+                statusMsg.innerText = `Dashboard cargado. ${rawDataFilter.length} registros.`;
+                statusMsg.style.color = "var(--good)";
+                populateEstadoFilter();
+            } catch (error) {
+                console.error(error);
+                statusMsg.innerText = "Error al leer el archivo Dashboard.";
+                statusMsg.style.color = "#ff6b6b";
+            }
+        };
+        reader.readAsBinaryString(file);
+    });
+
+    async function processDashboardData() {
+        if (!rawDashboardRows.length) return alert("Sube el archivo Dashboard primero.");
+        document.getElementById('btn-loader-dashboard').style.display = 'inline-block';
+        dataGuiasEscaneadas = await fetchFirebase3DaysData();
+        rawProcessedStats = [];
+
+        const rows = rawDashboardRows;
+        const viajeConductorMap = {};
+
+        rows.forEach(r => {
+            const idViaje = String(r['Id Viaje'] || '').trim();
+            if (!idViaje) return;
+            if (!viajeConductorMap[idViaje]) {
+                viajeConductorMap[idViaje] = {
+                    conductor: String(r['Conductor'] || '').trim(),
+                    // El Dashboard no trae Estado/Categoría del viaje:
+                    // los dejamos con guion para no romper la tabla.
+                    estadoViaje: "-",
+                    categoriaViaje: "-"
+                };
+            }
+        });
+
+        rows.forEach(r => {
+            const idViaje = String(r['Id Viaje'] || '').trim();
+            const infoViaje = viajeConductorMap[idViaje];
+            if (!infoViaje) return;
+            if (infoViaje.conductor === "COP MTY") return;
+
+            const guia = String(r['Paquete'] || '').trim();
+            const estadoPaquete = String(r['Descripcion'] || '').trim();
+            const motivo = String(r['Motivo'] || '').trim();
+            const proveedor = (infoViaje.conductor === "CONDUCTOR QP CONDUCTOR QP") ? "QP" : "ROMBO";
+
+            // El Dashboard no trae Amazon/SameDay: usamos "-" para no romper la tabla.
+            const categoriaAmazon = "-";
+
+            rawProcessedStats.push({
+                proveedor,
+                conductor: infoViaje.conductor,
+                estadoViaje: infoViaje.estadoViaje,
+                categoriaViaje: infoViaje.categoriaViaje,
+                categoria: categoriaAmazon,
+                estado: estadoPaquete,
+                motivo: motivo,
+                guia,
+                viaje: idViaje
+            });
+        });
+
+        renderUI();
+        filterAndRenderTable();
+        document.getElementById('btn-loader-dashboard').style.display = 'none';
+    }
+
+    async function fetchFirebase3DaysData() {
+        try {
+            const tempGuias = new Set();
+            const calculoFecha = (diasAtras) => {
+                const d = new Date();
+                d.setDate(d.getDate() - diasAtras);
+                return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
+            };
+            const diasPermitidos = Array.from({ length: umbralDiasCuadratura }, (_, i) => calculoFecha(i));
+            allGuias.forEach(g => {
+                if (g.guia && diasPermitidos.includes(g.dateKey)) tempGuias.add(String(g.guia).trim());
+            });
+            return tempGuias;
+        } catch (error) { 
+            console.error("Error filtrando Firebase", error);
+            return new Set(); 
+        }
+    }
+
     function renderUI() {
         const query = document.getElementById('smart-search').value.toLowerCase();
         const provSel = document.getElementById('filter-proveedor').value;
@@ -1842,9 +1994,9 @@
             guiasUnicas: new Set(),
             totalGuias: 0, pendNoEmb: 0, pendNoEnt: 0
         };
-        let tableHtml = "";
         let pendientesCount = 0;
-        const driverNoEntregados = {};
+        const matchedItems = [];
+        const driverPendingCount = {};
 
         rawProcessedStats.forEach(item => {
             if (item.proveedor !== provSel) return;
@@ -1864,26 +2016,31 @@
                 else if (item.categoriaViaje === "Amazon Same Day") stats.choferes.s.add(item.conductor);
             }
             const estadosRetorno = ['Fin de Carga', 'No Embarcado TR2', 'No Entregado', 'No Recibido CEDIS'];
-            // --- CONDICIÓN MODIFICADA: se excluyen guías que ya están entregadas en otra jornada ---
             if (estadosRetorno.includes(item.estado) && !dataGuiasEscaneadas.has(item.guia) && !guiasEntregadas.has(item.guia) && item.estado !== 'No Recibido CEDIS') {
                 if (item.estado === 'No Embarcado TR2') stats.pendNoEmb++;
                 if (item.estado === 'No Entregado') stats.pendNoEnt++;
                 const match = item.guia.toLowerCase().includes(query) || item.conductor.toLowerCase().includes(query) || String(item.viaje).includes(query);
                 if (match) {
                     pendientesCount++;
-                    const badgeClass = item.estado === 'No Entregado' ? 'c-badge no-ent' : 'c-badge no-emb';
-                    tableHtml += `
-                        <tr class="master-row">
-                            <td style="color:var(--text-dim); font-style: italic;">${item.categoria}</td>
-                            <td style="font-weight:700;">${item.viaje}</td>
-                            <td style="color:var(--text-dim);">${item.conductor}</td>
-                            <td style="font-weight:700; color:var(--bad);">${item.guia}</td>
-                            <td><span class="${badgeClass}">${item.estado}</span></td>
-                        </tr>`;
-                    if(item.estado === 'No Entregado') driverNoEntregados[item.conductor] = (driverNoEntregados[item.conductor] || 0) + 1;
+                    matchedItems.push(item);
+                    driverPendingCount[item.conductor] = (driverPendingCount[item.conductor] || 0) + 1;
                 }
             }
         });
+
+        const tableHtml = matchedItems.map(item => {
+            const badgeClass = item.estado === 'No Entregado' ? 'c-badge no-ent' : 'c-badge no-emb';
+            const count = driverPendingCount[item.conductor] || 0;
+            const tip = `${count} guía${count === 1 ? '' : 's'} pendiente${count === 1 ? '' : 's'} por devolver`;
+            return `
+                <tr class="master-row">
+                    <td style="color:var(--text-dim); font-style: italic;">${item.categoria}</td>
+                    <td style="font-weight:700;">${item.viaje}</td>
+                    <td style="color:var(--text-dim);"><span class="driver-name" onmouseenter="showDriverTip(event, '${tip.replace(/'/g, "\\'")}')" onmouseleave="hideDriverTip()">${item.conductor}</span></td>
+                    <td style="font-weight:700; color:var(--bad);">${item.guia}</td>
+                    <td><span class="${badgeClass}">${item.estado}</span></td>
+                </tr>`;
+        }).join('');
 
         stats.totalGuias = stats.guiasUnicas.size;
         document.getElementById('display-total-guias').innerText = stats.totalGuias;
@@ -1906,37 +2063,27 @@
         document.getElementById('sub-chofer-amz').innerText = stats.choferes.a.size;
         document.getElementById('sub-chofer-same').innerText = stats.choferes.s.size;
         document.getElementById('pending-list-body').innerHTML = tableHtml || `<tr><td colspan="5" class="empty-msg">Sin resultados o todas escaneadas dentro de los últimos ${umbralDiasCuadratura} días.</td></tr>`;
-
-        const sorted = Object.entries(driverNoEntregados).sort((a,b) => b[1]-a[1]);
-        renderChart(sorted.slice(0, 5));
-        document.getElementById('driver-summary-list').innerHTML = sorted.map(([n, c]) => `
-            <div style="display:flex; justify-content:space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.03);">
-                <span style="max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-transform:uppercase; font-size:0.72rem; color:var(--text-dim);">${n}</span>
-                <span style="background: rgba(239, 68, 68, 0.1); padding: 2px 6px; border-radius:4px; font-weight:800; color:var(--bad); font-size:0.75rem;">${c}</span>
-            </div>
-        `).join('');
     }
 
     function smartFilter() { renderUI(); }
 
-    function renderChart(data) {
-        const ctx = document.getElementById('chart-pendientes').getContext('2d');
-        if (chartInstance) chartInstance.destroy();
-        chartInstance = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: data.map(i => i[0].split(' ')[0]),
-                datasets: [{ data: data.map(i => i[1]), backgroundColor: '#9b2222', borderRadius: 2 }]
-            },
-            options: {
-                indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    x: { beginAtZero: true, grid: { display: false }, ticks: { color: '#666', font: { size: 8 } } },
-                    y: { grid: { display: false }, ticks: { color: '#999', font: { size: 8 } } }
-                }
-            }
-        });
+    function showDriverTip(evt, text) {
+        let tip = document.getElementById('driver-tip-box');
+        if (!tip) {
+            tip = document.createElement('div');
+            tip.id = 'driver-tip-box';
+            tip.className = 'driver-tip-box';
+            document.body.appendChild(tip);
+        }
+        tip.textContent = text;
+        tip.style.display = 'block';
+        const rect = evt.target.getBoundingClientRect();
+        tip.style.left = (rect.left + rect.width / 2) + 'px';
+        tip.style.top = rect.top + 'px';
+    }
+    function hideDriverTip() {
+        const tip = document.getElementById('driver-tip-box');
+        if (tip) tip.style.display = 'none';
     }
 
     function dateKeyToDate(dateKey) {
@@ -2158,11 +2305,6 @@
                 icon.parentElement.classList.remove("text-white");
             }
         });
-    }
-    function copyDriverSummary() {
-        let text = "CHOFER\tCANT\n";
-        document.querySelectorAll('#driver-summary-list > div').forEach(r => { text += `${r.children[0].innerText}\t${r.children[1].innerText}\n`; });
-        navigator.clipboard.writeText(text).then(() => alert("Copiado."));
     }
     function copyTableToSheets() {
         let text = "CAT\tVIAJE\tCHOFER\tGUIA\tESTADO\n";
