@@ -60,23 +60,6 @@
         .file-input-label input {
             display: none;
         }
-        .sheet-btn {
-            background: #1f8b4c;
-            padding: 8px 16px;
-            border-radius: 30px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            border: none;
-            color: white;
-            font-weight: 500;
-            transition: background 0.2s;
-        }
-        .sheet-btn:hover {
-            background: #166b3a;
-        }
         .status {
             font-size: 0.9rem;
             color: #a0c4e2;
@@ -98,7 +81,6 @@
             flex-direction: column;
             overflow-y: auto;
             z-index: 900;
-            transition: all 0.2s;
             border-right: 1px solid #d0d7de;
         }
         .sidebar-header {
@@ -165,23 +147,6 @@
             flex: 1;
             height: 100%;
             background: #eef2f6;
-        }
-        .leaflet-popup-content {
-            font-size: 0.9rem;
-            min-width: 220px;
-        }
-        .popup-row {
-            display: flex;
-            margin-bottom: 4px;
-        }
-        .popup-label {
-            font-weight: 600;
-            width: 90px;
-            color: #2c3e50;
-        }
-        .popup-value {
-            flex: 1;
-            color: #1e2b3c;
         }
         .selected-marker {
             filter: drop-shadow(0 0 8px gold);
@@ -266,9 +231,6 @@
             <i class="fas fa-upload"></i> Cargar CSV
             <input type="file" id="csvFileInput" accept=".csv">
         </label>
-        <button class="sheet-btn" id="loadSheetBtn">
-            <i class="fas fa-table"></i> Cargar ejemplo
-        </button>
         <div class="status" id="statusMessage">
             <i class="fas fa-info-circle"></i> Esperando archivo...
         </div>
@@ -299,26 +261,20 @@
             // ---- Variables globales ----
             let map;
             let markersLayer = L.layerGroup();
+            let connectorLine = null; // Línea punteada entre puntos gemelos
             let allRows = [];
             let markerMap = new Map();
             let selectedRowIndex = null;
             let selectedMarkerPair = [];
             let currentNotification = null;
-            let hasData = false;
 
             // ---- Inicializar mapa ----
             function initMap() {
                 map = L.map('map').setView(MAP_CENTER, ZOOM_LEVEL);
 
-                // ============================================================
-                // PROVEEDOR DE MOSAICOS: OpenFreeMap
-                // - Gratuito
-                // - Sin API key
-                // - Sin registro
-                // - Sin bloqueos
-                // ============================================================
-                L.tileLayer('https://tiles.openfreemap.org/styles/bright/{z}/{x}/{y}.png', {
-                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://openfreemap.org/">OpenFreeMap</a>',
+                // Mosaicos raster de OpenStreetMap (gratuitos, sin API key, sin bloqueos)
+                L.tileLayer('https://tile.openstreetmap.de/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
                     maxZoom: 19
                 }).addTo(map);
 
@@ -375,11 +331,14 @@
 
             function clearMapAndData() {
                 markersLayer.clearLayers();
+                if (connectorLine) {
+                    map.removeLayer(connectorLine);
+                    connectorLine = null;
+                }
                 markerMap.clear();
                 allRows = [];
                 selectedRowIndex = null;
                 selectedMarkerPair = [];
-                hasData = false;
                 const container = document.getElementById('sidebarContent');
                 container.innerHTML = '';
                 const placeholder = document.createElement('div');
@@ -401,6 +360,10 @@
                     if (el) el.classList.remove('selected-marker', 'twin-marker');
                 });
                 selectedMarkerPair = [];
+                if (connectorLine) {
+                    map.removeLayer(connectorLine);
+                    connectorLine = null;
+                }
             }
 
             function updateSidebar(row) {
@@ -454,7 +417,7 @@
                     `;
                 });
                 html += `</div>`;
-                html += `<div style="padding: 12px 6px; font-size:0.8rem; color:#5b6e82;"><i class="fas fa-link"></i> Punto gemelo resaltado en el mapa</div>`;
+                html += `<div style="padding: 12px 6px; font-size:0.8rem; color:#5b6e82;"><i class="fas fa-link"></i> Punto gemelo resaltado en el mapa con línea punteada</div>`;
 
                 container.innerHTML = html;
             }
@@ -462,11 +425,12 @@
             function renderMarkers(rows) {
                 markersLayer.clearLayers();
                 markerMap.clear();
-
-                if (!rows || rows.length === 0) {
-                    hasData = false;
-                    return;
+                if (connectorLine) {
+                    map.removeLayer(connectorLine);
+                    connectorLine = null;
                 }
+
+                if (!rows || rows.length === 0) return;
 
                 rows.forEach((row, idx) => {
                     const coordOrig = parseCoord(row.gps_original);
@@ -482,13 +446,7 @@
                             tipo: 'original'
                         }).addTo(markersLayer);
 
-                        marker.bindPopup(() => {
-                            return `<b>📍 GPS Original</b><br>
-                                    <div class="popup-row"><span class="popup-label">Dirección:</span><span class="popup-value">${row.direccion || '—'}</span></div>
-                                    <div class="popup-row"><span class="popup-label">Destinatario:</span><span class="popup-value">${row.destinatario || '—'}</span></div>
-                                    <div class="popup-row"><span class="popup-label">TBM:</span><span class="popup-value">${row.tbm || '—'}</span></div>`;
-                        });
-
+                        // SIN POPUP (la información se muestra solo en el panel izquierdo)
                         marker.on('click', (e) => {
                             L.DomEvent.stopPropagation(e);
                             selectRowAndHighlight(idx);
@@ -510,13 +468,7 @@
                             tipo: 'entrega'
                         }).addTo(markersLayer);
 
-                        marker.bindPopup(() => {
-                            return `<b>🚚 GPS Entrega</b><br>
-                                    <div class="popup-row"><span class="popup-label">Dirección:</span><span class="popup-value">${row.direccion || '—'}</span></div>
-                                    <div class="popup-row"><span class="popup-label">Destinatario:</span><span class="popup-value">${row.destinatario || '—'}</span></div>
-                                    <div class="popup-row"><span class="popup-label">TBM:</span><span class="popup-value">${row.tbm || '—'}</span></div>`;
-                        });
-
+                        // SIN POPUP
                         marker.on('click', (e) => {
                             L.DomEvent.stopPropagation(e);
                             selectRowAndHighlight(idx);
@@ -525,8 +477,6 @@
                         markerMap.set(idx + '_entrega', marker);
                     }
                 });
-
-                hasData = rows.length > 0;
 
                 if (markersLayer.getLayers().length > 0) {
                     try {
@@ -549,28 +499,40 @@
                 const markersToHighlight = [];
                 const keyOrig = rowIndex + '_original';
                 const keyEntrega = rowIndex + '_entrega';
+                let markerOrig = null;
+                let markerEntrega = null;
 
                 if (markerMap.has(keyOrig)) {
-                    const m = markerMap.get(keyOrig);
-                    markersToHighlight.push(m);
-                    const el = m.getElement();
+                    markerOrig = markerMap.get(keyOrig);
+                    markersToHighlight.push(markerOrig);
+                    const el = markerOrig.getElement();
                     if (el) el.classList.add('selected-marker', 'twin-marker');
                 }
                 if (markerMap.has(keyEntrega)) {
-                    const m = markerMap.get(keyEntrega);
-                    markersToHighlight.push(m);
-                    const el = m.getElement();
+                    markerEntrega = markerMap.get(keyEntrega);
+                    markersToHighlight.push(markerEntrega);
+                    const el = markerEntrega.getElement();
                     if (el) el.classList.add('selected-marker', 'twin-marker');
                 }
 
                 selectedMarkerPair = markersToHighlight;
 
-                if (markersToHighlight.length === 2) {
-                    const group = L.featureGroup(markersToHighlight);
-                    map.fitBounds(group.getBounds().pad(0.5));
-                } else if (markersToHighlight.length === 1) {
-                    map.setView(markersToHighlight[0].getLatLng(), 15);
+                // ---- DIBUJAR LÍNEA PUNTEADA ENTRE LOS DOS PUNTOS GEMELOS ----
+                if (markerOrig && markerEntrega) {
+                    const latlngs = [markerOrig.getLatLng(), markerEntrega.getLatLng()];
+                    connectorLine = L.polyline(latlngs, {
+                        color: '#ffaa00',
+                        weight: 2.5,
+                        opacity: 0.85,
+                        dashArray: '6, 8',
+                        lineCap: 'round'
+                    }).addTo(map);
+                    // La línea va por debajo de los marcadores
+                    connectorLine.bringToBack();
                 }
+
+                // ---- SIN ZOOM: no se modifica la vista del mapa ----
+                // (Se eliminó map.fitBounds y map.setView)
             }
 
             function parseCSV(csvText) {
@@ -658,54 +620,11 @@
                 reader.readAsText(file);
             }
 
-            function loadSampleData() {
-                setStatus('Cargando datos de ejemplo...', true);
-
-                const sampleCSV = `fecha_operacion,fecha_entrega,hora_entrega,tbm,tipo_servicio,distancia_metros,gps_original,gps_entrega,direccion,destinatario,telefono_destinatario,codigo_postal,jornada,muelle,conductor,placas,viajes
-2026-09-27,2026-09-28,09:33:31.950000,21955450,ND,11046707,"25.7507236,-100.386667","0.0,0.0",Ley de reforma agraria 5131 PLUTARCO ELIAS CALLES MONTERREY NUEVO LEON 64108 Mexico,Juan carlos rosales hernandez,+528134801227,64108,787,G,Carlos Valencia Gallegos,TCG062B,22648
-2026-09-27,2026-09-28,09:30:29.620000,21957356,ND,11046434,"25.7501763,-100.3838875","0.0,0.0","Banco de fomento #6764A, Plutarco elias calles PLUTARCO ELIAS CALLES MONTERREY NUEVO LEON 64108 Mexico",Paulina Ovalle,8119754804,64108,787,G,Carlos Valencia Gallegos,TCG062B,22648
-2026-09-27,2026-09-28,09:24:34.076000,21956575,ND,11031282,"25.7546041,-100.2325084","0.0,0.0","Parque Sabino Norte #104, Cerradas del Parque CERRADAS DEL PARQUE CIUDAD APODACA NUEVO LEON 66632 Mexico",Aurora Guevara,8131805553,66632,787,S,Oziel Fernandez Hernandez,RYP047C,22667
-2026-09-27,2026-09-28,10:14:28.043000,21954864,ND,11028925,"25.710947,-100.2051145","0.0,0.0",Plaza Oriente 1103 RESIDENCIAL SAN ANTONIO GUADALUPE NUEVO LEON 67112 Mexico,Rita del Carmen Alemán,8333887677,67112,787,B,Jorge Alberto Camacho Garcia,RUH595A,22672
-2026-09-27,2026-09-28,09:24:28.316000,21956506,ND,13807,"25.7484747,-100.3824427","25.6861273,-100.2632509",colonial de la sierra 6468 LOMAS DE CUMBRES MONTERREY NUEVO LEON 64116 Mexico,Juan Jose Martinez Aguilar,8124067919,64116,787,G,Carlos Valencia Gallegos,TCG062B,22648
-2026-09-27,2026-09-28,09:23:56.440000,21950452,ND,13807,"25.7484747,-100.3824427","25.6861273,-100.2632509",colonial de la sierra 6468 LOMAS DE CUMBRES MONTERREY NUEVO LEON 64116 Mexico,Juan Jose Martinez Aguilar,8124067919,64116,787,G,Carlos Valencia Gallegos,TCG062B,22648
-2026-09-27,2026-09-28,10:37:48.096000,21954928,ND,5711,"25.732079,-100.3977251","25.6971694,-100.355907","Paseo de los Leones 1217, Colonia Las Cumbres, Monterrey, Nuevo León, 64610, México",DIEGO SANCHEZ,+528189991749,64610,787,V,Israel Natanel Duarte Flores,PM9872B,22664
-2026-09-27,2026-09-28,09:14:44.883000,21956340,ND,5602,"25.4705097,-100.1843333","25.5180142,-100.2029194","Calle Monte de los Olivos 116, Colonia El Barrial, Santiago, Nuevo León, 67303, México",Daniel Maldonado,+528110502259,67303,787,E,Aldo Fabian Mireles Cano,B61TKK51,22646
-2026-09-27,2026-09-28,09:48:08.693000,21955750,ND,4090,"25.6944483,-100.2842232","25.7300436,-100.2739546",Francisco Villa 2804 jardines de la moderna JARDINES DE LA MODERNA MONTERREY NUEVO LEON 64536 Mexico,Carlos Garza,8110442427,64536,787,O,Jhossio De Jesus Morales Leyva,RPL266C,22685
-2026-09-25,2026-09-28,10:34:57.066000,21948016,ND,3877,"25.7114171,-100.380765","25.7298733,-100.4136","Calle Cima de Tres Cruces 100, Colonia Cima de la Montaña, Monterrey, Nuevo León, 64349, México",Yolanda Siller Treviño,+528112512080,64349,787,L,Jahir Eduardo Martinez Hernandez,RXU932A,22653
-2026-09-26,2026-09-28,09:27:48.690000,21951851,SD,3055,"25.7268812,-100.2349443","25.7089112,-100.2580178","Calle Iturbide 100, Colonia Industrias del Vidrio Ampliación Oriente, San Nicolás de los Garza, Nuevo León, 66470, México",Yeraldhi Sanchez,+528119391935,66470,787,G,Alejandra Margarita Sifuentes Jasso,SAA106C,22678
-2026-09-27,2026-09-28,09:31:32.180000,21957232,ND,2733,"25.4788025,-100.1750338","25.4965421,-100.1938729","Calle Olmos 112, Privada Los Nogales, El Ranchito, Santiago, Nuevo León, 67303, México",Roberto de la Garza de la Torre,8120934010,67303,787,E,Aldo Fabian Mireles Cano,B61TKK51,22646
-2026-09-27,2026-09-28,08:39:41.420000,21959757,ND,2369,"25.6493223,-100.1749436","25.6683667,-100.16435","Calle Fuente de Palta 317, Colonia Fuentes de Guadalupe, Guadalupe, Nuevo León, 67205, México",Fernando Salazar,+528110701257,67205,787,E,Francisco Ortega Zuñiga,SKC138A,22675
-2026-09-27,2026-09-28,10:43:05.400000,21958854,ND,2061,"25.6942747,-100.4635479","25.6860817,-100.4450967",AV. LUIS DONADO COLOSIO MURRIETA #221 RESIDENCIAL CUAUHTEMOC CIUDAD SANTA CATARINA NUEVO LEON 66360 Mexico,Andres Joel Solis Medrano,8116861716,66360,787,S,Ramon Arredondo Valle,TAB693A,22696
-2026-09-27,2026-09-28,09:53:56.613000,21957921,ND,1952,"25.7376121,-100.4063526","25.7214417,-100.3987767",Padua 3057 colonia cumbres 5 sector BOSQUES DE LAS CUMBRES MONTERREY NUEVO LEON 64619 Mexico,Mario Alberto González Montemayor,+528114132328,64619,787,L,Jahir Eduardo Martinez Hernandez,RXU932A,22653
-2026-09-27,2026-09-28,10:41:26.176000,21955994,ND,1737,"25.7550448,-100.1613865","25.7419071,-100.170766",Rio Orinoco 146  Apodaca Nuevo Leon 66640 Mexico,Alejandra del Pilar Cobos Rivas,8111151449,66640,787,Q,Juan Francisco Gonzalez Sepulveda,SKG847B,22698
-2026-09-27,2026-09-28,10:42:03.986000,21955483,ND,1725,"25.7550448,-100.1613865","25.7419907,-100.1706846",Rio Orinoco 146  Apodaca Nuevo Leon 66640 Mexico,Alejandra del Pilar Cobos Rivas,8111151449,66640,787,Q,Juan Francisco Gonzalez Sepulveda,SKG847B,22698
-2026-09-27,2026-09-28,10:51:22.593000,21954611,ND,1609,"25.7648321,-100.2352159","25.751193,-100.2298389",Ébano 331 sector grecia CORINTO RESIDENCIAL CIUDAD APODACA NUEVO LEON 66630 Mexico,Lizeth Diego,+528127325192,66630,787,S,Oziel Fernandez Hernandez,RYP047C,22667
-2026-09-27,2026-09-28,10:33:57.103000,21957764,ND,1578,"25.7420377,-100.4054765","25.7300233,-100.4138567",Cima tres cruzes 106 CUMBRES ELITE MONTERREY NUEVO LEON 64349 Mexico,Armando Leal,528115991711,64349,787,L,Jahir Eduardo Martinez Hernandez,RXU932A,22653
-2026-09-27,2026-09-28,08:27:15.450000,21954491,ND,1526,"25.5550814,-100.2321415","25.5664476,-100.2406725",CARRETERA NACIONAL 267 N. 1110-27 PLAZA DEL SUR (REMAX) EL ENCINO MONTERREY NUEVO LEON 64987 Mexico,MONSERRAT MARTINEZ CASTRO,8110770766,64987,787,N,Felipe de Jesus Garcia Cervantes,PJ1672C1,22655
-2026-09-27,2026-09-28,10:57:40.246000,21957639,ND,1516,"25.7885563,-100.1452665","25.7749525,-100.1463061",NAFTA 775 parque Industrial Stiva Aeropuerto APODACA CENTRO CIUDAD APODACA NUEVO LEON 66600 Mexico,Monica Camacho,+528115037249,66600,787,H,Carlos Azael Correa Mendoza,SJG407A,22649`;
-
-                try {
-                    const rows = parseCSV(sampleCSV);
-                    if (rows.length === 0) {
-                        showNotification('Los datos de ejemplo no contienen coordenadas válidas', true);
-                        return;
-                    }
-                    clearMapAndData();
-                    allRows = rows;
-                    renderMarkers(rows);
-                    setStatus(`${rows.length} filas de ejemplo cargadas`);
-                    showNotification(`📋 ${rows.length} envíos de ejemplo cargados`);
-                } catch (err) {
-                    console.error(err);
-                    showNotification('Error al cargar datos de ejemplo', true);
-                }
-            }
-
             window.addEventListener('load', () => {
                 initMap();
                 document.getElementById('csvFileInput').addEventListener('change', handleFileUpload);
-                document.getElementById('loadSheetBtn').addEventListener('click', loadSampleData);
-                map.on('click', () => { /* opcional */ });
+                // Al hacer clic en el mapa vacío, no se hace nada
+                map.on('click', () => { /* Sin acción */ });
             });
 
         })();
