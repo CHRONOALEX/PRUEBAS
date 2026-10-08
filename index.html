@@ -835,10 +835,10 @@
     #trace-tab button { font: inherit; border: 1px solid var(--carbon-border); background: var(--card-bg); color: var(--text-main); padding: 8px 12px; border-radius: 8px; cursor: pointer; font-family: 'Lexend', sans-serif; }
     #trace-tab button.p { background: var(--primary); border-color: var(--primary); color: #fff; font-weight: 600; }
     #trace-tab button.p.done { background: var(--good); border-color: var(--good); }
-    #trace-tab .tw { overflow-x: auto; border: 1px solid var(--carbon-border); border-radius: 10px; max-height: 62vh; }
-    #trace-tab table { border-collapse: collapse; width: 100%; white-space: nowrap; }
-    #trace-tab th, #trace-tab td { padding: 5px 10px; text-align: left; border-bottom: 1px solid var(--carbon-border); font-size: 0.78rem; }
-    #trace-tab th { position: sticky; top: 0; background: var(--card-bg); cursor: pointer; user-select: none; font-size: 11px; text-transform: uppercase; letter-spacing: .03em; color: var(--text-dim); z-index: 1; }
+    #trace-tab .tw { overflow-x: auto; border: 1px solid var(--carbon-border); border-radius: 10px; max-height: 62vh; overflow-y: auto; }
+    #trace-tab table { border-collapse: collapse; width: 100%; white-space: nowrap; table-layout: auto; }
+    #trace-tab th, #trace-tab td { padding: 5px 8px; text-align: left; border-bottom: 1px solid var(--carbon-border); font-size: 0.76rem; }
+    #trace-tab th { position: sticky; top: 0; background: var(--card-bg); cursor: pointer; user-select: none; font-size: 10.5px; text-transform: uppercase; letter-spacing: .03em; color: var(--text-dim); z-index: 1; white-space: nowrap; }
     #trace-tab th:hover { color: var(--text-main); }
     #trace-tab th .ar { color: var(--accent); margin-left: 3px; }
     #trace-tab tbody tr:hover { background: var(--table-row-hover); }
@@ -852,6 +852,24 @@
     #trace-tab .sumbox { background: var(--card-bg); border: 1px solid var(--carbon-border); border-radius: 12px; padding: 8px 12px; max-height: 150px; overflow: auto; }
     #trace-tab .sumbox b { font-size: 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: .04em; }
     #trace-tab .opt { display: flex; gap: 6px; align-items: flex-start; font-size: 12px; color: var(--text-dim); }
+
+    /* ===== TRACE: aprovechar ancho en escritorio ===== */
+    @media (min-width: 1100px) {
+        #trace-tab .tw { overflow-x: hidden; }
+        #trace-tab table { table-layout: fixed; white-space: normal; }
+        #trace-tab th, #trace-tab td { white-space: normal; word-break: break-word; padding: 5px 6px; font-size: 0.72rem; }
+        #trace-tab th:nth-child(1), #trace-tab td:nth-child(1) { width: 9%; }    /* trackingid */
+        #trace-tab th:nth-child(2), #trace-tab td:nth-child(2) { width: 12%; }   /* fecha del cambio */
+        #trace-tab th:nth-child(3), #trace-tab td:nth-child(3) { width: 9%; }    /* de */
+        #trace-tab th:nth-child(4), #trace-tab td:nth-child(4) { width: 9%; }    /* a */
+        #trace-tab th:nth-child(5), #trace-tab td:nth-child(5) { width: 11%; }   /* fecha previa */
+        #trace-tab th:nth-child(6), #trace-tab td:nth-child(6) { width: 7%; }    /* tiempo */
+        #trace-tab th:nth-child(7), #trace-tab td:nth-child(7) { width: 11%; }   /* paso intermedio */
+        #trace-tab th:nth-child(8), #trace-tab td:nth-child(8) { width: 9%; }    /* usuario */
+        #trace-tab th:nth-child(9), #trace-tab td:nth-child(9) { width: 6%; }    /* viaje */
+        #trace-tab th:nth-child(10), #trace-tab td:nth-child(10) { width: 10%; } /* motivo */
+        #trace-tab th:nth-child(11), #trace-tab td:nth-child(11) { width: 7%; }  /* placas */
+    }
 </style>
 </head>
 <body>
@@ -1085,7 +1103,6 @@
             
             <div class="card c-flex-between">
                 <div class="c-flex-center" style="flex-wrap: wrap; row-gap: 8px;">
-                    <!-- Flujo 1: Viajes -->
                     <span class="flow-label">Viajes:</span>
                     <input type="file" id="fileViajes" style="display:none;" accept=".xlsx, .xls">
                     <label for="fileViajes" class="btn-primary btn-secondary" style="padding: 8px 14px; font-size: 0.75rem; font-weight: 700; cursor:pointer;">
@@ -1097,7 +1114,6 @@
 
                     <span class="flow-separator"></span>
 
-                    <!-- Flujo 2: Dashboard -->
                     <span class="flow-label">Dashboard:</span>
                     <input type="file" id="fileDashboard" style="display:none;" accept=".xlsx, .xls">
                     <label for="fileDashboard" class="btn-primary btn-secondary" style="padding: 8px 14px; font-size: 0.75rem; font-weight: 700; cursor:pointer;">
@@ -1109,7 +1125,6 @@
 
                     <span class="flow-separator"></span>
 
-                    <!-- Umbral compartido -->
                     <button id="btn-umbral-dias" onclick="cambiarUmbralDias()" title="Cambiar umbral de días para la cuadratura" class="btn-primary btn-secondary" style="padding: 8px 14px; font-size:0.75rem; font-weight:700;">
                         <i class="fas fa-calendar-day" style="margin-right: 6px;"></i>UMBRAL: <span id="umbral-dias-label">2</span> DÍAS
                     </button>
@@ -1446,7 +1461,6 @@
     </div>
 
 <script>
-    // Ofuscación simple para que la key no quede a simple vista en el HTML.
     function _dk(s) { return atob(s.split('').reverse().join('')); }
     const firebaseConfig = {
         apiKey: _dk("woUaf90ZTdEMOR1bfhnVDNTawFFOhtEd0cWR21Ub5c2Q5NVY6lUQ"),
@@ -1496,7 +1510,6 @@
         }
     }
 
-    // ===== OPTIMIZACIÓN: cache de tabs para evitar re-render innecesario =====
     let lastActiveTab = null;
 
     function switchTab(tabId, btn) {
@@ -2173,7 +2186,6 @@
     let currentSortCol = -1;
     let sortAsc = true;
 
-    // Flujo Dashboard (archivo Estatus_Entregas_Motivo)
     let rawDashboardRows = [];
 
     function cambiarUmbralDias() {
@@ -2182,9 +2194,6 @@
         if (dataViajes.length) processAllData();
     }
 
-    // ============================================================
-    //  FLUJO 1: VIAJES (Excel con hojas "Viajes" + "Paradas")
-    // ============================================================
     document.getElementById('fileViajes').addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (!file) return;
@@ -2262,9 +2271,6 @@
         document.getElementById('btn-loader').style.display = 'none';
     }
 
-    // ============================================================
-    //  FLUJO 2: DASHBOARD (Estatus_Entregas_Motivo)
-    // ============================================================
     document.getElementById('fileDashboard').addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (!file) return;
@@ -2840,10 +2846,10 @@
          {k:"fechaPrev",t:"fecha situación previa",d:1},
          {k:"tiempo",t:"tiempo en el cambio",n:1,raw:"seg"},
          {k:"inter",t:"paso intermedio"},
-         {k:"motivo",t:"motivo"},
          {k:"usuario",t:"usuario"},
-         {k:"placas",t:"placas"},
-         {k:"viaje",t:"viaje",n:1}
+         {k:"viaje",t:"viaje",n:1},
+         {k:"motivo",t:"motivo"},
+         {k:"placas",t:"placas"}
         ];
         const $=id=>document.getElementById(id);
         let viajeSel=new Set(),vOpen=false,rows=[],view=[],sortK="fechaCambio",sortD=-1,meta={};
