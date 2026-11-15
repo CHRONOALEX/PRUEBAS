@@ -3336,21 +3336,67 @@
         }).setView([23.6345, -102.5528], 5);
         L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-        // Mapas base (requieren internet). Si un proveedor falla, cambia solo al siguiente.
+        // Cuadrícula local (siempre debajo): se ve si el mapa de fondo no puede cargar
+        const OfflineGridLayer = L.GridLayer.extend({
+            createTile: function (coords) {
+                const tile = document.createElement('canvas');
+                const size = this.getTileSize();
+                tile.width = size.x;
+                tile.height = size.y;
+                const ctx = tile.getContext('2d');
+
+                // Fondo cartográfico suave
+                ctx.fillStyle = '#eef2f5';
+                ctx.fillRect(0, 0, size.x, size.y);
+
+                // Retícula secundaria
+                ctx.strokeStyle = '#e2e8f0';
+                ctx.lineWidth = 1;
+                const step = 64;
+                for (let x = 0; x <= size.x; x += step) {
+                    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, size.y); ctx.stroke();
+                }
+                for (let y = 0; y <= size.y; y += step) {
+                    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(size.x, y); ctx.stroke();
+                }
+
+                // Borde de mosaico
+                ctx.strokeStyle = '#cbd5e1';
+                ctx.strokeRect(0, 0, size.x, size.y);
+
+                // Coordenadas geográficas de referencia en el mosaico
+                const n = Math.pow(2, coords.z);
+                const lon = (coords.x / n) * 360 - 180;
+                const latRad = Math.atan(Math.sinh(Math.PI * (1 - 2 * coords.y / n)));
+                const lat = (latRad * 180) / Math.PI;
+
+                ctx.fillStyle = '#94a3b8';
+                ctx.font = '10px Lexend, sans-serif';
+                ctx.fillText(`${lat.toFixed(2)}°, ${lon.toFixed(2)}°`, 8, 16);
+
+                return tile;
+            }
+        });
+        new OfflineGridLayer({ zIndex: 0 }).addTo(map);
+
+        // Mapas base libres (OpenStreetMap y derivados, sin API key). Si uno falla, pasa solo al siguiente.
         const OSM_ATTR = '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>';
         const baseCarto = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-            subdomains: 'abcd', maxZoom: 20, attribution: OSM_ATTR + ' &copy; CARTO'
+            subdomains: 'abcd', maxZoom: 20, zIndex: 1, attribution: OSM_ATTR + ' &copy; CARTO'
         });
         const baseOsm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19, attribution: OSM_ATTR
+            maxZoom: 19, zIndex: 1, attribution: OSM_ATTR
+        });
+        const baseOsmFr = L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
+            subdomains: 'abc', maxZoom: 20, zIndex: 1, attribution: OSM_ATTR + ' &copy; OSM France'
         });
         const baseEsri = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
-            maxZoom: 19, attribution: 'Mapa &copy; Esri'
+            maxZoom: 19, zIndex: 1, attribution: 'Mapa &copy; Esri'
         });
         const baseSatelite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-            maxZoom: 19, attribution: 'Imágenes &copy; Esri, Maxar, Earthstar Geographics'
+            maxZoom: 19, zIndex: 1, attribution: 'Imágenes &copy; Esri, Maxar, Earthstar Geographics'
         });
-        const calleLayers = [baseCarto, baseOsm, baseEsri];
+        const calleLayers = [baseCarto, baseOsm, baseOsmFr, baseEsri];
         let tileOk = 0, tileErr = 0, avisoBase = false;
         calleLayers.forEach((l, i) => {
             l.on('tileload', () => { if (map.hasLayer(l)) tileOk++; });
@@ -3364,13 +3410,13 @@
                 } else if (!avisoBase) {
                     avisoBase = true;
                     const t = document.getElementById('mp-toast');
-                    if (t) { t.textContent = 'No se pudo cargar el mapa de fondo. Revisa tu conexión a internet.'; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 6000); }
+                    if (t) { t.textContent = 'No se pudo cargar el mapa de fondo (sin internet o bloqueado). Se muestra la cuadrícula local.'; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 7000); }
                 }
             });
         });
         map.on('baselayerchange', () => { tileOk = 0; tileErr = 0; });
         baseCarto.addTo(map);
-        L.control.layers({ 'Calles (CARTO)': baseCarto, 'Calles (OSM)': baseOsm, 'Calles (Esri)': baseEsri, 'Satélite': baseSatelite }, null, { position: 'bottomright', collapsed: true }).addTo(map);
+        L.control.layers({ 'Calles (CARTO)': baseCarto, 'Calles (OSM)': baseOsm, 'Calles (OSM Francia)': baseOsmFr, 'Calles (Esri)': baseEsri, 'Satélite': baseSatelite }, null, { position: 'bottomright', collapsed: true }).addTo(map);
 
         const pinsLayer = L.layerGroup().addTo(map);
 
