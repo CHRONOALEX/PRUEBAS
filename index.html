@@ -328,7 +328,6 @@
     }
     #btn-theme-toggle:hover { background: var(--accent); color: #111; border-color: var(--accent); }
 
-    /* ---- Header responsivo: nunca se desborda ---- */
     @media (max-width: 1200px) {
         .header-dynamic-title { display: none; }
     }
@@ -353,7 +352,6 @@
         .nav-tab-btn { min-width: 68px; padding: 6px 10px; }
     }
 
-    /* ---- Admin Guías: barra de filtros ordenada ---- */
     #admin-tab .filter-top {
         display: flex; align-items: center; justify-content: space-between;
         flex-wrap: wrap; gap: 10px 12px; flex: 1 1 100%; min-width: 0;
@@ -743,7 +741,7 @@
         display: block;
     }
 
-    /* ===== KPI TAB STYLES (adaptados al tema del Master) ===== */
+    /* ===== KPI TAB STYLES ===== */
     .kpi-grid {
         display: grid;
         grid-template-columns: 1fr 3fr;
@@ -989,7 +987,7 @@
     .sd-tag.sd { background: rgba(168,85,247,0.2); color: #c084fc; border: 1px solid rgba(168,85,247,0.4); }
     .sd-tag.inc { background: rgba(239,68,68,0.15); color: var(--bad); border: 1px solid rgba(239,68,68,0.35); }
 
-    /* ===== TEMA TRAXION (header lime #d2df00 + fondo blanco + gris claro) ===== */
+    /* ===== TEMA TRAXION ===== */
     body.theme-traxion {
         --primary: #d2df00;
         --primary-hover: #b9c500;
@@ -1111,9 +1109,11 @@
     #mapa-tab .mp-wrap {
         position: relative; isolation: isolate; overflow: hidden; border-radius: 12px;
         border: 1px solid var(--carbon-border); height: clamp(420px, calc(100vh - 300px), 900px);
+        background: #e5e7eb;
     }
-    #mapa-tab #mp-map { position: absolute; inset: 0; z-index: 1; }
-    #mapa-tab .leaflet-container { font-family: 'Lexend', sans-serif; color: #23262b; }
+    #mapa-tab #mp-map { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; background: #e8ecf1; }
+    #mapa-tab .leaflet-container { font-family: 'Lexend', sans-serif; color: #23262b; background: #e8ecf1 !important; cursor: grab; }
+    #mapa-tab .leaflet-container:active { cursor: grabbing; }
     #mapa-tab .mp-empty { position: absolute; z-index: 999; inset: 0; display: flex; align-items: center; justify-content: center; padding: 16px; pointer-events: none; }
     #mapa-tab .mp-empty .mp-box {
         pointer-events: auto; background: rgba(255,255,255,.94); color: #23262b; border: 1.5px dashed #c9c9c3; border-radius: 16px;
@@ -1163,7 +1163,7 @@
         backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
     }
     body.mapa-active #mapa-tab .mp-wrap {
-        position: fixed; inset: 0; z-index: 0; height: auto; min-height: 0;
+        position: fixed; inset: 0; z-index: 0; height: 100vh; width: 100vw; min-height: 0;
         border: none; border-radius: 0;
     }
     @media (max-width: 980px) { body.mapa-active #top-nav { position: relative; } }
@@ -1451,10 +1451,9 @@
             </div>
         </div>
 
-        <!-- ================= CUADRATURA TAB (MEJORADA) ================= -->
+        <!-- ================= CUADRATURA TAB ================= -->
         <div id="cuadratura-tab" class="tab-content">
             
-            <!-- Tarjeta unificada: Barra de carga inteligente + KPIs -->
             <div class="card" style="display: flex; flex-direction: column; gap: 12px;">
                 <div class="c-flex-between" style="border-bottom: 1px solid var(--carbon-border); padding-bottom: 10px;">
                     <div class="c-flex-center" style="flex-wrap: wrap; row-gap: 8px;">
@@ -1483,7 +1482,6 @@
                     </div>
                 </div>
 
-                <!-- Grid de indicadores KPI compactado -->
                 <div id="cuadratura-stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px;">
                     <div class="c-num-box c-tinted" style="--box-color: var(--primary);">
                         <div class="c-label" style="font-size: 0.65rem;">Faltan Escanear</div>
@@ -1518,7 +1516,6 @@
                 </div>
             </div>
 
-            <!-- Tarjeta unificada con Subpestañas para las 2 tablas -->
             <div class="card">
                 <div class="c-subtabs-bar">
                     <div class="c-subtabs-group">
@@ -1534,7 +1531,6 @@
                         </button>
                     </div>
 
-                    <!-- Controles dinámicos según la subpestaña activa -->
                     <div id="subtab-actions-pendientes" class="c-flex-center">
                         <button onclick="copyTableToSheets()" class="btn-primary" style="padding:6px 12px; font-size:0.72rem;">
                             <i class="fas fa-copy" style="margin-right:5px;"></i>COPIAR SHEETS
@@ -1552,7 +1548,6 @@
                     </div>
                 </div>
 
-                <!-- Subpestaña 1: Listado de Pendientes -->
                 <div id="c-subtab-pendientes" class="c-subtab-panel active">
                     <div class="table-wrap" style="max-height: 460px; overflow-y: auto;">
                         <table id="table-pending">
@@ -1572,7 +1567,6 @@
                     </div>
                 </div>
 
-                <!-- Subpestaña 2: Filtro de Paquetes por Estado -->
                 <div id="c-subtab-estados" class="c-subtab-panel">
                     <div class="table-wrap" style="max-height: 460px; overflow-y: auto;">
                         <table id="dataTable">
@@ -2648,7 +2642,7 @@
     }
 
     // ============================================================
-    //  CUADRATURA: DETECCIÓN AUTOMÁTICA + SUBPESTAÑAS
+    //  CUADRATURA
     // ============================================================
     let dataViajes = [], dataParadas = [], dataGuiasEscaneadas = new Set(), rawProcessedStats = [];
     let umbralDiasCuadratura = 2;
@@ -2657,7 +2651,7 @@
     let currentSortCol = -1;
     let sortAsc = true;
     let rawDashboardRows = [];
-    let cuadraturaTipoDetectado = null; // 'viajes' | 'dashboard' | null
+    let cuadraturaTipoDetectado = null;
 
     function switchCuadraturaSubtab(subtabId, btn) {
         document.querySelectorAll('#cuadratura-tab .c-subtab-btn').forEach(b => b.classList.remove('active'));
@@ -3798,222 +3792,568 @@
     function kpiEsc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;"); }
     function kpiHms(s) {
         if (s == null) return "";
-        return [Math.floor(s / 3600), Math.floor((s % 3600) / 60), s % 60].map(function (n) { return String(n).padStart(2, "0"); }).join(":");
+        var h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), x = s % 60;
+        return String(h).padStart(2, "0") + ":" + String(m).padStart(2, "0") + ":" + String(x).padStart(2, "0");
     }
-    function kpiSortByViaje(list) {
-        return list.slice().sort(function (a, b) {
-            var va = Number(a.idv), vb = Number(b.idv);
-            var na = isNaN(va), nb = isNaN(vb);
-            if (!na && !nb && va !== vb) return va - vb;
-            if (na !== nb) return na ? 1 : -1;
-            if (a.idv !== b.idv) return String(a.idv).localeCompare(String(b.idv), "es");
-            return (a.h == null ? 9e9 : a.h) - (b.h == null ? 9e9 : b.h);
+    var kpiShown = [], kpiCurKey = null, kpiChipList = [], kpiActiveChip = null;
+    function kpiRenderRows(rows) {
+        kpiShown = rows.slice().sort(function (a, b) {
+            return String(a.f || "").localeCompare(String(b.f || "")) || (a.h || 0) - (b.h || 0);
         });
-    }
-    var kpiCurrentShown = [];
-    function kpiRenderRows(list) {
-        kpiCurrentShown = kpiSortByViaje(list);
-        document.getElementById("kpiListBody").innerHTML = kpiCurrentShown.map(function (o) {
-            return "<tr><td>" + kpiEsc(o.idv) + "</td><td>" + kpiEsc(o.dOrig) + "</td><td>" + kpiEsc(o.f) + "</td><td>" + kpiEsc(o.p) + "</td><td>" + kpiHms(o.h) + "</td></tr>";
+        document.getElementById("kpiListBody").innerHTML = kpiShown.map(function (o) {
+            return "<tr><td>" + kpiEsc(o.idv) + "</td><td>" + kpiEsc(o.dOrig || o.d) + "</td><td>" + kpiEsc(o.f) + "</td><td>" + kpiEsc(o.p) + "</td><td>" + kpiEsc(kpiHms(o.h) || o.hRaw) + "</td></tr>";
         }).join("");
     }
-    function kpiRenderHisto(list) {
-        var wrap = document.getElementById("kpiHistoWrap");
-        var svg = document.getElementById("kpiHistoSvg");
-        if (!list.length) { wrap.style.display = "none"; return; }
-        var buckets = {}, minH = 24, maxH = 0;
-        list.forEach(function (o) {
-            if (o.h == null) return;
-            var hr = Math.floor(o.h / 3600);
-            buckets[hr] = (buckets[hr] || 0) + 1;
-            if (hr < minH) minH = hr;
-            if (hr > maxH) maxH = hr;
+    function kpiRenderHisto(rows, title) {
+        var wrap = document.getElementById("kpiHistoWrap"), svg = document.getElementById("kpiHistoSvg");
+        if (!rows.length) { wrap.style.display = "none"; return; }
+        var counts = {};
+        for (var h = 0; h < 24; h++) counts[h] = 0;
+        var has = 0;
+        rows.forEach(function (o) {
+            if (o.h != null) {
+                counts[Math.floor(o.h / 3600) % 24]++;
+                has++;
+            }
         });
-        if (minH > maxH) { wrap.style.display = "none"; return; }
-        var start = Math.min(8, minH), end = Math.max(21, maxH);
-        var hrs = [];
-        for (var h = start; h <= end; h++) hrs.push({ hr: h, n: buckets[h] || 0 });
-        var maxN = Math.max.apply(null, hrs.map(function (x) { return x.n; }).concat([1]));
-        var W = 760, H = 200, padL = 32, padR = 16, padT = 22, padB = 26;
-        var plotW = W - padL - padR, plotH = H - padT - padB;
-        var n = hrs.length;
-        var pts = hrs.map(function (x, i) {
-            var px = padL + (n === 1 ? plotW / 2 : (i / (n - 1)) * plotW);
-            var py = padT + plotH - (x.n / maxN) * plotH;
-            return { x: px, y: py, hr: x.hr, n: x.n };
-        });
-        var grid = [0, 0.5, 1].map(function (t) {
-            var y = padT + plotH - t * plotH;
-            var val = Math.round(t * maxN);
-            return '<line class="kpi-histoGrid" x1="' + padL + '" y1="' + y + '" x2="' + (W - padR) + '" y2="' + y + '"/>'
-                + '<text class="kpi-histoAxisLbl" x="' + (padL - 6) + '" y="' + (y + 3) + '" text-anchor="end">' + val + '</text>';
-        }).join("");
-        var lineD = pts.map(function (p, i) { return (i ? "L" : "M") + p.x.toFixed(1) + "," + p.y.toFixed(1); }).join(" ");
-        var dots = pts.map(function (p) {
-            return '<circle class="kpi-histoDot" cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="3.5"/>'
-                + (p.n ? '<text class="kpi-histoLbl" x="' + p.x.toFixed(1) + '" y="' + (p.y - 7).toFixed(1) + '" text-anchor="middle">' + p.n + '</text>' : "")
-                + '<text class="kpi-histoAxisLbl" x="' + p.x.toFixed(1) + '" y="' + (H - 8) + '" text-anchor="middle">' + String(p.hr).padStart(2, "0") + 'h</text>';
-        }).join("");
-        svg.innerHTML = grid + '<path class="kpi-histoLine" d="' + lineD + '"/>' + dots;
-        document.getElementById("kpiHistoTitle").textContent = "Distribución por hora (" + list.length + " paquete" + (list.length === 1 ? "" : "s") + ")";
+        if (!has) { wrap.style.display = "none"; return; }
         wrap.style.display = "block";
+        document.getElementById("kpiHistoTitle").textContent = title || ("Entregas por hora (" + has + ")");
+        var W = 760, H = 200, padL = 28, padR = 12, padT = 20, padB = 26, cw = W - padL - padR, ch = H - padT - padB;
+        var max = 1;
+        for (var h = 0; h < 24; h++) if (counts[h] > max) max = counts[h];
+        var pts = [], out = '<line class="kpi-histoGrid" x1="' + padL + '" y1="' + (padT + ch) + '" x2="' + (W - padR) + '" y2="' + (padT + ch) + '"/>';
+        for (var h = 0; h < 24; h++) {
+            var x = padL + (h / 23) * cw, y = padT + ch - (counts[h] / max) * ch;
+            pts.push(x.toFixed(1) + "," + y.toFixed(1));
+        }
+        out += '<polyline class="kpi-histoLine" points="' + pts.join(" ") + '"/>';
+        for (var h = 0; h < 24; h++) {
+            var x = padL + (h / 23) * cw, y = padT + ch - (counts[h] / max) * ch;
+            if (counts[h] > 0) {
+                out += '<circle class="kpi-histoDot" cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="3.5"/>';
+                out += '<text class="kpi-histoLbl" x="' + x.toFixed(1) + '" y="' + (y - 6).toFixed(1) + '" text-anchor="middle">' + counts[h] + '</text>';
+            }
+            if (h % 2 === 0) out += '<text class="kpi-histoAxisLbl" x="' + x.toFixed(1) + '" y="' + (H - 8) + '" text-anchor="middle">' + h + 'h</text>';
+        }
+        svg.innerHTML = out;
     }
-    var KPI_TRACK_URL = "https://redpack.unigis.com/tracking/Shipment/Index?id=";
-    function kpiShowList(key, title) {
-        var list = kpiVista[key] || [];
+    function kpiSelectChip(idx) {
+        var chips = document.querySelectorAll("#kpiChips .kpi-chip");
+        chips.forEach(function (el) { el.classList.remove("active"); });
+        if (kpiActiveChip === idx || idx == null) {
+            kpiActiveChip = null;
+            var allRows = kpiVista[kpiCurKey] ? kpiVista[kpiCurKey].rows : [];
+            kpiRenderRows(allRows);
+            kpiRenderHisto(allRows, "Entregas por hora — todos (" + allRows.length + ")");
+            return;
+        }
+        kpiActiveChip = idx;
+        if (chips[idx]) chips[idx].classList.add("active");
+        var v = kpiChipList[idx];
+        kpiRenderRows(v.rows);
+        kpiRenderHisto(v.rows, "Entregas por hora — Id Viaje " + v.id + " (" + v.f + ")");
+    }
+    function kpiShowList(key) {
         var sec = document.getElementById("kpiListSection");
-        var chips = document.getElementById("kpiChips");
-        var byViaje = {};
-        list.forEach(function (o) {
-            var id = String(o.idv || "");
-            if (!byViaje[id]) byViaje[id] = { f: o.f || "", id: id, c: o.c || "", items: [] };
-            byViaje[id].items.push(o);
+        if (kpiCurKey === key && sec.style.display === "block") {
+            sec.style.display = "none";
+            kpiCurKey = null;
+            return;
+        }
+        var info = kpiVista[key];
+        if (!info) return;
+        kpiCurKey = key;
+        kpiActiveChip = null;
+        document.getElementById("kpiListTitle").textContent = info.title + " (" + info.rows.length + ")";
+        var viajes = {}, order = [];
+        info.rows.forEach(function (o) {
+            var id = String(o.idv == null || o.idv === "" ? "Sin Id" : o.idv);
+            var k = id + "|" + (o.f || "");
+            if (!viajes[k]) {
+                viajes[k] = { id: id, f: o.f || "", rows: [], drivers: {}, dOrder: [] };
+                order.push(viajes[k]);
+            }
+            viajes[k].rows.push(o);
+            var drv = o.c || "Sin conductor";
+            if (!viajes[k].drivers[drv]) {
+                viajes[k].drivers[drv] = 0;
+                viajes[k].dOrder.push(drv);
+            }
+            viajes[k].drivers[drv]++;
         });
-        var grupos = Object.keys(byViaje).map(function (k) { return byViaje[k]; }).sort(function (a, b) {
-            return String(b.f).localeCompare(String(a.f)) || String(a.id).localeCompare(String(b.id));
+        order.sort(function (a, b) {
+            return b.rows.length - a.rows.length || a.f.localeCompare(b.f) || a.id.localeCompare(b.id);
         });
-        var esTodos = document.getElementById("kpiConductorSelect").value === "__all__";
-        chips.innerHTML = grupos.map(function (g, idx) {
-            var track = g.id ? '<a class="trackBtn" href="' + KPI_TRACK_URL + encodeURIComponent(g.id) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">Tracking</a>' : "";
-            var drv = esTodos ? '<span class="cdriver" title="' + kpiEsc(g.c) + '">' + kpiEsc(g.c || "—") + '</span>' : '';
-            return '<div class="kpi-chip" data-idx="' + idx + '">' + drv + '<span class="cdate">' + kpiEsc(g.f) + '</span><span class="cid">Viaje ' + kpiEsc(g.id || "—") + '</span><span class="cn">' + g.items.length + '</span>' + track + '</div>';
+        kpiChipList = order;
+        var allDrivers = document.getElementById("kpiConductorSelect").value === "__all__";
+        document.getElementById("kpiChips").innerHTML = order.map(function (v, i) {
+            var drvTxt = v.dOrder.length === 1 ? v.dOrder[0] : v.dOrder.length + " conductores";
+            return '<div class="kpi-chip" data-idx="' + i + '">' + (allDrivers ? '<div class="cdriver" title="' + kpiEsc(v.dOrder.join(", ")) + '">' + kpiEsc(drvTxt) + '</div>' : '') + '<div class="cdate">' + kpiEsc(v.f) + '</div><div class="cid">' + kpiEsc(v.id) + '</div><div class="cn">' + v.rows.length + '</div><a class="trackBtn" href="https://redpack.unigis.com/tracking/Shipment/Index?id=' + encodeURIComponent(v.id) + '" target="_blank" rel="noopener">Tracking</a></div>';
         }).join("");
-        chips.querySelectorAll(".kpi-chip").forEach(function (el) {
-            el.addEventListener("click", function () {
-                chips.querySelectorAll(".kpi-chip").forEach(function (c) { c.classList.remove("active"); });
-                el.classList.add("active");
-                var g = grupos[+el.dataset.idx];
-                document.getElementById("kpiListTitle").textContent = title + " · Viaje " + (g.id || "—") + " (" + g.items.length + ")";
-                kpiRenderRows(g.items);
-                kpiRenderHisto(g.items);
-            });
-        });
-        document.getElementById("kpiListTitle").textContent = title + " (" + list.length + ")";
-        kpiRenderRows(list);
-        kpiRenderHisto(list);
+        kpiRenderRows(info.rows);
+        kpiRenderHisto(info.rows, "Entregas por hora — todos (" + info.rows.length + ")");
         sec.style.display = "block";
         sec.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
+    document.getElementById("kpiChips").addEventListener("click", function (e) {
+        if (e.target.closest(".trackBtn")) return;
+        var chip = e.target.closest(".kpi-chip");
+        if (chip) kpiSelectChip(+chip.getAttribute("data-idx"));
+    });
     document.getElementById("kpiCloseBtn").addEventListener("click", function () {
         document.getElementById("kpiListSection").style.display = "none";
+        kpiCurKey = null;
+        kpiActiveChip = null;
     });
     document.getElementById("kpiCopyBtn").addEventListener("click", function () {
-        var rows = kpiCurrentShown;
-        var tsv = ["Id Viaje\tDescripción\tFecha Jornada\tPaquete\tHora Estado"].concat(rows.map(function (o) {
-            return [o.idv, o.dOrig, o.f, o.p, kpiHms(o.h)].join("\t");
-        })).join("\n");
+        var tsv = "Id Viaje\tDescripción\tFecha Jornada\tPaquete\tHora Estado\n" + kpiShown.map(function (o) {
+            return [o.idv, o.dOrig || o.d, o.f, o.p, kpiHms(o.h) || o.hRaw].join("\t");
+        }).join("\n");
         var btn = this;
         navigator.clipboard.writeText(tsv).then(function () {
-            btn.textContent = "✓ Copiado (" + rows.length + ")";
+            btn.textContent = "✓ Copiado (" + kpiShown.length + ")";
             setTimeout(function () { btn.textContent = "📋 Copiar para Sheets"; }, 1800);
         });
     });
-    function kpiBindCard(id, key, title) {
-        var el = document.getElementById(id).parentElement;
+    [["kpiK1", "ent"], ["kpiK2", "noe"], ["kpiK3", "tr2"], ["kpiM1", "m1"], ["kpiM2", "m2"], ["kpiM3", "m3"]].forEach(function (p) {
+        var el = document.getElementById(p[0]).parentElement;
         el.style.cursor = "pointer";
-        el.title = "Haz clic para ver los paquetes";
-        el.addEventListener("click", function () { if (kpiRows.length) kpiShowList(key, title); });
-    }
-    kpiBindCard("kpiK1", "ent", "Total Entregas");
-    kpiBindCard("kpiK2", "noe", "Total No Entregados");
-    kpiBindCard("kpiK3", "tr2", "Total No Embarcados TR2");
-    kpiBindCard("kpiM1", "me", "Masivos Entregados");
-    kpiBindCard("kpiM2", "mn", "Masivos No Entregados");
-    kpiBindCard("kpiM3", "noc", "Entregas Nocturnas");
-
+        el.title = "Clic para ver listado de guías";
+        el.addEventListener("click", function () { kpiShowList(p[1]); });
+    });
     function kpiCalc() {
-        var c = document.getElementById("kpiConductorSelect").value;
-        var d = c === "__all__" ? kpiRows : kpiRows.filter(function (o) { return o.c === c; });
-        var dias = {}, lEnt = [], lNoe = [], lTr2 = [], lNoc = [];
+        var val = document.getElementById("kpiConductorSelect").value;
+        var d = val === "__all__" ? kpiRows : kpiRows.filter(function (o) { return o.c === val; });
+        var rEnt = [], rNoe = [], rTr2 = [], rNoc = [], dias = {};
         d.forEach(function (o) {
-            if (o.f) dias[o.f] = 1;
-            if (o.d === KPI_ENT) { lEnt.push(o); if (o.h != null && o.h >= 20 * 3600) lNoc.push(o); }
-            else if (o.d === KPI_NOE) lNoe.push(o);
-            else if (o.d === KPI_TR2) lTr2.push(o);
+            if (o.d === KPI_ENT) rEnt.push(o);
+            else if (o.d === KPI_NOE) rNoe.push(o);
+            else if (o.d === KPI_TR2) rTr2.push(o);
+            if (o.f) dias[o.c + "|" + o.f] = 1;
+            if (o.d === KPI_ENT && o.h != null && o.h >= 21 * 3600) rNoc.push(o);
         });
-        var nDias = Object.keys(dias).length;
-        var ent = lEnt.length, noe = lNoe.length, tr2 = lTr2.length, noc = lNoc.length;
-        var lMe = kpiMasivos(d, KPI_ENT), lMn = kpiMasivos(d, KPI_NOE);
-        kpiVista = { ent: lEnt, noe: lNoe, tr2: lTr2, me: lMe, mn: lMn, noc: lNoc };
-        document.getElementById("kpiListSection").style.display = "none";
-        document.getElementById("kpiK0").textContent = nDias;
-        var ef = (ent + noe) ? (ent / (ent + noe) * 100) : null;
-        document.getElementById("kpiEf").textContent = ef != null ? ef.toFixed(2) + "%" : "–";
-        var efCard = document.getElementById("kpiEfCard");
-        efCard.classList.remove("ef-red", "ef-yellow", "ef-green", "ef-gold");
-        if (ef != null) {
-            if (ef < 90) efCard.classList.add("ef-red");
-            else if (ef < 95) efCard.classList.add("ef-yellow");
-            else if (ef < 98) efCard.classList.add("ef-green");
-            else efCard.classList.add("ef-gold");
+        var ent = rEnt.length, noe = rNoe.length, tr2 = rTr2.length, noc = rNoc.length;
+        var m1 = kpiMasivos(d, KPI_ENT), m2 = kpiMasivos(d, KPI_NOE);
+        kpiVista = {
+            ent: { title: "Total Entregas", rows: rEnt },
+            noe: { title: "Total No Entregados", rows: rNoe },
+            tr2: { title: "Total No Embarcados TR2", rows: rTr2 },
+            m1: { title: "Masivos Entregados", rows: m1 },
+            m2: { title: "Masivos No Entregados", rows: m2 },
+            m3: { title: "Entregas Nocturnas", rows: rNoc }
+        };
+        if (kpiCurKey && document.getElementById("kpiListSection").style.display === "block") {
+            var cur = kpiCurKey;
+            kpiCurKey = null;
+            kpiShowList(cur);
         }
-        document.getElementById("kpiTp").textContent = kpiFmtDur(kpiTiempoPromedio(d));
+        var nd = Object.keys(dias).length;
+        document.getElementById("kpiK0").textContent = nd;
         document.getElementById("kpiK1").textContent = ent;
         document.getElementById("kpiK2").textContent = noe;
         document.getElementById("kpiK3").textContent = tr2;
-        document.getElementById("kpiP1").textContent = nDias ? (ent / nDias).toFixed(1) : "–";
-        document.getElementById("kpiP2").textContent = nDias ? (noe / nDias).toFixed(1) : "–";
-        document.getElementById("kpiP3").textContent = nDias ? (tr2 / nDias).toFixed(1) : "–";
-        document.getElementById("kpiM1").textContent = lMe.length;
-        document.getElementById("kpiM2").textContent = lMn.length;
+        document.getElementById("kpiP1").textContent = nd ? (ent / nd).toFixed(1) : "–";
+        document.getElementById("kpiP2").textContent = nd ? (noe / nd).toFixed(1) : "–";
+        document.getElementById("kpiP3").textContent = nd ? (tr2 / nd).toFixed(1) : "–";
+        document.getElementById("kpiM1").textContent = m1.length;
+        document.getElementById("kpiM2").textContent = m2.length;
         document.getElementById("kpiM3").textContent = noc;
+        document.getElementById("kpiTp").textContent = kpiFmtDur(kpiTiempoPromedio(d));
+        var base = ent + noe, ef = base ? (ent / base) * 100 : null;
+        document.getElementById("kpiEf").textContent = ef != null ? ef.toFixed(1) + "%" : "–";
+        var card = document.getElementById("kpiEfCard");
+        card.classList.remove("ef-red", "ef-yellow", "ef-green", "ef-gold");
+        if (ef != null) card.classList.add(ef < 90 ? "ef-red" : ef < 95 ? "ef-yellow" : ef < 98 ? "ef-green" : "ef-gold");
     }
 
-    // ================= MAPA PEDIDOS =================
+    // ============================================================
+    //  MAPA DE PEDIDOS (LEAFLET OFFLINE / SIN API, ARRASTRABLE)
+    // ============================================================
     (function () {
         if (typeof L === 'undefined') return;
-        const PALETTE = ['#D8E84B', '#F06060', '#58D68D', '#5DADE2', '#F5B041', '#AF7AC5', '#48C9B0', '#EB984E', '#EC7063', '#85C1E9'];
-        const OK_COLOR = '#22c55e', BAD_COLOR = '#F04438';
-        const pinColor = r => (r && r.mal) ? BAD_COLOR : OK_COLOR;
-        const $ = id => document.getElementById(id);
+        const PALETTE = [
+            { bg: '#f6fc92', border: '#c5cf2b' },
+            { bg: '#c8f5d4', border: '#38a169' },
+            { bg: '#cde7ff', border: '#3182ce' },
+            { bg: '#ffd6e0', border: '#d53f8c' },
+            { bg: '#ffe3bd', border: '#dd6b20' },
+            { bg: '#e3d5ff', border: '#805ad5' },
+            { bg: '#b8f2eb', border: '#2c7a7b' },
+            { bg: '#ffd1d1', border: '#e53e3e' },
+            { bg: '#d9f2b4', border: '#5a8f29' },
+            { bg: '#d6dcff', border: '#4c51bf' }
+        ];
+        const PIN_BODY = 'M14 1C7.4 1 2 6.4 2 13c0 9.2 12 25 12 25s12-15.8 12-25C26 6.4 20.6 1 14 1z';
+        const BAD = { bg: '#F04438', border: '#B42318' };
+        const BAD_KEYWORDS = ['sin colonia', 'no existe', 'no encontrada', 'no encontrado', 'error', 'invalida', 'inválida', 'sin resultado', 'sin ubicacion', 'sin ubicación', 'desconocida'];
 
-        const map = L.map('mp-map', { zoomControl: false, attributionControl: false }).setView([23.6345, -102.5528], 5);
+        const map = L.map('mp-map', {
+            zoomControl: false,
+            dragging: true,
+            touchZoom: true,
+            scrollWheelZoom: true,
+            doubleClickZoom: true,
+            boxZoom: true,
+            keyboard: true
+        }).setView([23.6345, -102.5528], 5);
         L.control.zoom({ position: 'bottomright' }).addTo(map);
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { maxZoom: 20, subdomains: 'abcd' }).addTo(map);
-        const layer = L.layerGroup().addTo(map);
 
-        let rows = [], stateColor = {}, hiddenStates = new Set(), selectedKey = null, markers = new Map(), onlyBad = false, panelMode = 'all';
+        // Capa de mapa vectorial / cuadrícula local en Canvas (100% sin API externa ni bloqueo de red)
+        const OfflineGridLayer = L.GridLayer.extend({
+            createTile: function (coords) {
+                const tile = document.createElement('canvas');
+                const size = this.getTileSize();
+                tile.width = size.x;
+                tile.height = size.y;
+                const ctx = tile.getContext('2d');
 
-        const norm = s => String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toUpperCase();
+                // Fondo cartográfico suave
+                ctx.fillStyle = '#eef2f5';
+                ctx.fillRect(0, 0, size.x, size.y);
+
+                // Retícula secundaria
+                ctx.strokeStyle = '#e2e8f0';
+                ctx.lineWidth = 1;
+                const step = 64;
+                for (let x = 0; x <= size.x; x += step) {
+                    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, size.y); ctx.stroke();
+                }
+                for (let y = 0; y <= size.y; y += step) {
+                    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(size.x, y); ctx.stroke();
+                }
+
+                // Borde de mosaico
+                ctx.strokeStyle = '#cbd5e1';
+                ctx.strokeRect(0, 0, size.x, size.y);
+
+                // Coordenadas geográficas de referencia en el mosaico
+                const n = Math.pow(2, coords.z);
+                const lon = (coords.x / n) * 360 - 180;
+                const latRad = Math.atan(Math.sinh(Math.PI * (1 - 2 * coords.y / n)));
+                const lat = (latRad * 180) / Math.PI;
+
+                ctx.fillStyle = '#94a3b8';
+                ctx.font = '10px Lexend, sans-serif';
+                ctx.fillText(`${lat.toFixed(2)}°, ${lon.toFixed(2)}°`, 8, 16);
+
+                return tile;
+            }
+        });
+        new OfflineGridLayer({ attribution: 'Mapa Interactivo Local (Sin API)' }).addTo(map);
+
+        const pinsLayer = L.layerGroup().addTo(map);
+
+        const $ = id => document.getElementById(id);
+        const tabEl = $('mapa-tab'), fileIn = $('mp-file'), qIn = $('mp-q');
+        const fname = document.createElement('span'); fname.className = 'mp-fname';
+        const statsEl = document.createElement('div'); statsEl.className = 'mp-stats';
+        statsEl.innerHTML = `<span class="mp-stat"><b id="mp-nPins">0</b> puntos</span><span class="mp-stat"><b id="mp-nRows">0</b> pedidos</span><span class="mp-warnchip" id="mp-onlyBad" title="Mostrar solo ubicaciones incorrectas">⚠ <b id="mp-nBadHdr">0</b> incorrectas</span>`;
+        const legendEl = document.createElement('div'); legendEl.className = 'mp-legend';
+        const barEl = tabEl.querySelector('.mp-bar');
+        barEl.querySelector('.mp-file').appendChild(fname);
+        barEl.append(statsEl, legendEl);
+        const panelEl = $('mp-panel'), pList = $('mp-pl'), pCount = $('mp-pcount');
+        let panelMode = 'all';
+
+        let all = [], markers = [], colorMap = {}, hiddenColors = new Set(), selected = null, onlyBad = false;
+        const syncPanelTop = () => {
+            const b = barEl.getBoundingClientRect();
+            tabEl.style.setProperty('--mp-top', Math.round(b.bottom + 10) + 'px');
+            tabEl.style.setProperty('--mp-left', Math.max(12, Math.round(b.left)) + 'px');
+        };
+        new ResizeObserver(syncPanelTop).observe(barEl);
+        window.addEventListener('resize', syncPanelTop);
+        $('mp-pcol').addEventListener('click', () => panelEl.classList.toggle('collapsed'));
+        $('mp-pf').addEventListener('click', e => {
+            const c = e.target.closest('.mp-pchip'); if (!c) return;
+            panelMode = c.dataset.m;
+            $('mp-pf').querySelectorAll('.mp-pchip').forEach(x => x.classList.toggle('active', x === c));
+            renderPanel();
+        });
+
         const esc = s => String(s ?? '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
-        const parseNum = v => {
+        const norm = s => String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toUpperCase().replace(/[^A-Z0-9]+/g, ' ').trim();
+        const toast = m => { const t = $('mp-toast'); t.textContent = m; t.classList.add('show'); clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 4500); };
+
+        function num(v) {
             if (typeof v === 'number') return Number.isFinite(v) ? v : NaN;
-            let s = String(v ?? '').trim().replace(/[^\d.,-]/g, '');
+            if (v == null) return NaN;
+            let s = String(v).trim().replace(/[^\d.,+-]/g, '');
             if (!s) return NaN;
             if (s.includes(',') && !s.includes('.')) s = s.replace(',', '.');
-            else if (s.includes(',') && s.includes('.')) s = s.replace(/,/g, '');
+            else s = s.replace(/,/g, '');
             const n = parseFloat(s);
             return Number.isFinite(n) ? n : NaN;
+        }
+        const okCoords = (la, lo) => Number.isFinite(la) && Number.isFinite(lo) && la >= -90 && la <= 90 && lo >= -180 && lo <= 180 && !(la === 0 && lo === 0);
+
+        const ALIASES = {
+            id: ['ID', 'PEDIDO ID', 'ID PEDIDO', 'ORDER ID'],
+            ref: ['REFERENCIA', 'REF', 'REFERENCIA EXTERNA', 'PEDIDO REFERENCIA', 'GUIA', 'TRACKING'],
+            nombre: ['NOMBRE', 'CLIENTE', 'DESTINATARIO', 'NOMBRE CLIENTE'],
+            dir: ['DIRECCION', 'DOMICILIO', 'CALLE', 'DIRECCION COMPLETA'],
+            col: ['COLONIA', 'ASENTAMIENTO', 'FRACCIONAMIENTO'],
+            mun: ['MUNICIPIO', 'DELEGACION', 'ALCALDIA', 'CIUDAD'],
+            edo: ['ESTADO', 'ENTIDAD', 'PROVINCIA'],
+            cp: ['CP', 'CODIGO POSTAL', 'POSTAL'],
+            lat: ['LATITUD', 'LAT', 'LATITUDE', 'Y'],
+            lng: ['LONGITUD', 'LON', 'LNG', 'LONG', 'LONGITUDE', 'X'],
+            obs: ['OBSERVACIONES', 'OBSERVACION', 'NOTAS', 'COMENTARIOS', 'REFERENCIAS', 'INDICACIONES'],
+            geo: ['GEOCODIFICACION', 'GEOCODE', 'ESTATUS GEO', 'TIPO GEOCODIFICACION', 'RESULTADO GEO', 'CALIDAD GEO', 'NIVEL GEO'],
+            color: ['COLOR', 'COLOR PIN', 'ZONA', 'RUTA', 'GRUPO', 'CATEGORIA', 'ESTATUS', 'ESTADO PEDIDO']
         };
-        function toast(msg) {
-            const el = $('mp-toast');
-            el.textContent = msg;
-            el.classList.add('show');
-            clearTimeout(toast._t);
-            toast._t = setTimeout(() => el.classList.remove('show'), 3600);
+
+        function mapCols(headers) {
+            const idx = {};
+            const nHeaders = headers.map(h => norm(h));
+            for (const [k, list] of Object.entries(ALIASES)) {
+                let found = -1;
+                for (const a of list) {
+                    found = nHeaders.findIndex(h => h === a);
+                    if (found !== -1) break;
+                }
+                if (found === -1) {
+                    for (const a of list) {
+                        if (a.length < 3) continue;
+                        found = nHeaders.findIndex(h => h.includes(a));
+                        if (found !== -1) break;
+                    }
+                }
+                idx[k] = found;
+            }
+            return idx;
         }
 
-        function findCols(headers) {
-            const H = headers.map(h => ({ raw: h, n: norm(h) }));
-            const pick = (...tests) => {
-                for (const t of tests) {
-                    const hit = H.find(h => typeof t === 'string' ? h.n === t : t.test(h.n));
-                    if (hit) return hit.raw;
-                }
-                return null;
-            };
-            return {
-                lat: pick('LATITUD', 'LAT', /^LATITUD\b/, /\bLATITUD\b/, /\bLAT\b/),
-                lng: pick('LONGITUD', 'LON', 'LNG', /^LONGITUD\b/, /\bLONGITUD\b/, /\bLON\b/, /\bLNG\b/),
-                id: pick('ID', 'ID PEDIDO', 'PEDIDO', /^ID\b/),
-                ref: pick('REFERENCIA', 'REF', 'GUIA', 'TRACKING', /REFERENCIA/, /GUIA/),
-                est: pick('ESTADO', 'ESTATUS', 'STATUS', /^ESTADO\b/, /^ESTATUS\b/),
-                nom: pick('NOMBRE', 'CLIENTE', 'DESTINATARIO', /NOMBRE/, /CLIENTE/),
-                dir: pick('DIRECCION', 'DOMICILIO', 'CALLE', /DIRECCION/, /DOMICILIO/),
-                ent: pick('ENTRE CALLES', 'ENTRECALLES', /ENTRE.*CALLE/),
-                bar: pick('BARRIO', 'COLONIA', 'LOCALIDAD', /COLONIA/, /BARRIO/),
-                cp: pick('CODIGO POSTAL', 'CP', 'C.P.', 'ZIP', /CODIGO POSTAL/, /\bCP\b/)
-            };
+        function isAutoBad(geo) {
+            if (!geo) return false;
+            const g = String(geo).toLowerCase();
+            return BAD_KEYWORDS.some(k => g.includes(k));
+        }
+        const isBad = r => r.manualBad !== null ? r.manualBad : r.autoBad;
+
+        function colorFor(key) {
+            const k = (key || 'Sin grupo').trim() || 'Sin grupo';
+            if (!colorMap[k]) colorMap[k] = PALETTE[Object.keys(colorMap).length % PALETTE.length];
+            return { key: k, ...colorMap[k] };
+        }
+
+        function pinIcon(c, sel, n, bad) {
+            const pal = bad ? BAD : c;
+            const numColor = bad ? '#fff' : '#555';
+            const label = n > 1 ? (n > 99 ? '99+' : n) : '';
+            const stroke = sel ? 'rgba(0,0,0,.5)' : 'none';
+            return L.divIcon({
+                className: '', iconSize: [28, 40], iconAnchor: [14, 39], popupAnchor: [0, -34],
+                html: `<div class="gpin${sel ? ' sel' : ''}"><svg viewBox="0 0 28 40"><path class="body" d="${PIN_BODY}" fill="${pal.bg}" stroke="${stroke}" stroke-width="2"/><circle cx="14" cy="13" r="6" fill="${pal.border}"/></svg>${label ? `<span class="gnum" style="color:${numColor}">${label}</span>` : ''}</div>`
+            });
+        }
+
+        function selectMarker(m) {
+            if (selected && selected !== m) selected.setIcon(pinIcon(selected._c, false, selected._rows.length, selected._rows.some(isBad)));
+            selected = m;
+            if (m) m.setIcon(pinIcon(m._c, true, m._rows.length, m._rows.some(isBad)));
+            pList.querySelectorAll('.mp-it').forEach(el => el.classList.toggle('sel', !!m && el.dataset.g === String(m._gi)));
+        }
+
+        function updateBadCount() {
+            const n = all.filter(isBad).length;
+            const b = $('mp-nBadHdr'); if (b) b.textContent = n;
+            const chip = $('mp-onlyBad');
+            if (chip) chip.style.display = n || onlyBad ? 'inline-flex' : 'none';
+            if (!n && onlyBad) { onlyBad = false; chip?.classList.remove('active'); }
+        }
+
+        function popupHtml(rows) {
+            const head = rows.length > 1 ? `<div class="mp-gcount">${rows.length} pedidos en esta ubicación</div>` : '';
+            const body = rows.map((r, i) => {
+                const c = colorFor(r.color);
+                const bad = isBad(r);
+                const dir = [r.dir, r.col, r.mun, r.edo, r.cp].filter(Boolean).join(', ');
+                const row = (k, v) => v ? `<div class="mp-row"><span>${k}</span><span>${esc(v)}</span></div>` : '';
+                return `<div class="mp-order">
+                    ${r.color ? `<span class="mp-badge" style="background:${c.bg};border:1px solid ${c.border}">${esc(c.key)}</span>` : ''}
+                    <h4>${esc(r.nombre || r.ref || r.id || 'Pedido')}</h4>
+                    <div class="mp-sub">${[r.id && 'ID ' + r.id, r.ref && 'Ref ' + r.ref].filter(Boolean).map(esc).join(' · ')}</div>
+                    ${row('Dirección', dir)}
+                    ${row('Geocodificación', r.geo)}
+                    ${row('Observaciones', r.obs)}
+                    ${row('Coordenadas', `${r.lat.toFixed(6)}, ${r.lng.toFixed(6)}`)}
+                    <label class="mp-flag${bad ? ' on' : ''}">
+                        <input type="checkbox" data-idx="${r._i}" ${bad ? 'checked' : ''}>
+                        <span>Marcar ubicación incorrecta</span>
+                    </label>
+                </div>`;
+            }).join('');
+            return `<div class="mp-pop">${head}${body}</div>`;
+        }
+
+        function buildLegend() {
+            const entries = Object.entries(colorMap);
+            legendEl.innerHTML = '';
+            if (entries.length <= 1 && entries[0]?.[0] === 'Sin grupo') { legendEl.style.display = 'none'; return; }
+            legendEl.style.display = 'flex';
+            for (const [k, c] of entries) {
+                const el = document.createElement('span');
+                el.className = 'mp-chip' + (hiddenColors.has(k) ? ' off' : '');
+                el.innerHTML = `<i style="background:${c.bg};border:1px solid ${c.border}"></i>${esc(k)}`;
+                el.onclick = () => { hiddenColors.has(k) ? hiddenColors.delete(k) : hiddenColors.add(k); el.classList.toggle('off'); render(); };
+                legendEl.appendChild(el);
+            }
+        }
+
+        function renderPanel() {
+            if (!all.length) { pList.innerHTML = ''; return; }
+            const q = qIn.value.trim().toLowerCase();
+            const match = r => !q || r._search.includes(q);
+            const nBad = all.filter(isBad).length;
+            $('mp-nAll').textContent = all.length;
+            $('mp-nOk').textContent = all.length - nBad;
+            $('mp-nBad').textContent = nBad;
+            const list = all.filter(r => {
+                if (!match(r)) return false;
+                if (panelMode === 'bad') return isBad(r);
+                if (panelMode === 'ok') return !isBad(r);
+                return true;
+            });
+            pCount.textContent = list.length;
+            if (!list.length) { pList.innerHTML = '<div class="mp-pempty">Sin paquetes en esta vista</div>'; return; }
+            pList.innerHTML = list.map(r => {
+                const bad = isBad(r);
+                const t1 = r.ref || r.id || r.nombre || 'Pedido';
+                const t2 = [r.id && r.ref ? 'ID ' + r.id : '', r.nombre && t1 !== r.nombre ? r.nombre : '', r.col || r.mun].filter(Boolean).join(' · ');
+                const selCls = selected && r._m === selected ? ' sel' : '';
+                return `<div class="mp-it${selCls}" data-i="${r._i}" data-g="${r._gi ?? ''}">
+                    <div class="mp-itx"><div class="mp-it1">${esc(t1)}</div>${t2 ? `<div class="mp-it2">${esc(t2)}</div>` : ''}</div>
+                    <button type="button" class="mp-st ${bad ? 'bad' : 'ok'}" data-i="${r._i}">${bad ? 'Incorrecto' : 'Correcto'}</button>
+                </div>`;
+            }).join('');
+        }
+
+        function setRowBad(r, val) {
+            r.manualBad = val;
+            updateBadCount();
+            if (onlyBad) { render(); return; }
+            const m = r._m;
+            if (m) {
+                const anyBad = m._rows.some(isBad);
+                m.setIcon(pinIcon(m._c, m === selected, m._rows.length, anyBad));
+                m.setZIndexOffset(anyBad ? 500 : 0);
+                if (m.isPopupOpen()) m.setPopupContent(popupHtml(m._rows));
+            }
+            renderPanel();
+        }
+
+        pList.addEventListener('click', e => {
+            const btn = e.target.closest('.mp-st');
+            if (btn) {
+                e.stopPropagation();
+                const r = all[+btn.dataset.i]; if (r) setRowBad(r, !isBad(r));
+                return;
+            }
+            const it = e.target.closest('.mp-it'); if (!it) return;
+            const r = all[+it.dataset.i]; if (!r) return;
+            if (!r._m) { render(); }
+            if (r._m) {
+                map.setView(r._m.getLatLng(), Math.max(map.getZoom(), 16));
+                r._m.openPopup();
+                selectMarker(r._m);
+            }
+        });
+
+        function render(fit = false) {
+            pinsLayer.clearLayers();
+            markers = [];
+            selected = null;
+            all.forEach(r => { r._m = null; r._gi = null; });
+            const q = qIn.value.trim().toLowerCase();
+            const filtered = all.filter(r => {
+                if (hiddenColors.has(colorFor(r.color).key)) return false;
+                if (onlyBad && !isBad(r)) return false;
+                if (!q) return true;
+                return r._search.includes(q);
+            });
+
+            const groups = new Map();
+            for (const r of filtered) {
+                const key = r.lat.toFixed(6) + ',' + r.lng.toFixed(6);
+                if (!groups.has(key)) groups.set(key, []);
+                groups.get(key).push(r);
+            }
+
+            const bounds = [];
+            let gi = 0;
+            for (const rows of groups.values()) {
+                const c = colorFor(rows[0].color);
+                const anyBad = rows.some(isBad);
+                const m = L.marker([rows[0].lat, rows[0].lng], {
+                    icon: pinIcon(c, false, rows.length, anyBad),
+                    zIndexOffset: anyBad ? 500 : 0
+                });
+                m._c = c;
+                m._rows = rows;
+                m._gi = gi;
+                rows.forEach(r => { r._m = m; r._gi = gi; });
+                gi++;
+                m.bindPopup(() => popupHtml(rows), { maxWidth: 400 });
+                m.on('popupopen', e => {
+                    selectMarker(m);
+                    e.popup.getElement().querySelectorAll('.mp-flag input').forEach(cb => {
+                        cb.onchange = () => setRowBad(all[+cb.dataset.idx], cb.checked);
+                    });
+                });
+                m.on('popupclose', () => { if (selected === m) selectMarker(null); });
+                m.addTo(pinsLayer);
+                markers.push(m);
+                bounds.push([rows[0].lat, rows[0].lng]);
+            }
+
+            $('mp-nPins').textContent = markers.length;
+            $('mp-nRows').textContent = filtered.length;
+            updateBadCount();
+            renderPanel();
+            if (fit && bounds.length) {
+                map.fitBounds(bounds, { padding: [50, 50], maxZoom: 16 });
+            }
+        }
+
+        function loadRows(aoa, name) {
+            if (!aoa || aoa.length < 2) return toast('El archivo está vacío o no tiene filas.');
+            const headers = aoa[0].map(h => String(h ?? '').trim());
+            const idx = mapCols(headers);
+            if (idx.lat === -1 || idx.lng === -1) return toast('No encontré las columnas LATITUD y LONGITUD.');
+
+            all = []; colorMap = {}; hiddenColors.clear(); onlyBad = false;
+            $('mp-onlyBad')?.classList.remove('active');
+            let skipped = 0;
+            for (let i = 1; i < aoa.length; i++) {
+                const row = aoa[i];
+                if (!row || !row.length) continue;
+                const get = k => idx[k] !== -1 && row[idx[k]] != null ? String(row[idx[k]]).trim() : '';
+                const lat = num(row[idx.lat]), lng = num(row[idx.lng]);
+                if (!okCoords(lat, lng)) { skipped++; continue; }
+                const geo = get('geo');
+                const rec = {
+                    _i: all.length,
+                    id: get('id'), ref: get('ref'), nombre: get('nombre'),
+                    dir: get('dir'), col: get('col'), mun: get('mun'), edo: get('edo'), cp: get('cp'),
+                    lat, lng, obs: get('obs'), geo, color: get('color'),
+                    autoBad: isAutoBad(geo), manualBad: null
+                };
+                rec._search = [rec.id, rec.ref, rec.nombre, rec.dir, rec.col, rec.mun, rec.edo, rec.cp, rec.obs, rec.geo, rec.color].join(' ').toLowerCase();
+                all.push(rec);
+            }
+
+            if (!all.length) return toast('Ninguna fila tiene coordenadas válidas.');
+            all.forEach(r => colorFor(r.color));
+            fname.textContent = name;
+            statsEl.style.display = 'flex';
+            tabEl.classList.add('has-data');
+            syncPanelTop();
+            buildLegend();
+            render(true);
+            setTimeout(() => map.invalidateSize(), 100);
+            if (skipped) toast(`Se omitieron ${skipped} fila(s) sin coordenadas válidas.`);
         }
 
         function handleFile(file) {
@@ -4023,285 +4363,33 @@
                 try {
                     const wb = XLSX.read(e.target.result, { type: 'array' });
                     const ws = wb.Sheets[wb.SheetNames[0]];
-                    const json = XLSX.utils.sheet_to_json(ws, { defval: '' });
-                    if (!json.length) { toast('El archivo está vacío'); return; }
-
-                    const cols = findCols(Object.keys(json[0]));
-                    if (!cols.lat || !cols.lng) {
-                        toast('No encontré columnas LATITUD y LONGITUD en la primera fila');
-                        return;
-                    }
-
-                    const parsed = [];
-                    let skipped = 0;
-                    for (const r of json) {
-                        let lat = parseNum(r[cols.lat]), lng = parseNum(r[cols.lng]);
-                        if (!Number.isFinite(lat) || !Number.isFinite(lng) || (lat === 0 && lng === 0)) { skipped++; continue; }
-                        if (Math.abs(lat) > 90 && Math.abs(lng) <= 90) [lat, lng] = [lng, lat];
-                        if (Math.abs(lat) > 90 || Math.abs(lng) > 180) { skipped++; continue; }
-
-                        const g = k => k ? String(r[k] ?? '').trim() : '';
-                        parsed.push({
-                            lat, lng,
-                            id: g(cols.id),
-                            ref: g(cols.ref),
-                            est: g(cols.est) || 'Sin estado',
-                            nom: g(cols.nom),
-                            dir: g(cols.dir),
-                            ent: g(cols.ent),
-                            bar: g(cols.bar),
-                            cp: g(cols.cp),
-                            mal: false
-                        });
-                    }
-
-                    if (!parsed.length) { toast('Ninguna fila tenía coordenadas válidas'); return; }
-
-                    rows = parsed;
-                    hiddenStates.clear();
-                    selectedKey = null;
-                    onlyBad = false;
-                    panelMode = 'all';
-
-                    const states = [...new Set(rows.map(r => r.est))];
-                    stateColor = {};
-                    states.forEach((s, i) => stateColor[s] = PALETTE[i % PALETTE.length]);
-
-                    $('mapa-tab').classList.add('has-data');
-
-                    render(true);
-                    if (skipped) toast(`Se omitieron ${skipped} fila(s) sin coordenadas válidas`);
+                    const aoa = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+                    loadRows(aoa, file.name);
                 } catch (err) {
-                    console.error(err);
-                    toast('No se pudo leer el archivo');
+                    toast('No se pudo leer el archivo: ' + err.message);
                 }
             };
             reader.readAsArrayBuffer(file);
         }
 
-        function updateBadCount() {
-            const bad = rows.filter(r => r.mal).length;
-            if ($('mp-nAll')) $('mp-nAll').textContent = rows.length;
-            if ($('mp-nOk')) $('mp-nOk').textContent = rows.length - bad;
-            if ($('mp-nBad')) $('mp-nBad').textContent = bad;
-            renderPanel();
-        }
-
-        function pinIcon(color, label, sel) {
-            return L.divIcon({
-                className: '',
-                iconSize: [28, 40],
-                iconAnchor: [14, 40],
-                popupAnchor: [0, -34],
-                html: `<div class="gpin${sel ? ' sel' : ''}">
-                    <svg viewBox="0 0 28 40">
-                      <path class="body" d="M14 1C7.1 1 1.5 6.6 1.5 13.5c0 9.6 12.5 24.5 12.5 24.5s12.5-14.9 12.5-24.5C26.5 6.6 20.9 1 14 1z" fill="${color}" stroke="#7f8c10" stroke-width="1.4"/>
-                      <circle cx="14" cy="13.5" r="7.5" fill="#fff"/>
-                    </svg>
-                    ${label ? `<span class="gnum">${label}</span>` : ''}
-                </div>`
-            });
-        }
-
-        function popupHtml(items) {
-            const head = items.length > 1 ? `<div class="mp-gcount">${items.length} pedidos en esta ubicación</div>` : '';
-            const blocks = items.map(r => {
-                const idx = rows.indexOf(r);
-                const row = (lbl, val) => val ? `<div class="mp-row"><span>${lbl}</span><span>${esc(val)}</span></div>` : '';
-                return `<div class="mp-order">
-                    <span class="mp-badge" style="background:${stateColor[r.est]}">${esc(r.est)}</span>
-                    <h4>${esc(r.nom || 'Sin nombre')}</h4>
-                    <div class="mp-sub">${[r.id && 'ID ' + r.id, r.ref && 'Ref. ' + r.ref].filter(Boolean).map(esc).join(' · ') || '&nbsp;'}</div>
-                    ${row('Dirección', r.dir)}
-                    ${row('Entre calles', r.ent)}
-                    ${row('Colonia / Barrio', r.bar)}
-                    ${row('Código postal', r.cp)}
-                    <label class="mp-flag${r.mal ? ' on' : ''}">
-                      <input type="checkbox" data-idx="${idx}" ${r.mal ? 'checked' : ''}>
-                      <span>Pin mal ubicado</span>
-                    </label>
-                </div>`;
-            }).join('');
-            return `<div class="mp-pop">${head}${blocks}</div>`;
-        }
-
-        function render(fit = false) {
-            layer.clearLayers();
-            markers.clear();
-            const q = norm($('mp-q').value);
-
-            const filtered = rows.filter(r => {
-                if (hiddenStates.has(r.est)) return false;
-                if (onlyBad && !r.mal) return false;
-                if (!q) return true;
-                return norm(r.id).includes(q) || norm(r.ref).includes(q) || norm(r.nom).includes(q) || norm(r.dir).includes(q) || norm(r.bar).includes(q) || norm(r.cp).includes(q);
-            });
-
-            const groups = new Map();
-            for (const r of filtered) {
-                const key = `${r.lat.toFixed(6)},${r.lng.toFixed(6)}`;
-                if (!groups.has(key)) groups.set(key, []);
-                groups.get(key).push(r);
-            }
-
-            const bounds = [];
-            for (const [key, items] of groups) {
-                const { lat, lng } = items[0];
-                bounds.push([lat, lng]);
-                const main = items.find(r => r.mal) || items[0];
-                const color = pinColor(main);
-                const label = items.length > 1 ? String(items.length) : '';
-                const m = L.marker([lat, lng], { icon: pinIcon(color, label, key === selectedKey) });
-                m.bindPopup(() => popupHtml(items), { maxWidth: 400 });
-                m.on('click', () => selectPin(key));
-                m.on('popupclose', () => { if (selectedKey === key) selectPin(null); });
-                m.addTo(layer);
-                markers.set(key, { marker: m, items });
-            }
-
-            if (fit && bounds.length) {
-                map.fitBounds(bounds, { padding: [50, 50], maxZoom: 16 });
-            }
-            renderPanel();
-        }
-
-        function renderPanel() {
-            const listEl = $('mp-pl');
-            if (!listEl) return;
-            const q = norm($('mp-q').value);
-            const items = rows.map((r, idx) => ({ r, idx })).filter(({ r }) => {
-                if (hiddenStates.has(r.est)) return false;
-                if (panelMode === 'ok' && r.mal) return false;
-                if (panelMode === 'bad' && !r.mal) return false;
-                if (!q) return true;
-                return norm(r.id).includes(q) || norm(r.ref).includes(q) || norm(r.nom).includes(q) || norm(r.dir).includes(q) || norm(r.bar).includes(q) || norm(r.cp).includes(q);
-            });
-            $('mp-pcount').textContent = items.length;
-            document.querySelectorAll('#mp-pf .mp-pchip').forEach(c => c.classList.toggle('active', c.dataset.m === panelMode));
-            if (!items.length) {
-                listEl.innerHTML = '<div class="mp-pempty">Sin paquetes en este filtro</div>';
-                return;
-            }
-            listEl.innerHTML = items.map(({ r, idx }) => {
-                const key = `${r.lat.toFixed(6)},${r.lng.toFixed(6)}`;
-                const code = r.ref || (r.id ? 'ID ' + r.id : '#' + (idx + 1));
-                const sub = [r.nom, r.dir].filter(Boolean).join(' · ') || r.est;
-                return `<div class="mp-it${key === selectedKey ? ' sel' : ''}" data-idx="${idx}" data-key="${key}">
-                    <div class="mp-itx"><div class="mp-it1">${esc(code)}</div><div class="mp-it2">${esc(sub)}</div></div>
-                    <button type="button" class="mp-st ${r.mal ? 'bad' : 'ok'}" data-idx="${idx}">${r.mal ? 'Incorrecto' : 'Correcto'}</button>
-                </div>`;
-            }).join('');
-        }
-
-        function positionPanel() {
-            const tab = $('mapa-tab'), bar = tab && tab.querySelector('.mp-bar');
-            if (!tab || !bar) return;
-            const rect = bar.getBoundingClientRect();
-            tab.style.setProperty('--mp-top', Math.round(rect.bottom + 10) + 'px');
-            tab.style.setProperty('--mp-left', Math.round(rect.left) + 'px');
-        }
-
-        function setRowMal(idx, val) {
-            const r = rows[idx];
-            if (!r) return;
-            r.mal = val;
-            updateBadCount();
-            const key = `${r.lat.toFixed(6)},${r.lng.toFixed(6)}`;
-            const entry = markers.get(key);
-            if (entry) {
-                const main = entry.items.find(x => x.mal) || entry.items[0];
-                const label = entry.items.length > 1 ? String(entry.items.length) : '';
-                entry.marker.setIcon(pinIcon(pinColor(main), label, key === selectedKey));
-            }
-            if (onlyBad && !r.mal) render(false);
-        }
-
-        function selectPin(key) {
-            if (selectedKey && markers.has(selectedKey)) {
-                const prev = markers.get(selectedKey);
-                const main = prev.items.find(r => r.mal) || prev.items[0];
-                const label = prev.items.length > 1 ? String(prev.items.length) : '';
-                prev.marker.setIcon(pinIcon(pinColor(main), label, false));
-            }
-            selectedKey = key;
-            if (key && markers.has(key)) {
-                const cur = markers.get(key);
-                const main = cur.items.find(r => r.mal) || cur.items[0];
-                const label = cur.items.length > 1 ? String(cur.items.length) : '';
-                cur.marker.setIcon(pinIcon(pinColor(main), label, true));
-            }
-            document.querySelectorAll('#mp-pl .mp-it').forEach(el => el.classList.toggle('sel', !!key && el.dataset.key === key));
-        }
-
-        document.addEventListener('change', e => {
-            const cb = e.target.closest('.mp-flag input[type="checkbox"]');
-            if (!cb) return;
-            const r = rows[Number(cb.dataset.idx)];
-            if (!r) return;
-            cb.closest('.mp-flag').classList.toggle('on', cb.checked);
-            setRowMal(Number(cb.dataset.idx), cb.checked);
-        });
-
-        $('mp-pf').addEventListener('click', e => {
-            const chip = e.target.closest('.mp-pchip');
-            if (!chip) return;
-            panelMode = chip.dataset.m;
-            onlyBad = panelMode === 'bad';
+        fileIn.addEventListener('change', e => handleFile(e.target.files[0]));
+        qIn.addEventListener('input', () => render(false));
+        $('mp-onlyBad')?.addEventListener('click', function () {
+            onlyBad = !onlyBad;
+            this.classList.toggle('active', onlyBad);
             render(false);
         });
 
-        $('mp-pcol').addEventListener('click', () => {
-            $('mp-panel').classList.toggle('collapsed');
-        });
-
-        $('mp-pl').addEventListener('click', e => {
-            const btn = e.target.closest('.mp-st');
-            if (btn) {
-                e.stopPropagation();
-                const idx = Number(btn.dataset.idx);
-                setRowMal(idx, !rows[idx].mal);
-                const key = `${rows[idx].lat.toFixed(6)},${rows[idx].lng.toFixed(6)}`;
-                const entry = markers.get(key);
-                if (entry && entry.marker.isPopupOpen()) entry.marker.setPopupContent(popupHtml(entry.items));
-                return;
-            }
-            const it = e.target.closest('.mp-it');
-            if (!it) return;
-            const r = rows[Number(it.dataset.idx)];
-            if (!r) return;
-            const key = it.dataset.key;
-            if (!markers.has(key)) {
-                hiddenStates.delete(r.est);
-                onlyBad = false;
-                render(false);
-            }
-            const entry = markers.get(key);
-            if (!entry) return;
-            selectPin(key);
-            map.setView([r.lat, r.lng], Math.max(map.getZoom(), 16));
-            entry.marker.openPopup();
-        });
-
-        $('mp-file').addEventListener('change', e => handleFile(e.target.files[0]));
-        $('mp-q').addEventListener('input', () => render(false));
-
-        const tabEl = $('mapa-tab');
         ['dragenter', 'dragover'].forEach(ev => tabEl.addEventListener(ev, e => { e.preventDefault(); tabEl.classList.add('drag'); }));
         ['dragleave', 'drop'].forEach(ev => tabEl.addEventListener(ev, e => { e.preventDefault(); tabEl.classList.remove('drag'); }));
-        tabEl.addEventListener('drop', e => {
-            const f = e.dataTransfer?.files?.[0];
-            if (f) handleFile(f);
-        });
+        tabEl.addEventListener('drop', e => handleFile(e.dataTransfer.files[0]));
 
-        window.addEventListener('resize', () => {
-            if (document.body.classList.contains('mapa-active')) positionPanel();
-        });
-
-        window.mapaPedidosShow = function () {
-            setTimeout(() => {
+        window.mapaPedidosShow = () => {
+            syncPanelTop();
+            requestAnimationFrame(() => {
                 map.invalidateSize();
-                positionPanel();
-            }, 60);
+                setTimeout(() => map.invalidateSize(), 150);
+            });
         };
     })();
 </script>
