@@ -333,7 +333,6 @@
         .header-dynamic-title { display: none; }
     }
     @media (max-width: 980px) {
-        /* 2 filas: pestañas + acciones arriba, buscador abajo */
         #top-nav { flex-wrap: wrap; position: static; min-height: 0; row-gap: 10px; }
         .header-left-group { flex: 1 1 0; }
         .top-nav-tabs { flex: 1 1 0; }
@@ -342,7 +341,6 @@
         .search-limit-info { display: none !important; }
     }
     @media (max-width: 760px) {
-        /* 3 filas: título + acciones / pestañas con scroll / buscador */
         #top-nav { padding: 10px 12px; }
         .header-left-group { display: contents; }
         .header-dynamic-title {
@@ -384,9 +382,9 @@
 
     @media (max-width: 640px) {
         #cuadratura-tab .card { padding: 12px; }
-        #stats-panel { grid-template-columns: repeat(2, 1fr) !important; gap: 8px; }
-        #stats-panel .c-num-box { padding: 8px 6px; }
-        #stats-panel .stat-num { font-size: 1.15rem !important; }
+        #cuadratura-stats-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px; }
+        #cuadratura-stats-grid .c-num-box { padding: 8px 6px; }
+        #cuadratura-stats-grid .stat-num { font-size: 1.15rem !important; }
         #cuadratura-tab .c-flex-between { gap: 10px; }
         #cuadratura-tab .c-flex-center { flex-wrap: wrap; row-gap: 8px; }
         #cuadratura-tab #info-display { width: 100%; justify-content: space-between; }
@@ -616,14 +614,133 @@
         width: 1px;
         height: 28px;
         background: var(--carbon-border);
-        margin: 0 6px;
+        margin: 0 4px;
     }
-    .flow-label {
-        font-size: 0.65rem;
-        color: var(--accent);
-        font-weight: 800;
-        letter-spacing: 0.8px;
+
+    /* ===== CUADRATURA: ESTILOS COMPACTOS Y SUBPESTAÑAS ===== */
+    .c-file-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        padding: 5px 10px;
+        border-radius: 8px;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid var(--carbon-border);
+        color: var(--text-dim);
+        max-width: 240px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    body.theme-light .c-file-badge,
+    body.theme-traxion .c-file-badge {
+        background: rgba(0,0,0,0.04);
+    }
+    .c-file-badge.detected-viajes {
+        border-color: #10b981;
+        color: #10b981;
+        background: rgba(16, 185, 129, 0.1);
+    }
+    .c-file-badge.detected-dashboard {
+        border-color: #3b82f6;
+        color: #3b82f6;
+        background: rgba(59, 130, 246, 0.1);
+    }
+    .c-mini-meta {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 10px;
+        border-radius: 8px;
+        background: rgba(0,0,0,0.22);
+        border: 1px solid var(--carbon-border);
+        font-size: 0.72rem;
+    }
+    body.theme-light .c-mini-meta,
+    body.theme-traxion .c-mini-meta {
+        background: rgba(0,0,0,0.04);
+    }
+    .c-mini-meta span {
+        color: var(--text-dim);
+        font-weight: 600;
+        font-size: 0.64rem;
         text-transform: uppercase;
+    }
+    .c-mini-meta strong {
+        font-weight: 800;
+        font-size: 0.85rem;
+        color: var(--accent);
+    }
+    .c-subtabs-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+        border-bottom: 1px solid var(--carbon-border);
+        padding-bottom: 10px;
+        margin-bottom: 12px;
+    }
+    .c-subtabs-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    .c-subtab-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(0,0,0,0.2);
+        border: 1px solid var(--carbon-border);
+        color: var(--text-dim);
+        border-radius: 9px;
+        padding: 8px 14px;
+        font-family: 'Lexend', sans-serif;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    body.theme-light .c-subtab-btn,
+    body.theme-traxion .c-subtab-btn {
+        background: rgba(0,0,0,0.04);
+    }
+    .c-subtab-btn:hover {
+        border-color: var(--text-dim);
+        color: var(--text-main);
+    }
+    .c-subtab-btn.active {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: #ffffff;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.25);
+    }
+    body.theme-traxion .c-subtab-btn.active {
+        background: #4b4f54;
+        border-color: #4b4f54;
+        color: #d2df00;
+    }
+    .c-subtab-pill {
+        background: rgba(255,255,255,0.16);
+        padding: 1px 7px;
+        border-radius: 999px;
+        font-size: 0.7rem;
+        font-weight: 800;
+    }
+    body.theme-light .c-subtab-btn:not(.active) .c-subtab-pill,
+    body.theme-traxion .c-subtab-btn:not(.active) .c-subtab-pill {
+        background: rgba(0,0,0,0.08);
+    }
+    .c-subtab-panel {
+        display: none;
+    }
+    .c-subtab-panel.active {
+        display: block;
     }
 
     /* ===== KPI TAB STYLES (adaptados al tema del Master) ===== */
@@ -876,7 +993,7 @@
     body.theme-traxion {
         --primary: #d2df00;
         --primary-hover: #b9c500;
-        --accent: #6f7800;            /* verde oliva del mismo tono, solo para texto/iconos (legible sobre blanco) */
+        --accent: #6f7800;
         --accent-hover: #565d00;
         --carbon-dark: #ffffff;
         --carbon-light: #ffffff;
@@ -908,7 +1025,6 @@
         background-image: none;
         color: var(--text-main);
     }
-    /* Reglas del tema claro reutilizadas para fondos blancos / textos oscuros */
     body.theme-traxion .card { background: var(--card-bg); border-color: var(--carbon-border); box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
     body.theme-traxion #filter-bar input, body.theme-traxion #filter-bar select,
     body.theme-traxion #tracker-filter-bar input, body.theme-traxion #tracker-filter-bar select,
@@ -939,7 +1055,6 @@
     body.theme-traxion #login-screen { background: #ffffff; }
     body.theme-traxion #btn-google-login { background: #4b4f54; color: #ffffff; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
     body.theme-traxion #total-count { background: rgba(0,0,0,0.05) !important; }
-    /* Header lime con texto gris, como traxion.com */
     body.theme-traxion .header-dynamic-title { color: #4b4f54 !important; border-right-color: rgba(0,0,0,0.2); }
     body.theme-traxion .header-dynamic-title i { color: #4b4f54 !important; }
     body.theme-traxion .nav-tab-btn { background: rgba(0,0,0,0.08); border-color: rgba(0,0,0,0.2); color: #4b4f54; }
@@ -960,7 +1075,6 @@
     body.theme-traxion .top-nav-user #btn-logout:hover { background: var(--bad); border-color: var(--bad); color: #fff; }
     body.theme-traxion #btn-theme-toggle { background: #4b4f54; border-color: #4b4f54; color: #d2df00; }
     body.theme-traxion #btn-theme-toggle:hover { background: #25282b; color: #d2df00; }
-    /* Botones primarios lime con texto oscuro */
     body.theme-traxion .btn-primary:not(.btn-secondary):not(.btn-danger):not(.btn-good):not(.btn-inject):not(.btn-inject-dev):not(.btn-inject-sameday):not(.btn-copy-search-results) {
         color: #1f2226; box-shadow: 0 2px 6px rgba(210,223,0,0.25);
     }
@@ -971,7 +1085,7 @@
     body.theme-traxion .guia-badge-count { background: rgba(210,223,0,0.12); border-color: rgba(210,223,0,0.3); }
     body.theme-traxion #bulk-bar { background: #f6f9c4; border-color: var(--primary); }
     body.theme-traxion #bulk-bar .bulk-count { color: #565d00; }
-        body.theme-traxion #sameday-filter-bar input:focus, body.theme-traxion #sameday-filter-bar select:focus { border-color: #b9c500 !important; box-shadow: 0 0 0 3px rgba(210,223,0,0.3); }
+    body.theme-traxion #sameday-filter-bar input:focus, body.theme-traxion #sameday-filter-bar select:focus { border-color: #b9c500 !important; box-shadow: 0 0 0 3px rgba(210,223,0,0.3); }
     body.theme-traxion .sd-stat-num { color: var(--accent); text-shadow: none; }
     body.theme-traxion .sd-stat-num.alt { color: #25282b; text-shadow: none; }
     body.theme-traxion tr.sd-detail > td { background: rgba(210,223,0,0.12); }
@@ -1039,7 +1153,6 @@
     #mapa-tab .mp-flag.on { border-color: #F04438; background: #fff4f3; color: #b42318; }
     #mapa-tab .mp-gcount { font-size: 11px; color: #7b8088; margin-bottom: 10px; }
 
-    /* Mapa a pantalla completa de fondo; la info flota encima */
     body.mapa-active #app-root { pointer-events: none; }
     body.mapa-active #top-nav { pointer-events: auto; z-index: 200; }
     body.mapa-active #mapa-tab .mp-wrap { pointer-events: auto; }
@@ -1055,7 +1168,6 @@
     }
     @media (max-width: 980px) { body.mapa-active #top-nav { position: relative; } }
 
-    /* Ventana flotante de paquetes */
     #mapa-tab .mp-panel { display: none; }
     body.mapa-active #mapa-tab.has-data .mp-panel {
         display: flex; flex-direction: column; pointer-events: auto; position: fixed;
@@ -1176,9 +1288,7 @@
                     <span class="search-icon"><i class="fas fa-magnifying-glass"></i></span>
                     <input type="text" id="sd-guia" placeholder="Buscar guía dentro del histórico Sameday..." oninput="renderSameday()">
                 </div>
-                <div id="search-wrap-kpi" class="nav-search-group">
-                    <!-- KPI tab uses its own file input, no search bar here -->
-                </div>
+                <div id="search-wrap-kpi" class="nav-search-group"></div>
                 <div id="search-wrap-mapa" class="nav-search-group">
                     <span class="search-icon"><i class="fas fa-magnifying-glass"></i></span>
                     <input type="text" id="mp-q" placeholder="Buscar ID, referencia, nombre...">
@@ -1341,136 +1451,148 @@
             </div>
         </div>
 
+        <!-- ================= CUADRATURA TAB (MEJORADA) ================= -->
         <div id="cuadratura-tab" class="tab-content">
             
-            <div class="card c-flex-between">
-                <div class="c-flex-center" style="flex-wrap: wrap; row-gap: 8px;">
-                    <!-- Flujo 1: Viajes -->
-                    <span class="flow-label">Viajes:</span>
-                    <input type="file" id="fileViajes" style="display:none;" accept=".xlsx, .xls">
-                    <label for="fileViajes" class="btn-primary btn-secondary" style="padding: 8px 14px; font-size: 0.75rem; font-weight: 700; cursor:pointer;">
-                        <i class="fas fa-file-excel" style="margin-right: 6px;"></i>SUBIR VIAJES
-                    </label>
-                    <button id="btn-process" class="btn-primary" onclick="processAllData()" style="padding: 8px 14px; font-size:0.75rem;">
-                        PROCESAR <i id="btn-loader" class="fas fa-circle-notch loading-spinner" style="display:none; margin-left:6px;"></i>
-                    </button>
+            <!-- Tarjeta unificada: Barra de carga inteligente + KPIs -->
+            <div class="card" style="display: flex; flex-direction: column; gap: 12px;">
+                <div class="c-flex-between" style="border-bottom: 1px solid var(--carbon-border); padding-bottom: 10px;">
+                    <div class="c-flex-center" style="flex-wrap: wrap; row-gap: 8px;">
+                        <input type="file" id="fileCuadratura" style="display:none;" accept=".xlsx, .xls, .csv">
+                        <label for="fileCuadratura" class="btn-primary btn-secondary" style="padding: 8px 14px; font-size: 0.75rem; font-weight: 700; cursor:pointer; display:inline-flex; align-items:center;">
+                            <i class="fas fa-file-excel" style="margin-right: 6px;"></i>SUBIR ARCHIVO
+                        </label>
+                        <button id="btn-process-cuadratura" class="btn-primary" onclick="processCuadraturaAuto()" style="padding: 8px 16px; font-size:0.75rem;">
+                            PROCESAR <i id="btn-loader-cuadratura" class="fas fa-circle-notch loading-spinner" style="display:none; margin-left:6px;"></i>
+                        </button>
 
-                    <span class="flow-separator"></span>
+                        <span class="flow-separator"></span>
 
-                    <!-- Flujo 2: Dashboard -->
-                    <span class="flow-label">Dashboard:</span>
-                    <input type="file" id="fileDashboard" style="display:none;" accept=".xlsx, .xls">
-                    <label for="fileDashboard" class="btn-primary btn-secondary" style="padding: 8px 14px; font-size: 0.75rem; font-weight: 700; cursor:pointer;">
-                        <i class="fas fa-file-excel" style="margin-right: 6px;"></i>SUBIR DASHBOARD
-                    </label>
-                    <button id="btn-process-dashboard" class="btn-primary" onclick="processDashboardData()" style="padding: 8px 14px; font-size:0.75rem;">
-                        PROCESAR <i id="btn-loader-dashboard" class="fas fa-circle-notch loading-spinner" style="display:none; margin-left:6px;"></i>
-                    </button>
+                        <button id="btn-umbral-dias" onclick="cambiarUmbralDias()" title="Cambiar umbral de días para la cuadratura" class="btn-primary btn-secondary" style="padding: 8px 14px; font-size:0.75rem; font-weight:700;">
+                            <i class="fas fa-calendar-day" style="margin-right: 6px;"></i>UMBRAL: <span id="umbral-dias-label">2</span> DÍAS
+                        </button>
 
-                    <span class="flow-separator"></span>
-
-                    <!-- Umbral compartido -->
-                    <button id="btn-umbral-dias" onclick="cambiarUmbralDias()" title="Cambiar umbral de días para la cuadratura" class="btn-primary btn-secondary" style="padding: 8px 14px; font-size:0.75rem; font-weight:700;">
-                        <i class="fas fa-calendar-day" style="margin-right: 6px;"></i>UMBRAL: <span id="umbral-dias-label">2</span> DÍAS
-                    </button>
-                </div>
-
-                <div id="info-display" style="display:none;" class="c-flex-center">
-                    <div class="stat-box" style="padding: 6px 12px; min-width: 90px;"><div class="stat-num" id="display-fecha" style="font-size:1.1rem;">--</div><div class="stat-label">FECHA EXCEL</div></div>
-                    <div class="stat-box" style="padding: 6px 12px; min-width: 90px;"><div class="stat-num" id="display-total-guias" style="font-size:1.1rem; color:var(--primary);">0</div><div class="stat-label">TOTAL GUIAS</div></div>
-                </div>
-            </div>
-
-            <div id="stats-panel" class="card" style="grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));">
-                <div class="c-num-box c-tinted" style="--box-color: var(--primary);">
-                    <div class="c-label" style="font-size: 0.65rem;">Faltan Escanear</div>
-                    <div class="stat-num" id="total-pending-count" style="color:var(--bad); font-size:1.5rem; margin:4px 0;">0</div>
-                    <div class="c-sub-val"><span>No Emb: <strong id="sub-pending-no-emb" style="color:var(--text-main);">0</strong></span><span>No Ent: <strong id="sub-pending-no-ent" style="color:var(--text-main);">0</strong></span></div>
-                </div>
-                <div class="c-num-box c-tinted" style="--box-color: #f97316;">
-                    <div class="c-label" style="font-size: 0.65rem;">No Emb. TR2</div>
-                    <div class="stat-num" id="count-no-emb" style="color:#f97316; font-size:1.5rem; margin:4px 0;">0</div>
-                    <div class="c-sub-val"><span>Amz: <strong id="sub-no-emb-amz" style="color:var(--text-main);">0</strong></span><span>Same: <strong id="sub-no-emb-same" style="color:var(--text-main);">0</strong></span></div>
-                </div>
-                <div class="c-num-box c-tinted" style="--box-color: #eab308;">
-                    <div class="c-label" style="font-size: 0.65rem;">No Recibido</div>
-                    <div class="stat-num" id="count-no-rec" style="color:#eab308; font-size:1.5rem; margin:4px 0;">0</div>
-                    <div class="c-sub-val"><span>Amz: <strong id="sub-no-rec-amz" style="color:var(--text-main);">0</strong></span><span>Same: <strong id="sub-no-rec-same" style="color:var(--text-main);">0</strong></span></div>
-                </div>
-                <div class="c-num-box c-tinted" style="--box-color: #2563eb;">
-                    <div class="c-label" style="font-size: 0.65rem;">No Entregado</div>
-                    <div class="stat-num" id="count-no-ent" style="color:#2563eb; font-size:1.5rem; margin:4px 0;">0</div>
-                    <div class="c-sub-val"><span>Amz: <strong id="sub-no-ent-amz" style="color:var(--text-main);">0</strong></span><span>Same: <strong id="sub-no-ent-same" style="color:var(--text-main);">0</strong></span></div>
-                </div>
-                <div class="c-num-box c-tinted" style="--box-color: #16a34a;">
-                    <div class="c-label" style="font-size: 0.65rem;">Total en Ruta</div>
-                    <div class="stat-num" id="count-in-route" style="color:#16a34a; font-size:1.5rem; margin:4px 0;">0</div>
-                    <div class="c-sub-val"><span>Amz: <strong id="sub-ruta-amz" style="color:var(--text-main);">0</strong></span><span>Same: <strong id="sub-ruta-same" style="color:var(--text-main);">0</strong></span></div>
-                </div>
-                <div class="c-num-box c-tinted" style="--box-color: #9333ea;">
-                    <div class="c-label" style="font-size: 0.65rem;">Choferes Ruta</div>
-                    <div class="stat-num" id="count-drivers-route" style="color:#9333ea; font-size:1.5rem; margin:4px 0;">0</div>
-                    <div class="c-sub-val"><span>Amz: <strong id="sub-chofer-amz" style="color:var(--text-main);">0</strong></span><span>Same: <strong id="sub-chofer-same" style="color:var(--text-main);">0</strong></span></div>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="c-flex-between" style="border-bottom: 1px solid var(--carbon-border); padding-bottom:8px; margin-bottom:8px;">
-                    <span class="c-label">Listado de Pendientes (No Escaneadas en <span id="umbral-dias-label-2">2</span> Días)</span>
-                    <button onclick="copyTableToSheets()" class="btn-primary" style="padding:6px 12px; font-size:0.7rem;">COPIAR SHEETS</button>
-                </div>
-                <div class="table-wrap" style="max-height: 420px; overflow-y: auto;">
-                    <table id="table-pending">
-                        <thead>
-                            <tr>
-                                <th class="sortable" onclick="sortTable(0)">Cat <i class="fas fa-sort ml-1 opacity-30"></i></th>
-                                <th class="sortable" onclick="sortTable(1)">Viaje <i class="fas fa-sort ml-1 opacity-30"></i></th>
-                                <th class="sortable" onclick="sortTable(2)">Conductor <i class="fas fa-sort ml-1 opacity-30"></i></th>
-                                <th class="sortable" onclick="sortTable(3)">Guía <i class="fas fa-sort ml-1 opacity-30"></i></th>
-                                <th class="sortable" onclick="sortTable(4)">Estado <i class="fas fa-sort ml-1 opacity-30"></i></th>
-                            </tr>
-                        </thead>
-                        <tbody id="pending-list-body">
-                            <tr><td colspan="5" class="empty-msg">Sube un archivo de viajes y presiona Procesar.</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="c-flex-between" style="border-bottom: 1px solid var(--carbon-border); padding-bottom:8px; margin-bottom:12px;">
-                    <div class="c-flex-center">
-                        <span class="c-label">Filtro de Paquetes por Estado</span>
-                        <span id="statusMsg" style="font-size: 0.72rem; color:var(--text-dim); margin-left:6px;">Sube un archivo de viajes para comenzar.</span>
+                        <span id="cuadratura-file-badge" class="c-file-badge" title="Formato detectado automáticamente por columnas">
+                            <i class="fas fa-circle-info"></i> Sin archivo cargado
+                        </span>
                     </div>
-                    <div class="c-flex-center">
+
+                    <div id="info-display" style="display:none;" class="c-flex-center">
+                        <div class="c-mini-meta"><span>Fecha Excel:</span> <strong id="display-fecha">--</strong></div>
+                        <div class="c-mini-meta"><span>Total Guías:</span> <strong id="display-total-guias" style="color:var(--good);">0</strong></div>
+                    </div>
+                </div>
+
+                <!-- Grid de indicadores KPI compactado -->
+                <div id="cuadratura-stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px;">
+                    <div class="c-num-box c-tinted" style="--box-color: var(--primary);">
+                        <div class="c-label" style="font-size: 0.65rem;">Faltan Escanear</div>
+                        <div class="stat-num" id="total-pending-count" style="color:var(--bad); font-size:1.45rem; margin:3px 0;">0</div>
+                        <div class="c-sub-val"><span>No Emb: <strong id="sub-pending-no-emb" style="color:var(--text-main);">0</strong></span><span>No Ent: <strong id="sub-pending-no-ent" style="color:var(--text-main);">0</strong></span></div>
+                    </div>
+                    <div class="c-num-box c-tinted" style="--box-color: #f97316;">
+                        <div class="c-label" style="font-size: 0.65rem;">No Emb. TR2</div>
+                        <div class="stat-num" id="count-no-emb" style="color:#f97316; font-size:1.45rem; margin:3px 0;">0</div>
+                        <div class="c-sub-val"><span>Amz: <strong id="sub-no-emb-amz" style="color:var(--text-main);">0</strong></span><span>Same: <strong id="sub-no-emb-same" style="color:var(--text-main);">0</strong></span></div>
+                    </div>
+                    <div class="c-num-box c-tinted" style="--box-color: #eab308;">
+                        <div class="c-label" style="font-size: 0.65rem;">No Recibido</div>
+                        <div class="stat-num" id="count-no-rec" style="color:#eab308; font-size:1.45rem; margin:3px 0;">0</div>
+                        <div class="c-sub-val"><span>Amz: <strong id="sub-no-rec-amz" style="color:var(--text-main);">0</strong></span><span>Same: <strong id="sub-no-rec-same" style="color:var(--text-main);">0</strong></span></div>
+                    </div>
+                    <div class="c-num-box c-tinted" style="--box-color: #2563eb;">
+                        <div class="c-label" style="font-size: 0.65rem;">No Entregado</div>
+                        <div class="stat-num" id="count-no-ent" style="color:#2563eb; font-size:1.45rem; margin:3px 0;">0</div>
+                        <div class="c-sub-val"><span>Amz: <strong id="sub-no-ent-amz" style="color:var(--text-main);">0</strong></span><span>Same: <strong id="sub-no-ent-same" style="color:var(--text-main);">0</strong></span></div>
+                    </div>
+                    <div class="c-num-box c-tinted" style="--box-color: #16a34a;">
+                        <div class="c-label" style="font-size: 0.65rem;">Total en Ruta</div>
+                        <div class="stat-num" id="count-in-route" style="color:#16a34a; font-size:1.45rem; margin:3px 0;">0</div>
+                        <div class="c-sub-val"><span>Amz: <strong id="sub-ruta-amz" style="color:var(--text-main);">0</strong></span><span>Same: <strong id="sub-ruta-same" style="color:var(--text-main);">0</strong></span></div>
+                    </div>
+                    <div class="c-num-box c-tinted" style="--box-color: #9333ea;">
+                        <div class="c-label" style="font-size: 0.65rem;">Choferes Ruta</div>
+                        <div class="stat-num" id="count-drivers-route" style="color:#9333ea; font-size:1.45rem; margin:3px 0;">0</div>
+                        <div class="c-sub-val"><span>Amz: <strong id="sub-chofer-amz" style="color:var(--text-main);">0</strong></span><span>Same: <strong id="sub-chofer-same" style="color:var(--text-main);">0</strong></span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tarjeta unificada con Subpestañas para las 2 tablas -->
+            <div class="card">
+                <div class="c-subtabs-bar">
+                    <div class="c-subtabs-group">
+                        <button type="button" class="c-subtab-btn active" data-subtab="c-subtab-pendientes" onclick="switchCuadraturaSubtab('c-subtab-pendientes', this)">
+                            <i class="fas fa-clipboard-list"></i>
+                            <span>Pendientes (<span id="umbral-dias-label-2">2</span> días)</span>
+                            <span class="c-subtab-pill" id="badge-subtab-pendientes">0</span>
+                        </button>
+                        <button type="button" class="c-subtab-btn" data-subtab="c-subtab-estados" onclick="switchCuadraturaSubtab('c-subtab-estados', this)">
+                            <i class="fas fa-filter"></i>
+                            <span>Paquetes por Estado</span>
+                            <span class="c-subtab-pill" id="badge-subtab-estados">0</span>
+                        </button>
+                    </div>
+
+                    <!-- Controles dinámicos según la subpestaña activa -->
+                    <div id="subtab-actions-pendientes" class="c-flex-center">
+                        <button onclick="copyTableToSheets()" class="btn-primary" style="padding:6px 12px; font-size:0.72rem;">
+                            <i class="fas fa-copy" style="margin-right:5px;"></i>COPIAR SHEETS
+                        </button>
+                    </div>
+
+                    <div id="subtab-actions-estados" class="c-flex-center" style="display:none; flex-wrap:wrap;">
+                        <span id="statusMsg" style="font-size: 0.72rem; color:var(--text-dim);">Sube un archivo para comenzar.</span>
                         <select id="estadoFilter" onchange="filterAndRenderTable()" disabled style="background:var(--input-bg); color:var(--text-main); border:1px solid var(--carbon-border); border-radius:8px; padding:6px 12px; font-family:'Lexend'; font-size:0.75rem;">
                             <option value="">-- Selecciona un archivo primero --</option>
                         </select>
                         <button id="copyBtn" onclick="copyToClipboard()" disabled class="btn-primary" style="padding:6px 12px; font-size:0.72rem;">
-                            COPIAR ESTADOS
+                            <i class="fas fa-copy" style="margin-right:5px;"></i>COPIAR ESTADOS
                         </button>
                     </div>
                 </div>
-                
-                <div class="table-wrap" style="max-height: 350px; overflow-y: auto;">
-                    <table id="dataTable">
-                        <thead>
-                            <tr>
-                                <th>Estado</th>
-                                <th>IdViaje</th>
-                                <th>Pedido Referencia externa</th>
-                                <th>Última Categoría (<span id="umbral-dias-label-3">2</span> días)</th>
-                                <th>Fecha</th>
-                                <th>Tracking</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tableBody">
-                            <tr>
-                                <td colspan="6" class="empty-msg">No hay datos cargados</td>
-                            </tr>
-                        </tbody>
-                    </table>
+
+                <!-- Subpestaña 1: Listado de Pendientes -->
+                <div id="c-subtab-pendientes" class="c-subtab-panel active">
+                    <div class="table-wrap" style="max-height: 460px; overflow-y: auto;">
+                        <table id="table-pending">
+                            <thead>
+                                <tr>
+                                    <th class="sortable" onclick="sortTable(0)">Cat <i class="fas fa-sort ml-1 opacity-30"></i></th>
+                                    <th class="sortable" onclick="sortTable(1)">Viaje <i class="fas fa-sort ml-1 opacity-30"></i></th>
+                                    <th class="sortable" onclick="sortTable(2)">Conductor <i class="fas fa-sort ml-1 opacity-30"></i></th>
+                                    <th class="sortable" onclick="sortTable(3)">Guía <i class="fas fa-sort ml-1 opacity-30"></i></th>
+                                    <th class="sortable" onclick="sortTable(4)">Estado <i class="fas fa-sort ml-1 opacity-30"></i></th>
+                                </tr>
+                            </thead>
+                            <tbody id="pending-list-body">
+                                <tr><td colspan="5" class="empty-msg">Sube un archivo (Viajes o Dashboard) y presiona Procesar.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Subpestaña 2: Filtro de Paquetes por Estado -->
+                <div id="c-subtab-estados" class="c-subtab-panel">
+                    <div class="table-wrap" style="max-height: 460px; overflow-y: auto;">
+                        <table id="dataTable">
+                            <thead>
+                                <tr>
+                                    <th>Estado</th>
+                                    <th>IdViaje</th>
+                                    <th>Pedido Referencia externa</th>
+                                    <th>Última Categoría (<span id="umbral-dias-label-3">2</span> días)</th>
+                                    <th>Fecha</th>
+                                    <th>Tracking</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody">
+                                <tr>
+                                    <td colspan="6" class="empty-msg">No hay datos cargados</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
@@ -1790,7 +1912,6 @@
     </div>
 
 <script>
-    // Ofuscación simple para que la key no quede a simple vista en el HTML.
     function _dk(s) { return atob(s.split('').reverse().join('')); }
     const firebaseConfig = {
         apiKey: _dk("woUaf90ZTdEMOR1bfhnVDNTawFFOhtEd0cWR21Ub5c2Q5NVY6lUQ"),
@@ -1819,7 +1940,6 @@
     let unsubscribe = null;
     let editingId = null;
 
-    // Temas disponibles: dark (default) → light → traxion
     const THEMES = ['dark', 'light', 'traxion'];
     const THEME_ICONS = { dark: 'fas fa-sun', light: 'fas fa-moon', traxion: 'fas fa-palette' };
     function getCurrentTheme() {
@@ -2527,75 +2647,189 @@
         document.getElementById('new-guia').value = '';
     }
 
+    // ============================================================
+    //  CUADRATURA: DETECCIÓN AUTOMÁTICA + SUBPESTAÑAS
+    // ============================================================
     let dataViajes = [], dataParadas = [], dataGuiasEscaneadas = new Set(), rawProcessedStats = [];
     let umbralDiasCuadratura = 2;
     let rawDataFilter = []; 
     let trackerChartInstance = null;
     let currentSortCol = -1;
     let sortAsc = true;
-
-    // Flujo Dashboard (archivo Estatus_Entregas_Motivo)
     let rawDashboardRows = [];
+    let cuadraturaTipoDetectado = null; // 'viajes' | 'dashboard' | null
+
+    function switchCuadraturaSubtab(subtabId, btn) {
+        document.querySelectorAll('#cuadratura-tab .c-subtab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('#cuadratura-tab .c-subtab-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        const panel = document.getElementById(subtabId);
+        if (panel) panel.classList.add('active');
+
+        const actPend = document.getElementById('subtab-actions-pendientes');
+        const actEst = document.getElementById('subtab-actions-estados');
+        if (subtabId === 'c-subtab-pendientes') {
+            if (actPend) actPend.style.display = 'flex';
+            if (actEst) actEst.style.display = 'none';
+        } else {
+            if (actPend) actPend.style.display = 'none';
+            if (actEst) actEst.style.display = 'flex';
+        }
+    }
 
     function cambiarUmbralDias() {
         umbralDiasCuadratura = umbralDiasCuadratura >= 4 ? 2 : umbralDiasCuadratura + 1;
         document.querySelectorAll('#umbral-dias-label, #umbral-dias-label-2, #umbral-dias-label-3').forEach(el => el.innerText = umbralDiasCuadratura);
-        if (dataViajes.length) processAllData();
+        if (cuadraturaTipoDetectado) processCuadraturaAuto();
     }
 
-    // ============================================================
-    //  FLUJO 1: VIAJES (Excel con hojas "Viajes" + "Paradas")
-    // ============================================================
-    document.getElementById('fileViajes').addEventListener('change', (e) => {
+    function normalizeColHeader(s) {
+        return String(s == null ? '' : s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase().replace(/\s+/g, ' ');
+    }
+
+    function detectCuadraturaFileType(wb) {
+        const sheetNamesNorm = wb.SheetNames.map(n => normalizeColHeader(n));
+        const hasViajesSheet = sheetNamesNorm.includes('viajes');
+        const hasParadasSheet = sheetNamesNorm.includes('paradas');
+        if (hasViajesSheet && hasParadasSheet) return 'viajes';
+
+        const firstSheet = wb.Sheets[wb.SheetNames[0]];
+        const sampleRows = XLSX.utils.sheet_to_json(firstSheet, { defval: '' }) || [];
+        if (sampleRows.length > 0) {
+            const cols = Object.keys(sampleRows[0]).map(normalizeColHeader);
+            const isDashboard = cols.includes('descripcion') && (cols.includes('id viaje') || cols.includes('idviaje')) && cols.includes('paquete');
+            if (isDashboard) return 'dashboard';
+
+            const isParadasLike = cols.includes('idviaje') && cols.includes('pedido referencia externa') && cols.includes('estado');
+            if (isParadasLike && hasViajesSheet) return 'viajes';
+        }
+        return null;
+    }
+
+    document.getElementById('fileCuadratura').addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (!file) return;
         const statusMsg = document.getElementById('statusMsg');
-        statusMsg.innerText = "Procesando archivo de Viajes...";
-        statusMsg.style.color = "#aaa";
+        const fileBadge = document.getElementById('cuadratura-file-badge');
+        statusMsg.innerText = "Analizando estructura del archivo...";
+        statusMsg.style.color = "var(--text-dim)";
 
         const reader = new FileReader();
         reader.onload = (evt) => {
             try {
                 const wb = XLSX.read(evt.target.result, { type: 'binary' });
-                dataViajes = XLSX.utils.sheet_to_json(wb.Sheets["Viajes"]) || [];
-                const targetSheetName = wb.SheetNames.find(name => name.trim().toLowerCase() === 'paradas');
-                if (!targetSheetName) {
-                    statusMsg.innerText = "Error: No se encontró la hoja 'Paradas'.";
+                const detected = detectCuadraturaFileType(wb);
+
+                if (!detected) {
+                    cuadraturaTipoDetectado = null;
+                    fileBadge.className = 'c-file-badge';
+                    fileBadge.innerHTML = `<i class="fas fa-triangle-exclamation" style="color:var(--bad);"></i> Formato no reconocido`;
+                    statusMsg.innerText = "No se identificaron columnas de Viajes ni Dashboard.";
                     statusMsg.style.color = "#ff6b6b";
                     return;
                 }
-                dataParadas = XLSX.utils.sheet_to_json(wb.Sheets[targetSheetName]) || [];
-                const jornadaRaw = dataViajes[0]?.Jornada || "";
-                const dateMatch = jornadaRaw.match(/\d{2}\/\d{2}\/\d{4}/);
-                const fechaExcelCuadratura = dateMatch ? dateMatch[0] : "S/F";
-                document.getElementById('display-fecha').innerText = fechaExcelCuadratura;
-                document.getElementById('info-display').style.display = 'flex';
-                if (dataParadas.length === 0) {
-                    statusMsg.innerText = "La hoja 'Paradas' está vacía.";
-                    statusMsg.style.color = "#ff6b6b";
-                    return;
+
+                cuadraturaTipoDetectado = detected;
+
+                if (detected === 'viajes') {
+                    rawDashboardRows = [];
+                    const viajesSheetName = wb.SheetNames.find(n => normalizeColHeader(n) === 'viajes');
+                    const paradasSheetName = wb.SheetNames.find(n => normalizeColHeader(n) === 'paradas');
+                    dataViajes = XLSX.utils.sheet_to_json(wb.Sheets[viajesSheetName]) || [];
+                    dataParadas = XLSX.utils.sheet_to_json(wb.Sheets[paradasSheetName]) || [];
+
+                    const jornadaRaw = dataViajes[0]?.Jornada || "";
+                    const dateMatch = String(jornadaRaw).match(/\d{2}\/\d{2}\/\d{4}/);
+                    const fechaExcelCuadratura = dateMatch ? dateMatch[0] : "S/F";
+                    document.getElementById('display-fecha').innerText = fechaExcelCuadratura;
+                    document.getElementById('info-display').style.display = 'flex';
+
+                    if (dataParadas.length === 0) {
+                        statusMsg.innerText = "La hoja 'Paradas' está vacía.";
+                        statusMsg.style.color = "#ff6b6b";
+                        return;
+                    }
+
+                    rawDataFilter = dataParadas.map(row => ({
+                        estado: row['Estado'] !== undefined ? String(row['Estado']).trim() : '',
+                        idViaje: row['IdViaje'] !== undefined ? String(row['IdViaje']).trim() : '',
+                        referencia: row['Pedido Referencia externa'] !== undefined ? String(row['Pedido Referencia externa']).trim() : '',
+                        fecha: fechaExcelCuadratura
+                    }));
+
+                    fileBadge.className = 'c-file-badge detected-viajes';
+                    fileBadge.innerHTML = `<i class="fas fa-truck"></i> Detectado: VIAJES (${rawDataFilter.length})`;
+                    statusMsg.innerText = `Viajes cargado (${rawDataFilter.length} registros).`;
+                    statusMsg.style.color = "var(--good)";
+                    populateEstadoFilter();
+                } else {
+                    dataViajes = [];
+                    dataParadas = [];
+                    const sheetName = wb.SheetNames.find(n =>
+                        normalizeColHeader(n).includes('estatus') ||
+                        normalizeColHeader(n) === 'estatus_entregas_motivo'
+                    ) || wb.SheetNames[0];
+
+                    rawDashboardRows = XLSX.utils.sheet_to_json(wb.Sheets[sheetName]) || [];
+
+                    if (rawDashboardRows.length === 0) {
+                        statusMsg.innerText = "La hoja Dashboard está vacía.";
+                        statusMsg.style.color = "#ff6b6b";
+                        return;
+                    }
+
+                    const jornadaRaw = rawDashboardRows[0]['Fecha Jornada'] || "";
+                    const dateMatch = String(jornadaRaw).match(/\d{2}\/\d{2}\/\d{4}/);
+                    const fechaExcelCuadratura = dateMatch ? dateMatch[0] : "S/F";
+
+                    document.getElementById('display-fecha').innerText = fechaExcelCuadratura;
+                    document.getElementById('info-display').style.display = 'flex';
+
+                    rawDataFilter = rawDashboardRows.map(r => ({
+                        estado: r['Descripcion'] !== undefined ? String(r['Descripcion']).trim() : '',
+                        idViaje: r['Id Viaje'] !== undefined ? String(r['Id Viaje']).trim() : '',
+                        referencia: r['Paquete'] !== undefined ? String(r['Paquete']).trim() : '',
+                        fecha: fechaExcelCuadratura,
+                        motivo: r['Motivo'] !== undefined ? String(r['Motivo']).trim() : ''
+                    }));
+
+                    fileBadge.className = 'c-file-badge detected-dashboard';
+                    fileBadge.innerHTML = `<i class="fas fa-chart-pie"></i> Detectado: DASHBOARD (${rawDataFilter.length})`;
+                    statusMsg.innerText = `Dashboard cargado (${rawDataFilter.length} registros).`;
+                    statusMsg.style.color = "var(--good)";
+                    populateEstadoFilter();
                 }
-                rawDataFilter = dataParadas.map(row => ({
-                    estado: row['Estado'] !== undefined ? String(row['Estado']).trim() : '',
-                    idViaje: row['IdViaje'] !== undefined ? String(row['IdViaje']).trim() : '',
-                    referencia: row['Pedido Referencia externa'] !== undefined ? String(row['Pedido Referencia externa']).trim() : '',
-                    fecha: fechaExcelCuadratura
-                }));
-                statusMsg.innerText = `Viajes cargado. ${rawDataFilter.length} registros en 'Paradas'.`;
-                statusMsg.style.color = "var(--good)"; 
-                populateEstadoFilter();
+
+                const badgeEstados = document.getElementById('badge-subtab-estados');
+                if (badgeEstados) badgeEstados.innerText = rawDataFilter.length;
             } catch (error) {
                 console.error(error);
-                statusMsg.innerText = "Error al leer el archivo Excel de Viajes.";
+                statusMsg.innerText = "Error al leer el archivo Excel.";
                 statusMsg.style.color = "#ff6b6b";
             }
         };
         reader.readAsBinaryString(file);
     });
 
+    async function processCuadraturaAuto() {
+        if (!cuadraturaTipoDetectado) {
+            return alert("Sube un archivo de Viajes o Dashboard primero.");
+        }
+        const loader = document.getElementById('btn-loader-cuadratura');
+        loader.style.display = 'inline-block';
+        try {
+            if (cuadraturaTipoDetectado === 'viajes') {
+                await processAllData();
+            } else if (cuadraturaTipoDetectado === 'dashboard') {
+                await processDashboardData();
+            }
+        } finally {
+            loader.style.display = 'none';
+        }
+    }
+
     async function processAllData() {
         if (!dataViajes.length) return alert("Sube el archivo de Viajes primero.");
-        document.getElementById('btn-loader').style.display = 'inline-block';
         dataGuiasEscaneadas = await fetchFirebase3DaysData();
         rawProcessedStats = []; 
         const viajeConductorMap = {};
@@ -2620,66 +2854,10 @@
         });
         renderUI();
         filterAndRenderTable();
-        document.getElementById('btn-loader').style.display = 'none';
     }
-
-    // ============================================================
-    //  FLUJO 2: DASHBOARD (Estatus_Entregas_Motivo)
-    // ============================================================
-    document.getElementById('fileDashboard').addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        const statusMsg = document.getElementById('statusMsg');
-        statusMsg.innerText = "Procesando archivo Dashboard...";
-        statusMsg.style.color = "#aaa";
-
-        const reader = new FileReader();
-        reader.onload = (evt) => {
-            try {
-                const wb = XLSX.read(evt.target.result, { type: 'binary' });
-                const sheetName = wb.SheetNames.find(n =>
-                    n.trim().toLowerCase().includes('estatus') ||
-                    n.trim().toLowerCase() === 'estatus_entregas_motivo'
-                ) || wb.SheetNames[0];
-
-                rawDashboardRows = XLSX.utils.sheet_to_json(wb.Sheets[sheetName]) || [];
-
-                if (rawDashboardRows.length === 0) {
-                    statusMsg.innerText = "La hoja Dashboard está vacía.";
-                    statusMsg.style.color = "#ff6b6b";
-                    return;
-                }
-
-                const jornadaRaw = rawDashboardRows[0]['Fecha Jornada'] || "";
-                const dateMatch = String(jornadaRaw).match(/\d{2}\/\d{2}\/\d{4}/);
-                const fechaExcelCuadratura = dateMatch ? dateMatch[0] : "S/F";
-
-                document.getElementById('display-fecha').innerText = fechaExcelCuadratura;
-                document.getElementById('info-display').style.display = 'flex';
-
-                rawDataFilter = rawDashboardRows.map(r => ({
-                    estado: r['Descripcion'] !== undefined ? String(r['Descripcion']).trim() : '',
-                    idViaje: r['Id Viaje'] !== undefined ? String(r['Id Viaje']).trim() : '',
-                    referencia: r['Paquete'] !== undefined ? String(r['Paquete']).trim() : '',
-                    fecha: fechaExcelCuadratura,
-                    motivo: r['Motivo'] !== undefined ? String(r['Motivo']).trim() : ''
-                }));
-
-                statusMsg.innerText = `Dashboard cargado. ${rawDataFilter.length} registros.`;
-                statusMsg.style.color = "var(--good)";
-                populateEstadoFilter();
-            } catch (error) {
-                console.error(error);
-                statusMsg.innerText = "Error al leer el archivo Dashboard.";
-                statusMsg.style.color = "#ff6b6b";
-            }
-        };
-        reader.readAsBinaryString(file);
-    });
 
     async function processDashboardData() {
         if (!rawDashboardRows.length) return alert("Sube el archivo Dashboard primero.");
-        document.getElementById('btn-loader-dashboard').style.display = 'inline-block';
         dataGuiasEscaneadas = await fetchFirebase3DaysData();
         rawProcessedStats = [];
 
@@ -2692,8 +2870,6 @@
             if (!viajeConductorMap[idViaje]) {
                 viajeConductorMap[idViaje] = {
                     conductor: String(r['Conductor'] || '').trim(),
-                    // El Dashboard no trae Estado/Categoría del viaje:
-                    // los dejamos con guion para no romper la tabla.
                     estadoViaje: "-",
                     categoriaViaje: "-"
                 };
@@ -2710,8 +2886,6 @@
             const estadoPaquete = String(r['Descripcion'] || '').trim();
             const motivo = String(r['Motivo'] || '').trim();
             const proveedor = (infoViaje.conductor === "CONDUCTOR QP CONDUCTOR QP") ? "QP" : "ROMBO";
-
-            // El Dashboard no trae Amazon/SameDay: usamos "-" para no romper la tabla.
             const categoriaAmazon = "-";
 
             rawProcessedStats.push({
@@ -2729,7 +2903,6 @@
 
         renderUI();
         filterAndRenderTable();
-        document.getElementById('btn-loader-dashboard').style.display = 'none';
     }
 
     async function fetchFirebase3DaysData() {
@@ -2820,6 +2993,9 @@
         stats.totalGuias = stats.guiasUnicas.size;
         document.getElementById('display-total-guias').innerText = stats.totalGuias;
         document.getElementById('total-pending-count').innerText = pendientesCount;
+        const badgePend = document.getElementById('badge-subtab-pendientes');
+        if (badgePend) badgePend.innerText = pendientesCount;
+
         document.getElementById('sub-pending-no-emb').innerText = stats.pendNoEmb;
         document.getElementById('sub-pending-no-ent').innerText = stats.pendNoEnt;
         document.getElementById('count-no-emb').innerText = stats.noEmb.t;
@@ -3104,10 +3280,16 @@
     function filterAndRenderTable() {
         const selectedEstado = document.getElementById('estadoFilter').value;
         const tableBody = document.getElementById('tableBody');
+        const badgeEstados = document.getElementById('badge-subtab-estados');
         tableBody.innerHTML = '';
-        if (rawDataFilter.length === 0) return;
+        if (rawDataFilter.length === 0) {
+            if (badgeEstados) badgeEstados.innerText = '0';
+            return;
+        }
         let filtered = [...rawDataFilter];
         if (selectedEstado && selectedEstado !== 'TODOS') filtered = rawDataFilter.filter(item => item.estado === selectedEstado);
+        if (badgeEstados) badgeEstados.innerText = filtered.length;
+
         filtered.sort((a, b) => {
             const isA_TR2 = a.estado.toLowerCase() === 'no embarcado tr2';
             const isB_TR2 = b.estado.toLowerCase() === 'no embarcado tr2';
@@ -3188,13 +3370,7 @@
     }
 
     // ============================================================
-    //  KPI CHOfer LOGIC
-    // ============================================================
-    // ============================================================
     //  HISTÓRICO SAMEDAY
-    //  Una guía aparece solo si tuvo "INY SAMEDAY" y después se volvió a
-    //  registrar en un día posterior. Cuenta MÁXIMO 1 incidencia por guía
-    //  (fecha = primer registro posterior al primer INY SAMEDAY).
     // ============================================================
     let sdChartInstance = null;
     let sdVisibleGuias = [];
@@ -3235,7 +3411,6 @@
         return out;
     }
 
-    // Total de guías con INY SAMEDAY (con o sin reincidencia). Fecha = primer INY SAMEDAY de la guía.
     function computeSamedayTotals() {
         const first = {};
         allGuias.forEach(g => {
@@ -3484,6 +3659,9 @@
         });
     }
 
+    // ============================================================
+    //  KPI CHOFER LOGIC
+    // ============================================================
     var kpiRows = [];
     var KPI_ENT = "entregado", KPI_NOE = "no entregado", KPI_TR2 = "no embarcado tr2";
     function kpiNorm(s) { return String(s == null ? "" : s).trim().toLowerCase().replace(/\s+/g, " "); }
@@ -3604,423 +3782,528 @@
         });
         for (var k in g) {
             var a = g[k].sort(function (x, y) { return x.h - y.h; });
-            for (var i = 0; i < a.length; i++) {
-                if ((i > 0 && a[i].h - a[i - 1].h < 120) || (i < a.length - 1 && a[i + 1].h - a[i].h < 120)) list.push(a[i]);
+            var i = 0;
+            while (i < a.length) {
+                var j = i + 1;
+                while (j < a.length && a[j].h - a[i].h <= 120) j++;
+                if (j - i >= 2) {
+                    for (var m = i; m < j; m++) list.push(a[m]);
+                    i = j;
+                } else i++;
             }
         }
         return list;
     }
-    var kpiLists = {};
-    function kpiCalc() {
-        document.getElementById("kpiListSection").style.display = "none";
-        var sel = document.getElementById("kpiConductorSelect").value;
-        var d = kpiRows.filter(function (o) { return sel === "__all__" || o.c === sel; });
-        var l1 = [], l2 = [], l3 = [], dias = {};
-        d.forEach(function (o) {
-            if (o.d === KPI_ENT || o.d === KPI_NOE || o.d === KPI_TR2) {
-                if (o.p !== "" && o.p != null) l1.push(o);
-            }
-            if (o.d === KPI_NOE) l2.push(o);
-            if (o.d === KPI_TR2) l3.push(o);
-            if (o.d === KPI_ENT && o.f) dias[o.f] = 1;
-        });
-        var nd = Object.keys(dias).length;
-        var lm1 = kpiMasivos(d, KPI_ENT), lm2 = kpiMasivos(d, KPI_NOE);
-        var ln = d.filter(function (o) { return o.d === KPI_ENT && o.h != null && (o.h >= 79200 || o.h <= 10800); });
-        kpiLists = { k1: l1, k2: l2, k3: l3, m1: lm1, m2: lm2, m3: ln };
-        document.getElementById("kpiM1").textContent = lm1.length;
-        document.getElementById("kpiM2").textContent = lm2.length;
-        document.getElementById("kpiM3").textContent = ln.length;
-        var avg = function (t) { return nd ? (t / nd).toFixed(1) : "–"; };
-        document.getElementById("kpiK0").textContent = nd;
-        document.getElementById("kpiK1").textContent = l1.length;
-        document.getElementById("kpiK2").textContent = l2.length;
-        document.getElementById("kpiK3").textContent = l3.length;
-        document.getElementById("kpiP1").textContent = avg(l1.length);
-        document.getElementById("kpiP2").textContent = avg(l2.length);
-        document.getElementById("kpiP3").textContent = avg(l3.length);
-        document.getElementById("kpiTp").textContent = kpiFmtDur(kpiTiempoPromedio(d));
-        var entOnly = d.filter(function (o) { return o.d === KPI_ENT; }).length;
-        var base = entOnly + l2.length;
-        var efEl = document.getElementById("kpiEfCard"), efVal = document.getElementById("kpiEf");
-        efEl.classList.remove("ef-red", "ef-yellow", "ef-green", "ef-gold");
-        if (base === 0) {
-            efVal.textContent = "–";
-        } else {
-            var pct = entOnly / base * 100;
-            efVal.textContent = pct.toFixed(2) + "%";
-            if (pct >= 100) efEl.classList.add("ef-gold");
-            else if (pct >= 98) efEl.classList.add("ef-green");
-            else if (pct >= 97) efEl.classList.add("ef-yellow");
-            else efEl.classList.add("ef-red");
-        }
+    var kpiVista = {};
+    function kpiEsc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;"); }
+    function kpiHms(s) {
+        if (s == null) return "";
+        return [Math.floor(s / 3600), Math.floor((s % 3600) / 60), s % 60].map(function (n) { return String(n).padStart(2, "0"); }).join(":");
     }
-    var KPI_TITLES = { k1: "Total Entregas", k2: "Total No Entregados", k3: "Total No Embarcados TR2", m1: "Masivos Entregados", m2: "Masivos No Entregados", m3: "Entregas Nocturnas" };
+    function kpiSortByViaje(list) {
+        return list.slice().sort(function (a, b) {
+            var va = Number(a.idv), vb = Number(b.idv);
+            var na = isNaN(va), nb = isNaN(vb);
+            if (!na && !nb && va !== vb) return va - vb;
+            if (na !== nb) return na ? 1 : -1;
+            if (a.idv !== b.idv) return String(a.idv).localeCompare(String(b.idv), "es");
+            return (a.h == null ? 9e9 : a.h) - (b.h == null ? 9e9 : b.h);
+        });
+    }
+    var kpiCurrentShown = [];
+    function kpiRenderRows(list) {
+        kpiCurrentShown = kpiSortByViaje(list);
+        document.getElementById("kpiListBody").innerHTML = kpiCurrentShown.map(function (o) {
+            return "<tr><td>" + kpiEsc(o.idv) + "</td><td>" + kpiEsc(o.dOrig) + "</td><td>" + kpiEsc(o.f) + "</td><td>" + kpiEsc(o.p) + "</td><td>" + kpiHms(o.h) + "</td></tr>";
+        }).join("");
+    }
+    function kpiRenderHisto(list) {
+        var wrap = document.getElementById("kpiHistoWrap");
+        var svg = document.getElementById("kpiHistoSvg");
+        if (!list.length) { wrap.style.display = "none"; return; }
+        var buckets = {}, minH = 24, maxH = 0;
+        list.forEach(function (o) {
+            if (o.h == null) return;
+            var hr = Math.floor(o.h / 3600);
+            buckets[hr] = (buckets[hr] || 0) + 1;
+            if (hr < minH) minH = hr;
+            if (hr > maxH) maxH = hr;
+        });
+        if (minH > maxH) { wrap.style.display = "none"; return; }
+        var start = Math.min(8, minH), end = Math.max(21, maxH);
+        var hrs = [];
+        for (var h = start; h <= end; h++) hrs.push({ hr: h, n: buckets[h] || 0 });
+        var maxN = Math.max.apply(null, hrs.map(function (x) { return x.n; }).concat([1]));
+        var W = 760, H = 200, padL = 32, padR = 16, padT = 22, padB = 26;
+        var plotW = W - padL - padR, plotH = H - padT - padB;
+        var n = hrs.length;
+        var pts = hrs.map(function (x, i) {
+            var px = padL + (n === 1 ? plotW / 2 : (i / (n - 1)) * plotW);
+            var py = padT + plotH - (x.n / maxN) * plotH;
+            return { x: px, y: py, hr: x.hr, n: x.n };
+        });
+        var grid = [0, 0.5, 1].map(function (t) {
+            var y = padT + plotH - t * plotH;
+            var val = Math.round(t * maxN);
+            return '<line class="kpi-histoGrid" x1="' + padL + '" y1="' + y + '" x2="' + (W - padR) + '" y2="' + y + '"/>'
+                + '<text class="kpi-histoAxisLbl" x="' + (padL - 6) + '" y="' + (y + 3) + '" text-anchor="end">' + val + '</text>';
+        }).join("");
+        var lineD = pts.map(function (p, i) { return (i ? "L" : "M") + p.x.toFixed(1) + "," + p.y.toFixed(1); }).join(" ");
+        var dots = pts.map(function (p) {
+            return '<circle class="kpi-histoDot" cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="3.5"/>'
+                + (p.n ? '<text class="kpi-histoLbl" x="' + p.x.toFixed(1) + '" y="' + (p.y - 7).toFixed(1) + '" text-anchor="middle">' + p.n + '</text>' : "")
+                + '<text class="kpi-histoAxisLbl" x="' + p.x.toFixed(1) + '" y="' + (H - 8) + '" text-anchor="middle">' + String(p.hr).padStart(2, "0") + 'h</text>';
+        }).join("");
+        svg.innerHTML = grid + '<path class="kpi-histoLine" d="' + lineD + '"/>' + dots;
+        document.getElementById("kpiHistoTitle").textContent = "Distribución por hora (" + list.length + " paquete" + (list.length === 1 ? "" : "s") + ")";
+        wrap.style.display = "block";
+    }
     var KPI_TRACK_URL = "https://redpack.unigis.com/tracking/Shipment/Index?id=";
-    var kpiCurrentKey = null;
-    function kpiFechaCorta(iso) {
-        if (!iso) return "";
-        var p = iso.split("-");
-        if (p.length === 3) return p[2] + "/" + p[1] + "/" + p[0].slice(2);
-        return iso;
-    }
-    function kpiEsc(v) { return String(v == null ? "" : v).replace(/&/g, "&amp;").replace(/</g, "&lt;"); }
-    function kpiOpenList(key) {
-        kpiCurrentKey = key;
-        var arr = kpiLists[key] || [];
-        document.getElementById("kpiListTitle").textContent = KPI_TITLES[key] + " (" + arr.length + ")";
-        var todos = document.getElementById("kpiConductorSelect").value === "__all__";
-        var counts = {}, order = [], fechas = {}, conductores = {};
-        arr.forEach(function (o) {
-            var idv = o.idv == null ? "" : o.idv;
-            if (!(idv in counts)) { counts[idv] = 0; order.push(idv); fechas[idv] = o.f; conductores[idv] = o.c; }
-            counts[idv]++;
+    function kpiShowList(key, title) {
+        var list = kpiVista[key] || [];
+        var sec = document.getElementById("kpiListSection");
+        var chips = document.getElementById("kpiChips");
+        var byViaje = {};
+        list.forEach(function (o) {
+            var id = String(o.idv || "");
+            if (!byViaje[id]) byViaje[id] = { f: o.f || "", id: id, c: o.c || "", items: [] };
+            byViaje[id].items.push(o);
         });
-        order.sort(function (a, b) { return counts[b] - counts[a]; });
-        document.getElementById("kpiChips").innerHTML = order.map(function (idv) {
-            var driverHtml = todos ? '<div class="cdriver" title="' + kpiEsc(conductores[idv]) + '">' + kpiEsc(conductores[idv]) + '</div>' : '';
-            return '<div class="kpi-chip" data-idv="' + kpiEsc(idv) + '">' + driverHtml +
-                '<div class="cdate">' + kpiEsc(kpiFechaCorta(fechas[idv])) + '</div>' +
-                '<div class="cid" title="' + kpiEsc(idv) + '">' + kpiEsc(idv) + '</div>' +
-                '<div class="cn">' + counts[idv] + '</div>' +
-                '<a class="trackBtn" href="' + KPI_TRACK_URL + encodeURIComponent(idv) + '" target="_blank" rel="noopener">Ver ↗</a>' +
-                '</div>';
+        var grupos = Object.keys(byViaje).map(function (k) { return byViaje[k]; }).sort(function (a, b) {
+            return String(b.f).localeCompare(String(a.f)) || String(a.id).localeCompare(String(b.id));
+        });
+        var esTodos = document.getElementById("kpiConductorSelect").value === "__all__";
+        chips.innerHTML = grupos.map(function (g, idx) {
+            var track = g.id ? '<a class="trackBtn" href="' + KPI_TRACK_URL + encodeURIComponent(g.id) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">Tracking</a>' : "";
+            var drv = esTodos ? '<span class="cdriver" title="' + kpiEsc(g.c) + '">' + kpiEsc(g.c || "—") + '</span>' : '';
+            return '<div class="kpi-chip" data-idx="' + idx + '">' + drv + '<span class="cdate">' + kpiEsc(g.f) + '</span><span class="cid">Viaje ' + kpiEsc(g.id || "—") + '</span><span class="cn">' + g.items.length + '</span>' + track + '</div>';
         }).join("");
-        document.getElementById("kpiHistoWrap").style.display = "none";
-        var tbody = document.getElementById("kpiListBody");
-        tbody.innerHTML = arr.map(function (o) {
-            var idv = o.idv == null ? "" : o.idv;
-            return "<tr><td>" + kpiEsc(idv) + "</td><td>" + kpiEsc(o.dOrig) + "</td><td>" + kpiEsc(o.f) + "</td><td>" + kpiEsc(o.p) + "</td><td>" + kpiEsc(o.hRaw) + "</td></tr>";
-        }).join("");
-        document.getElementById("kpiListSection").style.display = "block";
-        document.getElementById("kpiListSection").scrollIntoView({ behavior: "smooth", block: "start" });
+        chips.querySelectorAll(".kpi-chip").forEach(function (el) {
+            el.addEventListener("click", function () {
+                chips.querySelectorAll(".kpi-chip").forEach(function (c) { c.classList.remove("active"); });
+                el.classList.add("active");
+                var g = grupos[+el.dataset.idx];
+                document.getElementById("kpiListTitle").textContent = title + " · Viaje " + (g.id || "—") + " (" + g.items.length + ")";
+                kpiRenderRows(g.items);
+                kpiRenderHisto(g.items);
+            });
+        });
+        document.getElementById("kpiListTitle").textContent = title + " (" + list.length + ")";
+        kpiRenderRows(list);
+        kpiRenderHisto(list);
+        sec.style.display = "block";
+        sec.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
-    function kpiCloseList() {
+    document.getElementById("kpiCloseBtn").addEventListener("click", function () {
         document.getElementById("kpiListSection").style.display = "none";
-        kpiCurrentKey = null;
-    }
-    function kpiCopyTable() {
-        var arr = kpiLists[kpiCurrentKey] || [];
-        var head = "Id Viaje\tDescripción\tFecha Jornada\tPaquete\tHora Estado";
-        var body = arr.map(function (o) { return [o.idv, o.dOrig, o.f, o.p, o.hRaw].join("\t"); }).join("\n");
-        var text = head + "\n" + body;
-        navigator.clipboard.writeText(text).then(function () {
-            var b = document.getElementById("kpiCopyBtn");
-            var old = b.textContent;
-            b.textContent = "Copiado ✓";
-            setTimeout(function () { b.textContent = old; }, 1500);
+    });
+    document.getElementById("kpiCopyBtn").addEventListener("click", function () {
+        var rows = kpiCurrentShown;
+        var tsv = ["Id Viaje\tDescripción\tFecha Jornada\tPaquete\tHora Estado"].concat(rows.map(function (o) {
+            return [o.idv, o.dOrig, o.f, o.p, kpiHms(o.h)].join("\t");
+        })).join("\n");
+        var btn = this;
+        navigator.clipboard.writeText(tsv).then(function () {
+            btn.textContent = "✓ Copiado (" + rows.length + ")";
+            setTimeout(function () { btn.textContent = "📋 Copiar para Sheets"; }, 1800);
         });
-    }
-    ["kpiK1", "kpiK2", "kpiK3", "kpiM1", "kpiM2", "kpiM3"].forEach(function (id) {
-        var el = document.getElementById(id).closest(".kpi-card");
+    });
+    function kpiBindCard(id, key, title) {
+        var el = document.getElementById(id).parentElement;
         el.style.cursor = "pointer";
-        el.addEventListener("click", function () {
-            var key = id.replace("kpiK", "k").replace("kpiM", "m").toLowerCase();
-            if (id.startsWith("kpiK")) key = "k" + id.charAt(4);
-            if (id.startsWith("kpiM")) key = "m" + id.charAt(4);
-            kpiOpenList(key);
+        el.title = "Haz clic para ver los paquetes";
+        el.addEventListener("click", function () { if (kpiRows.length) kpiShowList(key, title); });
+    }
+    kpiBindCard("kpiK1", "ent", "Total Entregas");
+    kpiBindCard("kpiK2", "noe", "Total No Entregados");
+    kpiBindCard("kpiK3", "tr2", "Total No Embarcados TR2");
+    kpiBindCard("kpiM1", "me", "Masivos Entregados");
+    kpiBindCard("kpiM2", "mn", "Masivos No Entregados");
+    kpiBindCard("kpiM3", "noc", "Entregas Nocturnas");
+
+    function kpiCalc() {
+        var c = document.getElementById("kpiConductorSelect").value;
+        var d = c === "__all__" ? kpiRows : kpiRows.filter(function (o) { return o.c === c; });
+        var dias = {}, lEnt = [], lNoe = [], lTr2 = [], lNoc = [];
+        d.forEach(function (o) {
+            if (o.f) dias[o.f] = 1;
+            if (o.d === KPI_ENT) { lEnt.push(o); if (o.h != null && o.h >= 20 * 3600) lNoc.push(o); }
+            else if (o.d === KPI_NOE) lNoe.push(o);
+            else if (o.d === KPI_TR2) lTr2.push(o);
         });
-    });
-    function kpiRenderHisto(idv) {
-        var arr = (kpiLists[kpiCurrentKey] || []).filter(function (o) { return String(o.idv == null ? "" : o.idv) === String(idv); });
-        if (!arr.length) { document.getElementById("kpiHistoWrap").style.display = "none"; return; }
-        var JORNADA_INICIO = 6;
-        var hours = new Array(24).fill(0);
-        arr.forEach(function (o) {
-            if (o.h != null) {
-                var hReal = Math.floor(o.h / 3600) % 24;
-                var idx = (hReal - JORNADA_INICIO + 24) % 24;
-                hours[idx]++;
+        var nDias = Object.keys(dias).length;
+        var ent = lEnt.length, noe = lNoe.length, tr2 = lTr2.length, noc = lNoc.length;
+        var lMe = kpiMasivos(d, KPI_ENT), lMn = kpiMasivos(d, KPI_NOE);
+        kpiVista = { ent: lEnt, noe: lNoe, tr2: lTr2, me: lMe, mn: lMn, noc: lNoc };
+        document.getElementById("kpiListSection").style.display = "none";
+        document.getElementById("kpiK0").textContent = nDias;
+        var ef = (ent + noe) ? (ent / (ent + noe) * 100) : null;
+        document.getElementById("kpiEf").textContent = ef != null ? ef.toFixed(2) + "%" : "–";
+        var efCard = document.getElementById("kpiEfCard");
+        efCard.classList.remove("ef-red", "ef-yellow", "ef-green", "ef-gold");
+        if (ef != null) {
+            if (ef < 90) efCard.classList.add("ef-red");
+            else if (ef < 95) efCard.classList.add("ef-yellow");
+            else if (ef < 98) efCard.classList.add("ef-green");
+            else efCard.classList.add("ef-gold");
+        }
+        document.getElementById("kpiTp").textContent = kpiFmtDur(kpiTiempoPromedio(d));
+        document.getElementById("kpiK1").textContent = ent;
+        document.getElementById("kpiK2").textContent = noe;
+        document.getElementById("kpiK3").textContent = tr2;
+        document.getElementById("kpiP1").textContent = nDias ? (ent / nDias).toFixed(1) : "–";
+        document.getElementById("kpiP2").textContent = nDias ? (noe / nDias).toFixed(1) : "–";
+        document.getElementById("kpiP3").textContent = nDias ? (tr2 / nDias).toFixed(1) : "–";
+        document.getElementById("kpiM1").textContent = lMe.length;
+        document.getElementById("kpiM2").textContent = lMn.length;
+        document.getElementById("kpiM3").textContent = noc;
+    }
+
+    // ================= MAPA PEDIDOS =================
+    (function () {
+        if (typeof L === 'undefined') return;
+        const PALETTE = ['#D8E84B', '#F06060', '#58D68D', '#5DADE2', '#F5B041', '#AF7AC5', '#48C9B0', '#EB984E', '#EC7063', '#85C1E9'];
+        const OK_COLOR = '#22c55e', BAD_COLOR = '#F04438';
+        const pinColor = r => (r && r.mal) ? BAD_COLOR : OK_COLOR;
+        const $ = id => document.getElementById(id);
+
+        const map = L.map('mp-map', { zoomControl: false, attributionControl: false }).setView([23.6345, -102.5528], 5);
+        L.control.zoom({ position: 'bottomright' }).addTo(map);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { maxZoom: 20, subdomains: 'abcd' }).addTo(map);
+        const layer = L.layerGroup().addTo(map);
+
+        let rows = [], stateColor = {}, hiddenStates = new Set(), selectedKey = null, markers = new Map(), onlyBad = false, panelMode = 'all';
+
+        const norm = s => String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toUpperCase();
+        const esc = s => String(s ?? '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+        const parseNum = v => {
+            if (typeof v === 'number') return Number.isFinite(v) ? v : NaN;
+            let s = String(v ?? '').trim().replace(/[^\d.,-]/g, '');
+            if (!s) return NaN;
+            if (s.includes(',') && !s.includes('.')) s = s.replace(',', '.');
+            else if (s.includes(',') && s.includes('.')) s = s.replace(/,/g, '');
+            const n = parseFloat(s);
+            return Number.isFinite(n) ? n : NaN;
+        };
+        function toast(msg) {
+            const el = $('mp-toast');
+            el.textContent = msg;
+            el.classList.add('show');
+            clearTimeout(toast._t);
+            toast._t = setTimeout(() => el.classList.remove('show'), 3600);
+        }
+
+        function findCols(headers) {
+            const H = headers.map(h => ({ raw: h, n: norm(h) }));
+            const pick = (...tests) => {
+                for (const t of tests) {
+                    const hit = H.find(h => typeof t === 'string' ? h.n === t : t.test(h.n));
+                    if (hit) return hit.raw;
+                }
+                return null;
+            };
+            return {
+                lat: pick('LATITUD', 'LAT', /^LATITUD\b/, /\bLATITUD\b/, /\bLAT\b/),
+                lng: pick('LONGITUD', 'LON', 'LNG', /^LONGITUD\b/, /\bLONGITUD\b/, /\bLON\b/, /\bLNG\b/),
+                id: pick('ID', 'ID PEDIDO', 'PEDIDO', /^ID\b/),
+                ref: pick('REFERENCIA', 'REF', 'GUIA', 'TRACKING', /REFERENCIA/, /GUIA/),
+                est: pick('ESTADO', 'ESTATUS', 'STATUS', /^ESTADO\b/, /^ESTATUS\b/),
+                nom: pick('NOMBRE', 'CLIENTE', 'DESTINATARIO', /NOMBRE/, /CLIENTE/),
+                dir: pick('DIRECCION', 'DOMICILIO', 'CALLE', /DIRECCION/, /DOMICILIO/),
+                ent: pick('ENTRE CALLES', 'ENTRECALLES', /ENTRE.*CALLE/),
+                bar: pick('BARRIO', 'COLONIA', 'LOCALIDAD', /COLONIA/, /BARRIO/),
+                cp: pick('CODIGO POSTAL', 'CP', 'C.P.', 'ZIP', /CODIGO POSTAL/, /\bCP\b/)
+            };
+        }
+
+        function handleFile(file) {
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = e => {
+                try {
+                    const wb = XLSX.read(e.target.result, { type: 'array' });
+                    const ws = wb.Sheets[wb.SheetNames[0]];
+                    const json = XLSX.utils.sheet_to_json(ws, { defval: '' });
+                    if (!json.length) { toast('El archivo está vacío'); return; }
+
+                    const cols = findCols(Object.keys(json[0]));
+                    if (!cols.lat || !cols.lng) {
+                        toast('No encontré columnas LATITUD y LONGITUD en la primera fila');
+                        return;
+                    }
+
+                    const parsed = [];
+                    let skipped = 0;
+                    for (const r of json) {
+                        let lat = parseNum(r[cols.lat]), lng = parseNum(r[cols.lng]);
+                        if (!Number.isFinite(lat) || !Number.isFinite(lng) || (lat === 0 && lng === 0)) { skipped++; continue; }
+                        if (Math.abs(lat) > 90 && Math.abs(lng) <= 90) [lat, lng] = [lng, lat];
+                        if (Math.abs(lat) > 90 || Math.abs(lng) > 180) { skipped++; continue; }
+
+                        const g = k => k ? String(r[k] ?? '').trim() : '';
+                        parsed.push({
+                            lat, lng,
+                            id: g(cols.id),
+                            ref: g(cols.ref),
+                            est: g(cols.est) || 'Sin estado',
+                            nom: g(cols.nom),
+                            dir: g(cols.dir),
+                            ent: g(cols.ent),
+                            bar: g(cols.bar),
+                            cp: g(cols.cp),
+                            mal: false
+                        });
+                    }
+
+                    if (!parsed.length) { toast('Ninguna fila tenía coordenadas válidas'); return; }
+
+                    rows = parsed;
+                    hiddenStates.clear();
+                    selectedKey = null;
+                    onlyBad = false;
+                    panelMode = 'all';
+
+                    const states = [...new Set(rows.map(r => r.est))];
+                    stateColor = {};
+                    states.forEach((s, i) => stateColor[s] = PALETTE[i % PALETTE.length]);
+
+                    $('mapa-tab').classList.add('has-data');
+
+                    render(true);
+                    if (skipped) toast(`Se omitieron ${skipped} fila(s) sin coordenadas válidas`);
+                } catch (err) {
+                    console.error(err);
+                    toast('No se pudo leer el archivo');
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function updateBadCount() {
+            const bad = rows.filter(r => r.mal).length;
+            if ($('mp-nAll')) $('mp-nAll').textContent = rows.length;
+            if ($('mp-nOk')) $('mp-nOk').textContent = rows.length - bad;
+            if ($('mp-nBad')) $('mp-nBad').textContent = bad;
+            renderPanel();
+        }
+
+        function pinIcon(color, label, sel) {
+            return L.divIcon({
+                className: '',
+                iconSize: [28, 40],
+                iconAnchor: [14, 40],
+                popupAnchor: [0, -34],
+                html: `<div class="gpin${sel ? ' sel' : ''}">
+                    <svg viewBox="0 0 28 40">
+                      <path class="body" d="M14 1C7.1 1 1.5 6.6 1.5 13.5c0 9.6 12.5 24.5 12.5 24.5s12.5-14.9 12.5-24.5C26.5 6.6 20.9 1 14 1z" fill="${color}" stroke="#7f8c10" stroke-width="1.4"/>
+                      <circle cx="14" cy="13.5" r="7.5" fill="#fff"/>
+                    </svg>
+                    ${label ? `<span class="gnum">${label}</span>` : ''}
+                </div>`
+            });
+        }
+
+        function popupHtml(items) {
+            const head = items.length > 1 ? `<div class="mp-gcount">${items.length} pedidos en esta ubicación</div>` : '';
+            const blocks = items.map(r => {
+                const idx = rows.indexOf(r);
+                const row = (lbl, val) => val ? `<div class="mp-row"><span>${lbl}</span><span>${esc(val)}</span></div>` : '';
+                return `<div class="mp-order">
+                    <span class="mp-badge" style="background:${stateColor[r.est]}">${esc(r.est)}</span>
+                    <h4>${esc(r.nom || 'Sin nombre')}</h4>
+                    <div class="mp-sub">${[r.id && 'ID ' + r.id, r.ref && 'Ref. ' + r.ref].filter(Boolean).map(esc).join(' · ') || '&nbsp;'}</div>
+                    ${row('Dirección', r.dir)}
+                    ${row('Entre calles', r.ent)}
+                    ${row('Colonia / Barrio', r.bar)}
+                    ${row('Código postal', r.cp)}
+                    <label class="mp-flag${r.mal ? ' on' : ''}">
+                      <input type="checkbox" data-idx="${idx}" ${r.mal ? 'checked' : ''}>
+                      <span>Pin mal ubicado</span>
+                    </label>
+                </div>`;
+            }).join('');
+            return `<div class="mp-pop">${head}${blocks}</div>`;
+        }
+
+        function render(fit = false) {
+            layer.clearLayers();
+            markers.clear();
+            const q = norm($('mp-q').value);
+
+            const filtered = rows.filter(r => {
+                if (hiddenStates.has(r.est)) return false;
+                if (onlyBad && !r.mal) return false;
+                if (!q) return true;
+                return norm(r.id).includes(q) || norm(r.ref).includes(q) || norm(r.nom).includes(q) || norm(r.dir).includes(q) || norm(r.bar).includes(q) || norm(r.cp).includes(q);
+            });
+
+            const groups = new Map();
+            for (const r of filtered) {
+                const key = `${r.lat.toFixed(6)},${r.lng.toFixed(6)}`;
+                if (!groups.has(key)) groups.set(key, []);
+                groups.get(key).push(r);
             }
-        });
-        var max = Math.max.apply(null, hours);
-        if (max < 1) max = 1;
-        var W = 760, H = 200, padL = 22, padR = 14, padT = 26, padB = 26;
-        var innerW = W - padL - padR, innerH = H - padT - padB;
-        var x = function (i) { return padL + i * (innerW / 23); };
-        var y = function (v) { return padT + innerH - (v / max) * innerH; };
-        var pts = [];
-        var dots = "";
-        var ticks = "";
-        hours.forEach(function (v, i) {
-            if (v > 0) {
-                var cx = x(i), cy = y(v);
-                pts.push(cx + "," + cy);
-                var hReal = (JORNADA_INICIO + i) % 24;
-                var hLabel = String(hReal).padStart(2, "0") + "h";
-                var lbl = '<text class="kpi-histoLbl" x="' + cx + '" y="' + (cy - 8) + '" text-anchor="middle">' + v + '</text>';
-                dots += '<circle class="kpi-histoDot" cx="' + cx + '" cy="' + cy + '" r="3"><title>' + hLabel + ':00 - ' + v + ' paquetes</title></circle>' + lbl;
-                ticks += '<text class="kpi-histoAxisLbl" x="' + cx + '" y="' + (H - 6) + '" text-anchor="middle">' + hLabel + '</text>';
+
+            const bounds = [];
+            for (const [key, items] of groups) {
+                const { lat, lng } = items[0];
+                bounds.push([lat, lng]);
+                const main = items.find(r => r.mal) || items[0];
+                const color = pinColor(main);
+                const label = items.length > 1 ? String(items.length) : '';
+                const m = L.marker([lat, lng], { icon: pinIcon(color, label, key === selectedKey) });
+                m.bindPopup(() => popupHtml(items), { maxWidth: 400 });
+                m.on('click', () => selectPin(key));
+                m.on('popupclose', () => { if (selectedKey === key) selectPin(null); });
+                m.addTo(layer);
+                markers.set(key, { marker: m, items });
             }
+
+            if (fit && bounds.length) {
+                map.fitBounds(bounds, { padding: [50, 50], maxZoom: 16 });
+            }
+            renderPanel();
+        }
+
+        function renderPanel() {
+            const listEl = $('mp-pl');
+            if (!listEl) return;
+            const q = norm($('mp-q').value);
+            const items = rows.map((r, idx) => ({ r, idx })).filter(({ r }) => {
+                if (hiddenStates.has(r.est)) return false;
+                if (panelMode === 'ok' && r.mal) return false;
+                if (panelMode === 'bad' && !r.mal) return false;
+                if (!q) return true;
+                return norm(r.id).includes(q) || norm(r.ref).includes(q) || norm(r.nom).includes(q) || norm(r.dir).includes(q) || norm(r.bar).includes(q) || norm(r.cp).includes(q);
+            });
+            $('mp-pcount').textContent = items.length;
+            document.querySelectorAll('#mp-pf .mp-pchip').forEach(c => c.classList.toggle('active', c.dataset.m === panelMode));
+            if (!items.length) {
+                listEl.innerHTML = '<div class="mp-pempty">Sin paquetes en este filtro</div>';
+                return;
+            }
+            listEl.innerHTML = items.map(({ r, idx }) => {
+                const key = `${r.lat.toFixed(6)},${r.lng.toFixed(6)}`;
+                const code = r.ref || (r.id ? 'ID ' + r.id : '#' + (idx + 1));
+                const sub = [r.nom, r.dir].filter(Boolean).join(' · ') || r.est;
+                return `<div class="mp-it${key === selectedKey ? ' sel' : ''}" data-idx="${idx}" data-key="${key}">
+                    <div class="mp-itx"><div class="mp-it1">${esc(code)}</div><div class="mp-it2">${esc(sub)}</div></div>
+                    <button type="button" class="mp-st ${r.mal ? 'bad' : 'ok'}" data-idx="${idx}">${r.mal ? 'Incorrecto' : 'Correcto'}</button>
+                </div>`;
+            }).join('');
+        }
+
+        function positionPanel() {
+            const tab = $('mapa-tab'), bar = tab && tab.querySelector('.mp-bar');
+            if (!tab || !bar) return;
+            const rect = bar.getBoundingClientRect();
+            tab.style.setProperty('--mp-top', Math.round(rect.bottom + 10) + 'px');
+            tab.style.setProperty('--mp-left', Math.round(rect.left) + 'px');
+        }
+
+        function setRowMal(idx, val) {
+            const r = rows[idx];
+            if (!r) return;
+            r.mal = val;
+            updateBadCount();
+            const key = `${r.lat.toFixed(6)},${r.lng.toFixed(6)}`;
+            const entry = markers.get(key);
+            if (entry) {
+                const main = entry.items.find(x => x.mal) || entry.items[0];
+                const label = entry.items.length > 1 ? String(entry.items.length) : '';
+                entry.marker.setIcon(pinIcon(pinColor(main), label, key === selectedKey));
+            }
+            if (onlyBad && !r.mal) render(false);
+        }
+
+        function selectPin(key) {
+            if (selectedKey && markers.has(selectedKey)) {
+                const prev = markers.get(selectedKey);
+                const main = prev.items.find(r => r.mal) || prev.items[0];
+                const label = prev.items.length > 1 ? String(prev.items.length) : '';
+                prev.marker.setIcon(pinIcon(pinColor(main), label, false));
+            }
+            selectedKey = key;
+            if (key && markers.has(key)) {
+                const cur = markers.get(key);
+                const main = cur.items.find(r => r.mal) || cur.items[0];
+                const label = cur.items.length > 1 ? String(cur.items.length) : '';
+                cur.marker.setIcon(pinIcon(pinColor(main), label, true));
+            }
+            document.querySelectorAll('#mp-pl .mp-it').forEach(el => el.classList.toggle('sel', !!key && el.dataset.key === key));
+        }
+
+        document.addEventListener('change', e => {
+            const cb = e.target.closest('.mp-flag input[type="checkbox"]');
+            if (!cb) return;
+            const r = rows[Number(cb.dataset.idx)];
+            if (!r) return;
+            cb.closest('.mp-flag').classList.toggle('on', cb.checked);
+            setRowMal(Number(cb.dataset.idx), cb.checked);
         });
-        var baseline = '<line class="kpi-histoGrid" x1="' + padL + '" y1="' + (padT + innerH) + '" x2="' + (padL + innerW) + '" y2="' + (padT + innerH) + '"/>';
-        var line = pts.length > 1 ? '<polyline class="kpi-histoLine" points="' + pts.join(" ") + '"/>' : '';
-        document.getElementById("kpiHistoSvg").innerHTML = baseline + line + dots + ticks;
-        document.getElementById("kpiHistoTitle").textContent = "Entregas por hora (06:00 → 05:00) — Id Viaje " + idv + " (" + arr.length + " paquetes)";
-        document.getElementById("kpiHistoWrap").style.display = "block";
-    }
-    document.getElementById("kpiChips").addEventListener("click", function (e) {
-        if (e.target.closest(".trackBtn")) return;
-        var chip = e.target.closest(".kpi-chip");
-        if (!chip) return;
-        document.querySelectorAll("#kpiChips .kpi-chip").forEach(function (c) { c.classList.remove("active"); });
-        chip.classList.add("active");
-        kpiRenderHisto(chip.dataset.idv);
-    });
-    document.getElementById("kpiCloseBtn").addEventListener("click", kpiCloseList);
-    document.getElementById("kpiCopyBtn").addEventListener("click", kpiCopyTable);
-</script>
-<script>
-// ===== MAPA PEDIDOS (pestaña) =====
-(function(){
-  const tab = document.getElementById('mapa-tab');
-  let map = null, layer = null;
-  const LIME='#CEDF1F', WARN='#F04438';
-  let markerByKey={}, lastVisible=[], listMode='all', selIdx=-1;
-  let orders=[], headers=[], skipped=0, cols={};
 
-  const $ = id => document.getElementById(id);
-  const norm = s => String(s==null?'':s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[_\s]+/g,' ').trim().toUpperCase();
-  const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  function toast(msg){ const t=$('mp-toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove('show'),3500); }
-
-  function ensureMap(){
-    if(map) return true;
-    if(typeof L==='undefined'){ toast('No cargó Leaflet (revisa tu conexión)'); return false; }
-    map = L.map('mp-map',{zoomControl:false}).setView([25.67,-100.31],11);
-    L.control.zoom({position:'bottomright'}).addTo(map);
-    const mk=(url,opt)=>L.tileLayer(url,Object.assign({maxZoom:19},opt));
-    const bases={
-      'Calles':mk('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',{attribution:'Tiles &copy; Esri'}),
-      'OpenStreetMap':mk('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap contributors'}),
-      'Satélite':mk('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{attribution:'Tiles &copy; Esri'})
-    };
-    const order=['Calles','OpenStreetMap','Satélite'];
-    let baseIdx=0, tileErrs=0;
-    bases[order[0]].addTo(map);
-    L.control.layers(bases,null,{position:'bottomleft',collapsed:true}).addTo(map);
-    map.on('baselayerchange',e=>{ baseIdx=Math.max(0,order.indexOf(e.name)); tileErrs=0; });
-    Object.keys(bases).forEach(n=>bases[n].on('tileerror',()=>{
-      if(!map.hasLayer(bases[n])) return;
-      if(++tileErrs>=4 && baseIdx<order.length-1){
-        const next=order[baseIdx+1]; map.removeLayer(bases[n]); bases[next].addTo(map); baseIdx++; tileErrs=0;
-        toast('Cambié el mapa base a: '+next);
-      }
-    }));
-    layer = L.layerGroup().addTo(map);
-    return true;
-  }
-
-  window.mapaPedidosShow = function(){
-    if(!ensureMap()) return;
-    setTimeout(()=>{ map.invalidateSize(); posPanel(); },60);
-  };
-  window.addEventListener('resize',()=>{ if(map && tab.classList.contains('active')) map.invalidateSize(); });
-
-  function parseCoord(v){
-    if(v==null||v==='') return NaN;
-    if(typeof v==='number') return v;
-    let s=String(v).trim().replace(/\s/g,'');
-    if(s.includes(',') && s.includes('.')) s=s.replace(/,/g,'');
-    else s=s.replace(',','.');
-    return parseFloat(s);
-  }
-
-  function fmtValue(key,v){
-    if(v==null||v==='') return '';
-    if(v instanceof Date) return v.toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric'});
-    const k=norm(key);
-    if(k.includes('FECHA')){
-      if(typeof v==='number' && v>20000 && v<80000){
-        const d=new Date(Math.round((v-25569)*86400*1000));
-        return d.toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric',timeZone:'UTC'});
-      }
-      const m=String(v).match(/^(\d{4})-(\d{2})-(\d{2})/);
-      if(m){
-        const d=new Date(Date.UTC(+m[1],+m[2]-1,+m[3]));
-        const hasTime=/\d{2}:\d{2}/.test(String(v)) && !/00:00(:00)?$/.test(String(v).trim());
-        let out=d.toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric',timeZone:'UTC'});
-        if(hasTime) out+=' '+String(v).trim().slice(11,16);
-        return out;
-      }
-    }
-    return String(v);
-  }
-
-  function readFile(file){
-    if(!ensureMap()) return;
-    const reader=new FileReader();
-    reader.onload=e=>{
-      try{
-        const wb=XLSX.read(e.target.result,{type:'array',cellDates:true});
-        const ws=wb.Sheets[wb.SheetNames[0]];
-        const rows=XLSX.utils.sheet_to_json(ws,{defval:'',raw:true});
-        if(!rows.length){ toast('El archivo no tiene filas de datos'); return; }
-        headers=Object.keys(rows[0]);
-        const latKey=headers.find(h=>norm(h)==='LATITUD'||norm(h)==='LATITUDE'||norm(h)==='LAT');
-        const lngKey=headers.find(h=>norm(h)==='LONGITUD'||norm(h)==='LONGITUDE'||norm(h)==='LNG'||norm(h)==='LON');
-        if(!latKey||!lngKey){ toast('No encontré las columnas LATITUD y LONGITUD en la primera fila'); return; }
-        const estKey=headers.find(h=>norm(h)==='ESTADO PEDIDO'||norm(h)==='ESTADO');
-
-        orders=[]; skipped=0;
-        rows.forEach(r=>{
-          const lat=parseCoord(r[latKey]), lng=parseCoord(r[lngKey]);
-          if(!isFinite(lat)||!isFinite(lng)||Math.abs(lat)>90||Math.abs(lng)>180||(lat===0&&lng===0)){ skipped++; return; }
-          orders.push({fields:r,lat,lng,estado:estKey?String(r[estKey]||'Sin estado').trim():'Pedidos',key:null});
+        $('mp-pf').addEventListener('click', e => {
+            const chip = e.target.closest('.mp-pchip');
+            if (!chip) return;
+            panelMode = chip.dataset.m;
+            onlyBad = panelMode === 'bad';
+            render(false);
         });
-        orders.forEach((o,i)=>{o.key=o.lat.toFixed(5)+','+o.lng.toFixed(5);o.idx=i;o.flag=false;});
-        cols={latKey,lngKey,estKey};
 
-        tab.classList.add('has-data');
-        $('mp-q').value='';
-        $('mp-panel').classList.toggle('collapsed',window.innerWidth<=640); selIdx=-1;
-        render(true); posPanel();
-        if(!orders.length) toast('Ninguna fila tiene coordenadas válidas');
-        else if(skipped) toast(orders.length+' pedidos cargados ('+skipped+' sin coordenadas)');
-      }catch(err){ console.error(err); toast('No pude leer el archivo'); }
-    };
-    reader.readAsArrayBuffer(file);
-  }
-
-  function popupHTML(group){
-    const {latKey,lngKey,estKey}=cols;
-    const descKey=headers.find(h=>norm(h)==='DESCRIPCION');
-    const idKey=headers.find(h=>norm(h)==='ID');
-    let html='<div class="mp-pop">';
-    if(group.length>1) html+='<div class="mp-gcount">'+group.length+' pedidos en esta ubicación</div>';
-    group.forEach(o=>{
-      const f=o.fields;
-      const title=(descKey&&f[descKey])||(idKey&&('Pedido '+f[idKey]))||'Pedido';
-      html+='<div class="mp-order">';
-      html+='<h4>'+esc(title)+'</h4>';
-      if(idKey) html+='<div class="mp-sub">ID '+esc(f[idKey])+'</div>';
-      if(estKey) html+='<span class="mp-badge" style="background:'+LIME+'">'+esc(o.estado)+'</span>';
-      headers.forEach(h=>{
-        if(h===descKey||h===idKey||h===estKey||h===latKey||h===lngKey) return;
-        const v=fmtValue(h,f[h]); if(v==='') return;
-        html+='<div class="mp-row"><span>'+esc(h.replace(/_/g,' ').trim())+'</span><span>'+esc(v)+'</span></div>';
-      });
-      html+='<div class="mp-row"><span>Coordenadas</span><span>'+o.lat.toFixed(5)+', '+o.lng.toFixed(5)+'</span></div>';
-      html+='<label class="mp-flag'+(o.flag?' on':'')+'"><input type="checkbox" data-i="'+o.idx+'"'+(o.flag?' checked':'')+'> Marcar pin como incorrecto</label>';
-      html+='</div>';
-    });
-    return html+'</div>';
-  }
-
-  function pinIcon(warn,num,sel){
-    const fill=warn?WARN:LIME;
-    const inner=warn
-      ? '<circle cx="14" cy="14" r="8" fill="#fff"/><rect x="12.8" y="8.6" width="2.4" height="6.2" rx="1.2" fill="'+WARN+'"/><circle cx="14" cy="18" r="1.4" fill="'+WARN+'"/>'
-      : '<circle cx="14" cy="14" r="'+(num!==''?7:5.2)+'" fill="#fff"/>';
-    const svg='<svg viewBox="0 0 28 40" xmlns="http://www.w3.org/2000/svg"><path class="body" d="M14 0C6.3 0 0 6.2 0 13.8 0 24 14 40 14 40s14-16 14-26.2C28 6.2 21.7 0 14 0z" fill="'+fill+'" stroke="rgba(0,0,0,.28)" stroke-width=".8"/>'+inner+'</svg>';
-    return L.divIcon({className:'',html:'<div class="gpin'+(sel?' sel':'')+'">'+svg+(!warn&&num!==''?'<span class="gnum">'+num+'</span>':'')+'</div>',iconSize:[28,40],iconAnchor:[14,40],popupAnchor:[0,-34]});
-  }
-
-  function posPanel(){
-    const b=document.querySelector('#mapa-tab .mp-bar'), pn=$('mp-panel'); if(!b||!pn) return;
-    const r=b.getBoundingClientRect();
-    pn.style.setProperty('--mp-top',Math.round(r.bottom+12)+'px');
-    pn.style.setProperty('--mp-left',Math.round(r.left)+'px');
-    Object.values(markerByKey).forEach(applyPads);
-  }
-  function keyOf(re){ return headers.find(h=>norm(h)===re); }
-  function renderList(){
-    const pl=$('mp-pl'); if(!pl) return;
-    const ok=lastVisible.filter(o=>!o.flag).length, bad=lastVisible.length-ok;
-    $('mp-nAll').textContent=lastVisible.length; $('mp-nOk').textContent=ok; $('mp-nBad').textContent=bad;
-    $('mp-pcount').textContent=lastVisible.length;
-    const rows=lastVisible
-      .filter(o=>listMode==='all'||(listMode==='ok'?!o.flag:o.flag))
-      .sort((a,b)=>(b.flag?1:0)-(a.flag?1:0) || (a.idx-b.idx));
-    const refK=keyOf('REFERENCIA EXTERNA'), idK=keyOf('ID'), dK=keyOf('DESCRIPCION');
-    if(!rows.length){ pl.innerHTML='<div class="mp-pempty">Sin paquetes para este filtro</div>'; return; }
-    pl.innerHTML=rows.map(o=>{
-      const f=o.fields, ref=refK&&f[refK], id=idK&&f[idK], d=dK&&f[dK];
-      const t=ref||id||'Pedido';
-      const sub=[ref&&id?('ID '+id):'',d||''].filter(Boolean).join(' · ');
-      return '<div class="mp-it'+(o.idx===selIdx?' sel':'')+'" data-i="'+o.idx+'"><div class="mp-itx"><div class="mp-it1">'+esc(t)+'</div>'+(sub?'<div class="mp-it2">'+esc(sub)+'</div>':'')+'</div>'+
-        '<button type="button" class="mp-st '+(o.flag?'bad':'ok')+'" data-t="1" title="Clic para cambiar">'+(o.flag?'Incorrecto':'Correcto')+'</button></div>';
-    }).join('');
-  }
-
-  function pads(){
-    const pn=$('mp-panel'), mob=window.innerWidth<=640, vis=pn && tab.classList.contains('has-data');
-    const r=vis?pn.getBoundingClientRect():null;
-    return { tl:[(!mob&&r)?Math.round(r.right+16):30, topPad()], br:[30, (mob&&r)?Math.round(r.height+24):40] };
-  }
-  function applyPads(m){ const po=m.getPopup(); if(!po) return; const p=pads(); po.options.autoPanPaddingTopLeft=p.tl; po.options.autoPanPaddingBottomRight=p.br; }
-  function topPad(){ const b=document.querySelector('#mapa-tab .mp-bar'); return Math.round((b?b.getBoundingClientRect().bottom:120)+24); }
-  function render(fit){
-    if(!map) return;
-    layer.clearLayers();
-    const q=norm($('mp-q').value);
-    const visible=orders.filter(o=>{
-      if(!q) return true;
-      return Object.values(o.fields).some(v=>norm(v).includes(q));
-    });
-    lastVisible=visible; markerByKey={};
-    const groups={};
-    visible.forEach(o=>(groups[o.key]=groups[o.key]||[]).push(o));
-    const pts=[];
-    Object.values(groups).forEach(g=>{
-      const first=g[0];
-      const num=g.length>1?g.length:'';
-      const m=L.marker([first.lat,first.lng],{icon:pinIcon(g.some(o=>o.flag),num,false),riseOnHover:true}).bindPopup(popupHTML(g),{maxWidth:420,minWidth:Math.min(340,Math.max(240,window.innerWidth-80)),autoPanPaddingTopLeft:pads().tl,autoPanPaddingBottomRight:pads().br});
-      m._g=g; m._n=num; m._sel=false; markerByKey[first.key]=m;
-      const paint=()=>m.setIcon(pinIcon(m._g.some(o=>o.flag),m._n,m._sel));
-      m._paint=paint;
-      m.on('popupopen',e=>{
-        selIdx=first.idx; renderList();
-        m._sel=true; paint(); m.setZIndexOffset(1000);
-        e.popup.getElement().querySelectorAll('input[data-i]').forEach(cb=>{
-          cb.addEventListener('change',()=>{
-            const o=orders[+cb.dataset.i]; o.flag=cb.checked;
-            cb.closest('.mp-flag').classList.toggle('on',cb.checked);
-            paint(); renderList();
-          });
+        $('mp-pcol').addEventListener('click', () => {
+            $('mp-panel').classList.toggle('collapsed');
         });
-      });
-      m.on('popupclose',()=>{ m._sel=false; paint(); m.setZIndexOffset(0); });
-      applyPads(m);
-      m.addTo(layer);
-      pts.push([first.lat,first.lng]);
-    });
-    renderList();
-    if(fit && pts.length) map.fitBounds(pts,{paddingTopLeft:[50,topPad()],paddingBottomRight:[50,60],maxZoom:15});
-  }
 
-  $('mp-file').addEventListener('change',e=>{ if(e.target.files[0]) readFile(e.target.files[0]); e.target.value=''; });
-  $('mp-pf').addEventListener('click',e=>{
-    const c=e.target.closest('.mp-pchip'); if(!c) return;
-    listMode=c.dataset.m;
-    document.querySelectorAll('#mp-pf .mp-pchip').forEach(x=>x.classList.toggle('active',x===c));
-    renderList();
-  });
-  $('mp-pcol').addEventListener('click',()=>{ $('mp-panel').classList.toggle('collapsed'); posPanel(); });
-  $('mp-pl').addEventListener('click',e=>{
-    const it=e.target.closest('.mp-it'); if(!it) return;
-    const o=orders[+it.dataset.i]; if(!o) return;
-    const m=markerByKey[o.key];
-    if(e.target.closest('[data-t]')){
-      o.flag=!o.flag;
-      if(m){ if(m.isPopupOpen()) m.closePopup(); m.setPopupContent(popupHTML(m._g)); m._paint(); }
-      renderList(); return;
-    }
-    selIdx=o.idx;
-    if(m){ map.setView([o.lat,o.lng],Math.max(map.getZoom(),16),{animate:false}); applyPads(m); m.openPopup(); }
-    renderList();
-    if(window.innerWidth<=640){ $('mp-panel').classList.add('collapsed'); posPanel(); }
-  });
-  window.addEventListener('resize',posPanel);
-  if(window.ResizeObserver) new ResizeObserver(posPanel).observe(document.querySelector('#mapa-tab .mp-bar'));
-  $('mp-q').addEventListener('input',()=>render(false));
-  $('mp-q').addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); render(true); } });
+        $('mp-pl').addEventListener('click', e => {
+            const btn = e.target.closest('.mp-st');
+            if (btn) {
+                e.stopPropagation();
+                const idx = Number(btn.dataset.idx);
+                setRowMal(idx, !rows[idx].mal);
+                const key = `${rows[idx].lat.toFixed(6)},${rows[idx].lng.toFixed(6)}`;
+                const entry = markers.get(key);
+                if (entry && entry.marker.isPopupOpen()) entry.marker.setPopupContent(popupHtml(entry.items));
+                return;
+            }
+            const it = e.target.closest('.mp-it');
+            if (!it) return;
+            const r = rows[Number(it.dataset.idx)];
+            if (!r) return;
+            const key = it.dataset.key;
+            if (!markers.has(key)) {
+                hiddenStates.delete(r.est);
+                onlyBad = false;
+                render(false);
+            }
+            const entry = markers.get(key);
+            if (!entry) return;
+            selectPin(key);
+            map.setView([r.lat, r.lng], Math.max(map.getZoom(), 16));
+            entry.marker.openPopup();
+        });
 
-  // Arrastrar y soltar: solo dentro de esta pestaña
-  ['dragenter','dragover'].forEach(ev=>tab.addEventListener(ev,e=>{ e.preventDefault(); tab.classList.add('drag'); }));
-  tab.addEventListener('dragleave',e=>{ if(e.target===tab || !tab.contains(e.relatedTarget)) tab.classList.remove('drag'); });
-  tab.addEventListener('drop',e=>{ e.preventDefault(); tab.classList.remove('drag'); const f=e.dataTransfer.files[0]; if(f) readFile(f); });
-})();
+        $('mp-file').addEventListener('change', e => handleFile(e.target.files[0]));
+        $('mp-q').addEventListener('input', () => render(false));
+
+        const tabEl = $('mapa-tab');
+        ['dragenter', 'dragover'].forEach(ev => tabEl.addEventListener(ev, e => { e.preventDefault(); tabEl.classList.add('drag'); }));
+        ['dragleave', 'drop'].forEach(ev => tabEl.addEventListener(ev, e => { e.preventDefault(); tabEl.classList.remove('drag'); }));
+        tabEl.addEventListener('drop', e => {
+            const f = e.dataTransfer?.files?.[0];
+            if (f) handleFile(f);
+        });
+
+        window.addEventListener('resize', () => {
+            if (document.body.classList.contains('mapa-active')) positionPanel();
+        });
+
+        window.mapaPedidosShow = function () {
+            setTimeout(() => {
+                map.invalidateSize();
+                positionPanel();
+            }, 60);
+        };
+    })();
 </script>
 </body>
 </html>
