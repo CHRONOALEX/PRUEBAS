@@ -10,6 +10,8 @@
 <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -39,6 +41,8 @@
         --border-header-kpi: #92400e;
         --bg-header-sameday: linear-gradient(135deg, #3b0764 0%, #7e22ce 100%);
         --border-header-sameday: #6b21a8;
+        --bg-header-mapa: linear-gradient(135deg, #14532d 0%, #15803d 100%);
+        --border-header-mapa: #166534;
         --body-bg: var(--carbon-dark);
         --card-bg: var(--carbon-light);
         --input-bg: #000;
@@ -113,6 +117,7 @@
     #top-nav.cuadratura-mode .nav-tab-btn.active i { color: #4a0e0e !important; }
     #top-nav.tracker-mode .nav-tab-btn.active i { color: #0e7490 !important; }
     #top-nav.kpi-mode .nav-tab-btn.active i { color: #92400e !important; }
+    #top-nav.mapa-mode .nav-tab-btn.active i { color: #14532d !important; }
 
     * { box-sizing: border-box; outline: none; scrollbar-width: thin; scrollbar-color: var(--carbon-border) var(--scroll-track); }
     ::-webkit-scrollbar { width: 10px; height: 10px; }
@@ -159,12 +164,13 @@
     }
 
     #top-nav {
-        display: flex; align-items: center; gap: 20px;
+        display: flex; align-items: center; gap: 14px;
         background: var(--bg-header-admin);
         border: 1px solid var(--border-header-admin);
         border-radius: 14px;
-        padding: 10px 18px;
+        padding: 10px 16px;
         min-height: 58px;
+        min-width: 0; max-width: 100%;
         box-shadow: 0 6px 24px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.06);
         position: sticky; top: 8px; z-index: 200;
         transition: background 0.3s ease, border-color 0.3s ease;
@@ -173,8 +179,10 @@
     .header-left-group {
         display: flex;
         align-items: center;
-        gap: 16px;
-        flex: 0 1 auto;
+        gap: 14px;
+        flex: 0 0 auto;
+        min-width: 0;
+        max-width: 100%;
     }
     
     .header-dynamic-title {
@@ -184,19 +192,25 @@
         white-space: nowrap;
         letter-spacing: 0.5px;
         border-right: 1px solid rgba(255, 255, 255, 0.2);
-        padding-right: 16px;
+        padding-right: 14px;
         display: flex;
         align-items: center;
         gap: 8px;
     }
     
-    .top-nav-tabs { display: flex; gap: 8px; flex: 0 0 auto; }
+    .top-nav-tabs {
+        display: flex; gap: 6px; flex: 0 0 auto; min-width: 0; max-width: 100%;
+        overflow-x: auto; overflow-y: hidden; scrollbar-width: none;
+        -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain;
+    }
+    .top-nav-tabs::-webkit-scrollbar { display: none; }
+    .top-nav-actions { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; }
     .nav-tab-btn {
         display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
         background: rgba(0,0,0,0.22); border: 1px solid rgba(255,255,255,0.12); color: rgba(255,255,255,0.8);
         border-radius: 10px; padding: 6px 12px; cursor: pointer; font-family: 'Lexend', sans-serif;
         font-size: 0.62rem; font-weight: 700; letter-spacing: 0.3px; text-transform: uppercase; line-height: 1.25;
-        transition: all 0.2s ease; min-width: 78px;
+        transition: all 0.2s ease; min-width: 74px; flex: 0 0 auto;
     }
     .nav-tab-btn i { font-size: 1.05rem; color: var(--accent); }
     .nav-tab-btn:hover { background: rgba(0,0,0,0.35); color: #ffffff; transform: translateY(-1px); }
@@ -225,7 +239,14 @@
     }
     #top-nav.kpi-mode .nav-tab-btn.active i { color: #92400e; }
 
-    .top-nav-search { flex: 1 1 auto; min-width: 0; position: relative; }
+    #top-nav.mapa-mode .nav-tab-btn.active {
+        background: #ffffff; color: #14532d; border-color: #ffffff;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+    }
+    #top-nav.mapa-mode .nav-tab-btn.active i { color: #14532d; }
+
+    .top-nav-search { flex: 1 1 160px; min-width: 0; min-height: 38px; position: relative; display: flex; align-items: center; }
+    .top-nav-search > .nav-search-group.active { flex: 1 1 auto; min-width: 0; }
     .nav-search-group { display: none; align-items: center; gap: 8px; }
     .nav-search-group.active { display: flex; }
     .nav-search-group .search-icon { position: static; transform: none; color: rgba(255,255,255,0.6); font-size: 0.9rem; }
@@ -307,13 +328,58 @@
     }
     #btn-theme-toggle:hover { background: var(--accent); color: #111; border-color: var(--accent); }
 
-    @media (max-width: 990px) {
+    /* ---- Header responsivo: nunca se desborda ---- */
+    @media (max-width: 1200px) {
         .header-dynamic-title { display: none; }
     }
-    @media (max-width: 760px) {
-        #top-nav { flex-wrap: wrap; position: static; min-height: 0; }
+    @media (max-width: 980px) {
+        /* 2 filas: pestañas + acciones arriba, buscador abajo */
+        #top-nav { flex-wrap: wrap; position: static; min-height: 0; row-gap: 10px; }
+        .header-left-group { flex: 1 1 0; }
+        .top-nav-tabs { flex: 1 1 0; }
+        .top-nav-actions { order: 2; }
         .top-nav-search { order: 3; flex: 1 1 100%; }
-        .search-limit-info { display: none; }
+        .search-limit-info { display: none !important; }
+    }
+    @media (max-width: 760px) {
+        /* 3 filas: título + acciones / pestañas con scroll / buscador */
+        #top-nav { padding: 10px 12px; }
+        .header-left-group { display: contents; }
+        .header-dynamic-title {
+            display: flex; order: 1; flex: 1 1 0; min-width: 0; overflow: hidden;
+            border-right: none; padding-right: 0; font-size: 1rem;
+        }
+        .top-nav-actions { order: 2; }
+        .top-nav-tabs { order: 3; flex: 1 1 100%; padding-bottom: 2px; }
+        .top-nav-search { order: 4; flex: 1 1 100%; }
+        .nav-tab-btn { min-width: 68px; padding: 6px 10px; }
+    }
+
+    /* ---- Admin Guías: barra de filtros ordenada ---- */
+    #admin-tab .filter-top {
+        display: flex; align-items: center; justify-content: space-between;
+        flex-wrap: wrap; gap: 10px 12px; flex: 1 1 100%; min-width: 0;
+    }
+    #admin-tab .filter-top .filter-group { flex-wrap: wrap; min-width: 0; }
+    #admin-tab .filter-actions {
+        display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px; flex: 1 1 100%; min-width: 0;
+    }
+    #admin-tab .filter-actions .btn-primary {
+        display: flex; align-items: center; justify-content: center; gap: 8px;
+        text-align: center; white-space: normal; line-height: 1.25; padding: 10px 12px; min-width: 0;
+    }
+    #admin-tab .filter-actions .btn-count-badge { margin-left: 0; flex: 0 0 auto; }
+    @media (max-width: 1100px) {
+        #admin-tab .filter-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 480px) {
+        #admin-tab .filter-actions { grid-template-columns: 1fr; }
+        #admin-tab .filter-top .filter-group:last-child { width: 100%; }
+        #admin-tab .filter-top .filter-group:last-child select { flex: 1 1 auto; min-width: 0; }
+    }
+    @media (max-width: 640px) {
+        #admin-tab #stats-panel .stat-box:last-child:nth-child(odd) { grid-column: 1 / -1; }
     }
 
     @media (max-width: 640px) {
@@ -806,25 +872,26 @@
     .sd-tag.sd { background: rgba(168,85,247,0.2); color: #c084fc; border: 1px solid rgba(168,85,247,0.4); }
     .sd-tag.inc { background: rgba(239,68,68,0.15); color: var(--bad); border: 1px solid rgba(239,68,68,0.35); }
 
-    /* ===== TEMA TRAXION (lime #d2df00 + gris #565a5f + negro) ===== */
+    /* ===== TEMA TRAXION (header lime #d2df00 + fondo blanco + gris claro) ===== */
     body.theme-traxion {
         --primary: #d2df00;
-        --primary-hover: #e4f21a;
-        --accent: #d2df00;
-        --accent-hover: #e4f21a;
-        --carbon-dark: #0a0a0a;
-        --carbon-light: #17191b;
-        --carbon-card: #1f2226;
-        --carbon-border: #3b4046;
-        --text-main: #f3f4f6;
-        --text-dim: #a7adb4;
-        --body-bg: #0a0a0a;
-        --card-bg: #17191b;
-        --input-bg: #0c0d0e;
-        --border-subtle: #23262a;
-        --scroll-track: #0a0a0a;
-        --table-row-hover: rgba(210, 223, 0, 0.05);
-        --glow: rgba(210, 223, 0, 0.18);
+        --primary-hover: #b9c500;
+        --accent: #6f7800;            /* verde oliva del mismo tono, solo para texto/iconos (legible sobre blanco) */
+        --accent-hover: #565d00;
+        --carbon-dark: #ffffff;
+        --carbon-light: #ffffff;
+        --carbon-card: #eceef0;
+        --carbon-border: #d3d7db;
+        --text-main: #25282b;
+        --text-dim: #5f656b;
+        --white: #25282b;
+        --body-bg: #ffffff;
+        --card-bg: #f1f2f4;
+        --input-bg: #ffffff;
+        --border-subtle: #e1e4e7;
+        --scroll-track: #f1f2f4;
+        --table-row-hover: rgba(210, 223, 0, 0.16);
+        --glow: rgba(210, 223, 0, 0.35);
         --bg-header-admin: #d2df00;
         --bg-header-cuadratura: #d2df00;
         --bg-header-tracker: #d2df00;
@@ -835,9 +902,41 @@
         --border-header-tracker: #b9c500;
         --border-header-kpi: #b9c500;
         --border-header-sameday: #b9c500;
-        background: #0a0a0a;
-        background-image: radial-gradient(circle at top right, #2a2d31 0%, #0a0a0a 80%);
+        background: #ffffff;
+        background-image: none;
+        color: var(--text-main);
     }
+    /* Reglas del tema claro reutilizadas para fondos blancos / textos oscuros */
+    body.theme-traxion .card { background: var(--card-bg); border-color: var(--carbon-border); box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    body.theme-traxion #filter-bar input, body.theme-traxion #filter-bar select,
+    body.theme-traxion #tracker-filter-bar input, body.theme-traxion #tracker-filter-bar select,
+    body.theme-traxion #sameday-filter-bar input, body.theme-traxion #sameday-filter-bar select,
+    body.theme-traxion .form-row input, body.theme-traxion .form-row select,
+    body.theme-traxion #edit-modal select, body.theme-traxion #edit-modal input,
+    body.theme-traxion #bulk-bar select, body.theme-traxion #bulk-bar input[type="date"] {
+        background: var(--input-bg) !important; color: var(--text-main) !important; border-color: var(--carbon-border) !important;
+    }
+    body.theme-traxion .date-range-popup, body.theme-traxion .mini-calendar-popup { background: #ffffff; border-color: #d3d7db; }
+    body.theme-traxion .date-range-popup input[type="date"] { background: #ffffff; color: #25282b; }
+    body.theme-traxion .mc-day { color: #25282b; background: rgba(0,0,0,0.04); }
+    body.theme-traxion .mc-day:hover { background: #e1e4e7; }
+    body.theme-traxion .mc-header button { color: #25282b; border-color: #d3d7db; }
+    body.theme-traxion .mc-header button:hover { background: #e1e4e7; }
+    body.theme-traxion .mc-title { color: #25282b; }
+    body.theme-traxion .stat-box { background: rgba(0,0,0,0.04); }
+    body.theme-traxion .stat-box .stat-num { text-shadow: none; }
+    body.theme-traxion .c-num-box { background: rgba(0,0,0,0.04); }
+    body.theme-traxion .c-sub-val { border-top-color: rgba(0,0,0,0.08); }
+    body.theme-traxion .cell-btn:hover { background: rgba(0,0,0,0.06); }
+    body.theme-traxion td { border-bottom-color: var(--border-subtle); }
+    body.theme-traxion tr:hover td { background: var(--table-row-hover); }
+    body.theme-traxion th { border-bottom-color: var(--carbon-border); }
+    body.theme-traxion .empty-msg { color: #5f656b; }
+    body.theme-traxion #edit-modal { background: #ffffff; }
+    body.theme-traxion .guia-text { color: var(--text-main); }
+    body.theme-traxion #login-screen { background: #ffffff; }
+    body.theme-traxion #btn-google-login { background: #4b4f54; color: #ffffff; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+    body.theme-traxion #total-count { background: rgba(0,0,0,0.05) !important; }
     /* Header lime con texto gris, como traxion.com */
     body.theme-traxion .header-dynamic-title { color: #4b4f54 !important; border-right-color: rgba(0,0,0,0.2); }
     body.theme-traxion .header-dynamic-title i { color: #4b4f54 !important; }
@@ -868,12 +967,81 @@
     body.theme-traxion .mc-day.mc-selected,
     body.theme-traxion .mc-day.mc-selected .mc-day-badge { color: #1f2226; }
     body.theme-traxion .guia-badge-count { background: rgba(210,223,0,0.12); border-color: rgba(210,223,0,0.3); }
-    body.theme-traxion #bulk-bar { background: #1d200a; border-color: var(--primary); }
-    body.theme-traxion #bulk-bar select, body.theme-traxion #bulk-bar input[type="date"] { background: #0d0f04; border-color: #4a5200; }
-    body.theme-traxion #sameday-filter-bar input:focus, body.theme-traxion #sameday-filter-bar select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(210,223,0,0.15); }
-    body.theme-traxion .sd-stat-num { color: var(--accent); text-shadow: 0 0 18px rgba(210,223,0,0.3); }
-    body.theme-traxion .sd-stat-num.alt { color: #f3f4f6; text-shadow: none; }
-    body.theme-traxion tr.sd-detail > td { background: rgba(210,223,0,0.04); }
+    body.theme-traxion #bulk-bar { background: #f6f9c4; border-color: var(--primary); }
+    body.theme-traxion #bulk-bar .bulk-count { color: #565d00; }
+        body.theme-traxion #sameday-filter-bar input:focus, body.theme-traxion #sameday-filter-bar select:focus { border-color: #b9c500 !important; box-shadow: 0 0 0 3px rgba(210,223,0,0.3); }
+    body.theme-traxion .sd-stat-num { color: var(--accent); text-shadow: none; }
+    body.theme-traxion .sd-stat-num.alt { color: #25282b; text-shadow: none; }
+    body.theme-traxion tr.sd-detail > td { background: rgba(210,223,0,0.12); }
+
+    /* ===== MAPA PEDIDOS ===== */
+    #mapa-tab .mp-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
+    #mapa-tab .mp-file { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    #mapa-tab .mp-fname { font-size: 0.72rem; color: var(--text-dim); max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    #mapa-tab .mp-stats { display: none; align-items: center; gap: 10px 14px; flex-wrap: wrap; }
+    #mapa-tab .mp-stat { color: var(--text-dim); font-size: 0.78rem; white-space: nowrap; }
+    #mapa-tab .mp-stat b { color: var(--text-main); font-weight: 700; }
+    #mapa-tab .mp-warnchip, #mapa-tab .mp-chip {
+        display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--carbon-border); background: rgba(0,0,0,0.18);
+        border-radius: 999px; padding: 4px 10px; font-size: 0.72rem; cursor: pointer; user-select: none; color: var(--text-main);
+    }
+    #mapa-tab .mp-warnchip { color: var(--text-dim); }
+    #mapa-tab .mp-warnchip b { color: #f87171; font-weight: 700; }
+    #mapa-tab .mp-warnchip.active { border-color: #F04438; background: rgba(240,68,56,0.12); }
+    #mapa-tab .mp-chip i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+    #mapa-tab .mp-chip.off { opacity: 0.4; }
+    #mapa-tab .mp-chip.off i { background: #bbb !important; }
+    #mapa-tab .mp-legend { display: none; flex-wrap: wrap; gap: 6px; flex: 1 1 100%; }
+    #mapa-tab .mp-wrap {
+        position: relative; isolation: isolate; overflow: hidden; border-radius: 12px;
+        border: 1px solid var(--carbon-border); height: clamp(420px, calc(100vh - 300px), 900px);
+    }
+    #mapa-tab #mp-map { position: absolute; inset: 0; z-index: 1; }
+    #mapa-tab .leaflet-container { font-family: 'Lexend', sans-serif; color: #23262b; }
+    #mapa-tab .mp-empty { position: absolute; z-index: 999; inset: 0; display: flex; align-items: center; justify-content: center; padding: 16px; pointer-events: none; }
+    #mapa-tab .mp-empty .mp-box {
+        pointer-events: auto; background: rgba(255,255,255,.94); color: #23262b; border: 1.5px dashed #c9c9c3; border-radius: 16px;
+        padding: 30px 36px; text-align: center; box-shadow: 0 4px 18px rgba(30,35,45,.10); max-width: 420px;
+    }
+    #mapa-tab .mp-empty h2 { margin: 0 0 6px; font-size: 1rem; font-weight: 600; }
+    #mapa-tab .mp-empty p { margin: 0 0 16px; color: #7b8088; line-height: 1.5; font-size: 0.82rem; }
+    #mapa-tab.drag .mp-empty .mp-box { border-color: var(--primary); background: #fff; }
+    #mapa-tab.has-data .mp-empty { display: none; }
+    #mapa-tab #mp-toast {
+        position: absolute; z-index: 1100; bottom: 20px; left: 50%; transform: translateX(-50%); background: #23262b; color: #fff;
+        padding: 9px 16px; border-radius: 10px; font-size: 0.78rem; opacity: 0; transition: opacity .25s; pointer-events: none; max-width: 90%; text-align: center;
+    }
+    #mapa-tab #mp-toast.show { opacity: 1; }
+
+    #mapa-tab .leaflet-div-icon { background: transparent; border: none; }
+    #mapa-tab .gpin { position: relative; width: 28px; height: 40px; transform-origin: 50% 100%; transition: transform .18s ease; filter: drop-shadow(0 2px 2px rgba(0,0,0,.35)); }
+    #mapa-tab .gpin svg { display: block; width: 100%; height: 100%; }
+    #mapa-tab .gpin .gnum { position: absolute; top: 6px; left: 0; width: 100%; text-align: center; font-size: 11px; font-weight: 600; color: #555; line-height: 16px; }
+    #mapa-tab .gpin.sel { transform: scale(1.28); filter: drop-shadow(0 4px 4px rgba(0,0,0,.4)); }
+    #mapa-tab .gpin.sel svg path.body { stroke: rgba(0,0,0,.5); }
+
+    #mapa-tab .leaflet-popup-content-wrapper { border-radius: 12px; box-shadow: 0 4px 18px rgba(30,35,45,.18); padding: 0; border: 1px solid #e4e4e0; background: #fff; color: #23262b; }
+    #mapa-tab .leaflet-popup-tip { background: #fff; }
+    #mapa-tab .leaflet-popup-content { margin: 0; font-family: 'Lexend', sans-serif; font-weight: 300; font-size: 13px; color: #23262b; width: 380px !important; max-width: calc(100vw - 60px); }
+    #mapa-tab .leaflet-popup-close-button { color: #7b8088 !important; padding: 8px 8px 0 0 !important; }
+    #mapa-tab .mp-pop { max-height: min(460px, 50vh); overflow: auto; padding: 18px 20px; }
+    #mapa-tab .mp-pop .mp-order + .mp-order { border-top: 1px dashed #e4e4e0; margin-top: 12px; padding-top: 12px; }
+    #mapa-tab .mp-pop h4 { margin: 0 0 3px; font-size: 15.5px; font-weight: 600; color: #23262b; }
+    #mapa-tab .mp-sub { color: #7b8088; font-size: 12px; margin-bottom: 10px; }
+    #mapa-tab .mp-badge { display: inline-block; font-size: 10.5px; font-weight: 400; padding: 2px 8px; border-radius: 999px; color: #3b4506; margin-bottom: 8px; }
+    #mapa-tab .mp-row { display: flex; gap: 10px; padding: 5px 0; line-height: 1.45; }
+    #mapa-tab .mp-row span:first-child { flex: 0 0 112px; color: #7b8088; font-size: 11px; text-transform: uppercase; letter-spacing: .4px; padding-top: 1px; }
+    #mapa-tab .mp-row span:last-child { flex: 1; word-break: break-word; }
+    #mapa-tab .mp-flag { display: flex; align-items: center; gap: 8px; margin-top: 10px; padding: 8px 10px; border: 1px solid #e4e4e0; border-radius: 8px; background: #fafaf8; cursor: pointer; font-size: 12px; font-weight: 400; }
+    #mapa-tab .mp-flag input { width: 15px; height: 15px; accent-color: #F04438; margin: 0; cursor: pointer; }
+    #mapa-tab .mp-flag.on { border-color: #F04438; background: #fff4f3; color: #b42318; }
+    #mapa-tab .mp-gcount { font-size: 11px; color: #7b8088; margin-bottom: 10px; }
+    @media (max-width: 640px) {
+        #mapa-tab .mp-wrap { height: 68vh; min-height: 400px; }
+        #mapa-tab .leaflet-popup-content { width: 300px !important; }
+        #mapa-tab .mp-fname { max-width: 150px; }
+        #mapa-tab .mp-bar { gap: 10px; }
+    }
 </style>
 </head>
 <body>
@@ -918,6 +1086,10 @@
                         <i class="fas fa-truck-fast"></i>
                         <span>KPI</span>
                     </button>
+                    <button class="nav-tab-btn" onclick="switchTab('mapa-tab', this)" title="Mapa de Pedidos">
+                        <i class="fas fa-map-location-dot"></i>
+                        <span>Mapa<br>Pedidos</span>
+                    </button>
                 </div>
             </div>
 
@@ -950,19 +1122,25 @@
                 <div id="search-wrap-kpi" class="nav-search-group">
                     <!-- KPI tab uses its own file input, no search bar here -->
                 </div>
+                <div id="search-wrap-mapa" class="nav-search-group">
+                    <span class="search-icon"><i class="fas fa-magnifying-glass"></i></span>
+                    <input type="text" id="mp-q" placeholder="Buscar ID, referencia, nombre...">
+                </div>
             </div>
 
-            <div class="search-limit-info" id="search-limit-info">
-                <i class="fas fa-clock"></i> <span id="limit-days-text">15</span> días
-            </div>
+            <div class="top-nav-actions">
+                <div class="search-limit-info" id="search-limit-info">
+                    <i class="fas fa-clock"></i> <span id="limit-days-text">15</span> días
+                </div>
 
-            <div class="top-nav-user">
-                <button id="btn-logout" onclick="logout()" title="Cerrar sesión"><i class="fas fa-right-from-bracket"></i></button>
-            </div>
+                <div class="top-nav-user">
+                    <button id="btn-logout" onclick="logout()" title="Cerrar sesión"><i class="fas fa-right-from-bracket"></i></button>
+                </div>
 
-            <button id="btn-theme-toggle" onclick="toggleTheme()" title="Cambiar tema (Dark/Light)">
-                <i class="fas fa-sun" id="theme-icon"></i>
-            </button>
+                <button id="btn-theme-toggle" onclick="toggleTheme()" title="Cambiar tema (Dark/Light)">
+                    <i class="fas fa-sun" id="theme-icon"></i>
+                </button>
+            </div>
         </div>
 
         <div id="admin-tab" class="tab-content active">
@@ -976,38 +1154,40 @@
             </div>
 
             <div id="filter-bar" class="card">
-                <div class="filter-group">
-                    <div class="date-range-control">
-                        <button class="date-nav-btn" onclick="stepPeriod(-1)" title="Periodo anterior">◀</button>
-                        <button class="btn-primary btn-secondary" id="btn-fecha-toggle" onclick="toggleDateRangePopup(event)">
-                            <i class="fas fa-calendar-days"></i> <span id="fecha-label-text">Fecha</span>
-                        </button>
-                        <button class="date-nav-btn" onclick="stepPeriod(1)" title="Periodo siguiente">▶</button>
-                        <div id="date-range-popup" class="date-range-popup" style="display:none;">
-                            <label>Desde</label>
-                            <input type="date" id="filter-date-from">
-                            <label>Hasta</label>
-                            <input type="date" id="filter-date-to">
-                            <div class="date-range-popup-actions">
-                                <button type="button" class="btn-primary btn-secondary" onclick="clearDateFilter()">Ver todas</button>
-                                <button type="button" class="btn-primary" onclick="applyDateRange()">Aplicar</button>
+                <div class="filter-top">
+                    <div class="filter-group">
+                        <div class="date-range-control">
+                            <button class="date-nav-btn" onclick="stepPeriod(-1)" title="Periodo anterior">◀</button>
+                            <button class="btn-primary btn-secondary" id="btn-fecha-toggle" onclick="toggleDateRangePopup(event)">
+                                <i class="fas fa-calendar-days"></i> <span id="fecha-label-text">Fecha</span>
+                            </button>
+                            <button class="date-nav-btn" onclick="stepPeriod(1)" title="Periodo siguiente">▶</button>
+                            <div id="date-range-popup" class="date-range-popup" style="display:none;">
+                                <label>Desde</label>
+                                <input type="date" id="filter-date-from">
+                                <label>Hasta</label>
+                                <input type="date" id="filter-date-to">
+                                <div class="date-range-popup-actions">
+                                    <button type="button" class="btn-primary btn-secondary" onclick="clearDateFilter()">Ver todas</button>
+                                    <button type="button" class="btn-primary" onclick="applyDateRange()">Aplicar</button>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <div class="filter-group">
+                        <label style="font-size:0.75rem; color:var(--text-dim); font-weight:600;">Orden:</label>
+                        <select id="sort-order" onchange="render()">
+                            <option value="desc">Más reciente primero</option>
+                            <option value="asc">Más antiguo primero</option>
+                        </select>
+                        <span id="total-count" style="font-size:0.75rem; color:var(--text-dim); font-weight:600; background: rgba(255,255,255,0.05); padding:6px 12px; border-radius:6px; border:1px solid var(--carbon-border);"></span>
+                    </div>
                 </div>
-
-                <button class="btn-primary btn-inject" onclick="injectGuidesCopy()">⚡ INYECTAR GUÍAS (COPIAR)<span class="btn-count-badge" id="count-inyeccion">0</span></button>
-                <button class="btn-primary btn-inject-dev" onclick="injectDevolucionCopy()">🔴 DEV ORIGEN (COPIAR)<span class="btn-count-badge" id="count-devolucion">0</span></button>
-                <button class="btn-primary btn-inject-sameday" onclick="injectSamedayCopy()">📦 INY SAMEDAY (COPIAR)<span class="btn-count-badge" id="count-sameday">0</span></button>
-                <button class="btn-primary btn-copy-search-results" id="btn-copy-search" onclick="copySearchResults()">📋 COPIAR RESULTADOS<span class="btn-count-badge" id="count-search-results">0</span></button>
-
-                <div class="filter-group" style="margin-left:auto;">
-                    <label style="font-size:0.75rem; color:var(--text-dim); font-weight:600;">Orden:</label>
-                    <select id="sort-order" onchange="render()">
-                        <option value="desc">Más reciente primero</option>
-                        <option value="asc">Más antiguo primero</option>
-                    </select>
-                    <span id="total-count" style="font-size:0.75rem; color:var(--text-dim); font-weight:600; background: rgba(255,255,255,0.05); padding:6px 12px; border-radius:6px; border:1px solid var(--carbon-border);"></span>
+                <div class="filter-actions">
+                    <button class="btn-primary btn-inject" onclick="injectGuidesCopy()">⚡ INYECTAR GUÍAS (COPIAR)<span class="btn-count-badge" id="count-inyeccion">0</span></button>
+                    <button class="btn-primary btn-inject-dev" onclick="injectDevolucionCopy()">🔴 DEV ORIGEN (COPIAR)<span class="btn-count-badge" id="count-devolucion">0</span></button>
+                    <button class="btn-primary btn-inject-sameday" onclick="injectSamedayCopy()">📦 INY SAMEDAY (COPIAR)<span class="btn-count-badge" id="count-sameday">0</span></button>
+                    <button class="btn-primary btn-copy-search-results" id="btn-copy-search" onclick="copySearchResults()">📋 COPIAR RESULTADOS<span class="btn-count-badge" id="count-search-results">0</span></button>
                 </div>
             </div>
 
@@ -1340,7 +1520,7 @@
 
             <div id="sameday-filter-bar" class="card" style="display:flex; flex-wrap:wrap; gap:12px; align-items:center;">
                 <div class="filter-group">
-                    <label style="font-size:0.75rem; color:var(--text-dim); font-weight:600;">Periodo (fecha de reincidencia):</label>
+                    <label style="font-size:0.75rem; color:var(--text-dim); font-weight:600;"><span title="Incidencias: fecha de la 1ª reincidencia · Total INY SAMEDAY: fecha del 1er INY SAMEDAY">Periodo:</span></label>
                     <div class="date-control">
                         <input type="date" id="sd-date-from" onchange="renderSameday()" style="border:none !important; background:transparent !important; padding:6px 6px !important;">
                         <span style="color:var(--text-dim); padding:0 2px;">→</span>
@@ -1364,12 +1544,20 @@
 
             <div class="card">
                 <div class="c-flex-between" style="border-bottom: 1px solid var(--carbon-border); padding-bottom:8px; margin-bottom:2px;">
-                    <span class="c-label"><i class="fas fa-chart-area" style="margin-right:6px; color:var(--accent);"></i>Incidencias por día de reincidencia (1 por guía)</span>
+                    <span class="c-label"><i class="fas fa-chart-area" style="margin-right:6px; color:var(--accent);"></i>Incidencias vs total INY SAMEDAY por día</span>
                 </div>
                 <div class="sd-stats">
                     <div>
+                        <div class="sd-stat-num" id="sd-total-sameday" style="color:#fb923c; text-shadow:none;">0</div>
+                        <div class="sd-stat-label">Total INY SAMEDAY (guías)</div>
+                    </div>
+                    <div>
                         <div class="sd-stat-num" id="sd-total-incidencias">0</div>
                         <div class="sd-stat-label">Incidencias en el periodo (1 por guía)</div>
+                    </div>
+                    <div>
+                        <div class="sd-stat-num" id="sd-pct" style="color:var(--bad); text-shadow:none;">0%</div>
+                        <div class="sd-stat-label">% de guías con incidencia</div>
                     </div>
                     <div>
                         <div class="sd-stat-num alt" id="sd-total-posteriores">0</div>
@@ -1465,6 +1653,37 @@
             </div>
         </div>
 
+        <!-- ================= MAPA PEDIDOS TAB ================= -->
+        <div id="mapa-tab" class="tab-content">
+            <div class="card mp-bar">
+                <div class="mp-file">
+                    <input type="file" id="mp-file" accept=".xlsx,.xls,.csv,.ods" style="display:none;">
+                    <label for="mp-file" class="btn-primary" style="padding:10px 18px; font-size:0.82rem; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:8px;">
+                        <i class="fas fa-file-excel"></i> SUBIR ARCHIVO
+                    </label>
+                    <span class="mp-fname" id="mp-fileName">Sin archivo</span>
+                </div>
+                <div class="mp-stats" id="mp-stats">
+                    <span class="mp-stat"><b id="mp-sShown">0</b> de <b id="mp-sTotal">0</b> pedidos</span>
+                    <span class="mp-stat" id="mp-sSkipped"></span>
+                    <span class="mp-warnchip" id="mp-warnChip" title="Mostrar solo los marcados"><svg width="12" height="12" viewBox="0 0 24 24" fill="#F04438"><path d="M12 2 1 21h22L12 2zm1 15h-2v-2h2v2zm0-4h-2V9h2v4z"/></svg><b id="mp-sFlag">0</b> incorrectos</span>
+                    <button type="button" class="btn-primary btn-secondary" id="mp-btnExport" disabled style="padding:7px 14px; font-size:0.75rem;">Exportar incorrectos</button>
+                </div>
+                <div class="mp-legend" id="mp-legend"></div>
+            </div>
+            <div class="mp-wrap">
+                <div id="mp-map"></div>
+                <div class="mp-empty" id="mp-empty">
+                    <div class="mp-box">
+                        <h2>Arrastra tu Excel aquí</h2>
+                        <p>Archivo .xlsx, .xls o .csv con encabezados en la primera fila, incluyendo <b>LATITUD</b> y <b>LONGITUD</b>.</p>
+                        <label for="mp-file" class="btn-primary" style="display:inline-flex; cursor:pointer;">Elegir archivo</label>
+                    </div>
+                </div>
+                <div id="mp-toast"></div>
+            </div>
+        </div>
+
     </div>
 
     <div id="edit-modal-bg">
@@ -1556,6 +1775,11 @@
         const icon = document.getElementById('theme-icon');
         if (icon) icon.className = THEME_ICONS[theme] || THEME_ICONS.dark;
         try { localStorage.setItem('theme', theme); } catch (e) {}
+        try {
+            const act = id => { const el = document.getElementById(id); return el && el.classList.contains('active'); };
+            if (act('sameday-tab')) renderSameday();
+            if (act('tracker-tab')) renderTracker();
+        } catch (e) {}
     }
     function toggleTheme() {
         const idx = THEMES.indexOf(getCurrentTheme());
@@ -1575,7 +1799,7 @@
         btn.classList.add('active');
 
         document.querySelectorAll('.nav-search-group').forEach(g => g.classList.remove('active'));
-        const searchIds = { 'admin-tab': 'search-wrap-admin', 'cuadratura-tab': 'search-wrap-cuadratura', 'tracker-tab': 'search-wrap-tracker', 'sameday-tab': 'search-wrap-sameday', 'kpi-tab': 'search-wrap-kpi' };
+        const searchIds = { 'admin-tab': 'search-wrap-admin', 'cuadratura-tab': 'search-wrap-cuadratura', 'tracker-tab': 'search-wrap-tracker', 'sameday-tab': 'search-wrap-sameday', 'kpi-tab': 'search-wrap-kpi', 'mapa-tab': 'search-wrap-mapa' };
         const targetSearch = document.getElementById(searchIds[tabId]);
         if (targetSearch) targetSearch.classList.add('active');
         
@@ -1607,6 +1831,12 @@
             topNav.className = 'kpi-mode';
             headerTitleText.innerHTML = '<i class="fas fa-truck-fast"></i> KPI Chofer';
             if (limitInfo) limitInfo.style.display = 'none';
+        } else if (tabId === 'mapa-tab') {
+            topNav.style.background = 'var(--bg-header-mapa)';
+            topNav.style.borderColor = 'var(--border-header-mapa)';
+            topNav.className = 'mapa-mode';
+            headerTitleText.innerHTML = '<i class="fas fa-map-location-dot"></i> Mapa Pedidos';
+            if (limitInfo) limitInfo.style.display = 'none';
         } else {
             topNav.style.background = 'var(--bg-header-cuadratura)';
             topNav.style.borderColor = 'var(--border-header-cuadratura)';
@@ -1615,6 +1845,8 @@
             if (limitInfo) limitInfo.style.display = 'none';
         }
 
+        try { btn.scrollIntoView({ block: 'nearest', inline: 'nearest' }); } catch (e) {}
+        if (tabId === 'mapa-tab' && window.mapaPedidosShow) window.mapaPedidosShow();
         if (tabId === 'tracker-tab' && trackerChartInstance) trackerChartInstance.resize();
         if (tabId === 'sameday-tab') { renderSameday(); if (sdChartInstance) sdChartInstance.resize(); }
     }
@@ -2724,7 +2956,7 @@
                 },
                 scales: {
                     x: { grid: { display: false }, ticks: { color: '#999', font: { size: 9 } } },
-                    y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#999', font: { size: 9 }, precision: 0 }, suggestedMax: Math.max(...data, 0) + Math.ceil((Math.max(...data, 0) || 1) * 0.25) }
+                    y: { beginAtZero: true, grid: { color: isLightBg() ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.05)' }, ticks: { color: '#999', font: { size: 9 }, precision: 0 }, suggestedMax: Math.max(...data, 0) + Math.ceil((Math.max(...data, 0) || 1) * 0.25) }
                 }
             }
         });
@@ -2942,6 +3174,38 @@
         return out;
     }
 
+    // Total de guías con INY SAMEDAY (con o sin reincidencia). Fecha = primer INY SAMEDAY de la guía.
+    function computeSamedayTotals() {
+        const first = {};
+        allGuias.forEach(g => {
+            if (g.accion !== 'INY SAMEDAY') return;
+            const k = String(g.guia || '').trim();
+            const d = dateKeyToDate(g.dateKey);
+            if (!k || !d) return;
+            const t = d.getTime();
+            if (!first[k] || t < first[k].day) first[k] = { guia: k, day: t, prov: g.prov || '' };
+        });
+        return Object.keys(first).map(k => first[k]);
+    }
+    function getSamedayTotalsFiltered() {
+        const q = (document.getElementById('sd-guia').value || '').trim().toLowerCase();
+        const fromVal = document.getElementById('sd-date-from').value;
+        const toVal = document.getElementById('sd-date-to').value;
+        const prov = document.getElementById('sd-proveedor').value;
+        const from = fromVal ? new Date(fromVal + 'T00:00:00').getTime() : -Infinity;
+        const to = toVal ? new Date(toVal + 'T00:00:00').getTime() : Infinity;
+        return computeSamedayTotals()
+            .filter(t => t.day >= from && t.day <= to)
+            .filter(t => !prov || t.prov === prov)
+            .filter(t => !q || t.guia.toLowerCase().includes(q));
+    }
+    const SD_LETTERS = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
+    const SD_NAMES = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+    function dayLetter(key) { const d = dateKeyToDate(key); return d ? SD_LETTERS[d.getDay()] : ''; }
+    function dayName(key) { const d = dateKeyToDate(key); return d ? SD_NAMES[d.getDay()] : ''; }
+    function isWeekendKey(key) { const d = dateKeyToDate(key); return !!d && (d.getDay() === 0 || d.getDay() === 6); }
+    function isLightBg() { return document.body.classList.contains('theme-light') || document.body.classList.contains('theme-traxion'); }
+
     function getSamedayFiltered() {
         const q = (document.getElementById('sd-guia').value || '').trim().toLowerCase();
         const fromVal = document.getElementById('sd-date-from').value;
@@ -3003,6 +3267,10 @@
         document.getElementById('sd-empty-msg').style.display = list.length ? 'none' : 'block';
         document.getElementById('sd-total-incidencias').textContent = list.length;
         document.getElementById('sd-total-posteriores').textContent = list.reduce((s, h) => s + h.afterCount, 0);
+        const totals = getSamedayTotalsFiltered();
+        document.getElementById('sd-total-sameday').textContent = totals.length;
+        document.getElementById('sd-pct').textContent = totals.length
+            ? (Math.round((list.length / totals.length) * 1000) / 10).toLocaleString('es-MX') + '%' : '0%';
 
         document.getElementById('sd-table-body').innerHTML = list.map(h => {
             const open = sdExpanded.has(h.guia);
@@ -3019,16 +3287,17 @@
             return main + detail;
         }).join('');
 
-        renderSamedayChart(list);
+        renderSamedayChart(list, totals);
     }
 
-    function renderSamedayChart(list) {
+    function renderSamedayChart(list, totals) {
         const canvas = document.getElementById('sd-chart');
         if (!canvas || typeof Chart === 'undefined') return;
         const fromVal = document.getElementById('sd-date-from').value;
         const toVal = document.getElementById('sd-date-to').value;
-        const counts = {};
+        const counts = {}, sdCounts = {};
         list.forEach(h => { const k = sdKey(h.incidenceDay); counts[k] = (counts[k] || 0) + 1; });
+        (totals || []).forEach(t => { const k = sdKey(t.day); sdCounts[k] = (sdCounts[k] || 0) + 1; });
         let labels = [];
         if (fromVal && toVal) {
             let cur = new Date(fromVal + 'T00:00:00');
@@ -3040,49 +3309,86 @@
                 guard++;
             }
         } else {
-            labels = Object.keys(counts).sort((a, b) => dateKeyToDate(a) - dateKeyToDate(b));
+            labels = Object.keys(Object.assign({}, counts, sdCounts)).sort((a, b) => dateKeyToDate(a) - dateKeyToDate(b));
         }
         const data = labels.map(l => counts[l] || 0);
+        const dataSd = labels.map(l => sdCounts[l] || 0);
         const isTraxion = document.body.classList.contains('theme-traxion');
-        const line = isTraxion ? '#d2df00' : '#a855f7';
-        const fillTop = isTraxion ? 'rgba(210,223,0,0.40)' : 'rgba(168,85,247,0.45)';
-        const fillBot = isTraxion ? 'rgba(210,223,0,0.02)' : 'rgba(168,85,247,0.02)';
+        const lightBg = isLightBg();
+        const line = isTraxion ? '#c5d100' : '#a855f7';
+        const lineDot = isTraxion ? '#8f9900' : line;
+        const orange = '#fdba74';
+        const wkColor = lightBg ? '#dc2626' : '#fb7185';
         const ctx = canvas.getContext('2d');
         const gradient = ctx.createLinearGradient(0, 0, 0, 260);
-        gradient.addColorStop(0, fillTop);
-        gradient.addColorStop(1, fillBot);
+        gradient.addColorStop(0, isTraxion ? 'rgba(210,223,0,0.45)' : 'rgba(168,85,247,0.40)');
+        gradient.addColorStop(1, isTraxion ? 'rgba(210,223,0,0.03)' : 'rgba(168,85,247,0.02)');
+        const gradientOr = ctx.createLinearGradient(0, 0, 0, 260);
+        gradientOr.addColorStop(0, 'rgba(253,186,116,0.28)');
+        gradientOr.addColorStop(1, 'rgba(253,186,116,0.02)');
         if (sdChartInstance) sdChartInstance.destroy();
-        const maxV = Math.max.apply(null, data.concat([0]));
+        const maxV = Math.max.apply(null, data.concat(dataSd, [0]));
+        const dot = lightBg ? '#ffffff' : '#0b0b0c';
         sdChartInstance = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: labels.map(l => l.split('/').slice(0, 2).join('/')),
-                datasets: [{
-                    label: 'Incidencias', data, fill: true, backgroundColor: gradient,
-                    borderColor: line, borderWidth: 2.5, tension: 0.35,
-                    pointRadius: 3.5, pointHoverRadius: 6,
-                    pointBackgroundColor: '#0b0b0c', pointBorderColor: line, pointBorderWidth: 2
-                }]
+                labels: labels.map(l => [l.split('/').slice(0, 2).join('/'), dayLetter(l)]),
+                datasets: [
+                    {
+                        label: 'Total INY SAMEDAY', data: dataSd, fill: true, backgroundColor: gradientOr,
+                        borderColor: orange, borderWidth: 2, tension: 0.35, order: 2,
+                        pointRadius: 3.5, pointHoverRadius: 6,
+                        pointBackgroundColor: dot, pointBorderColor: orange, pointBorderWidth: 2,
+                        datalabels: { align: 'top', anchor: 'center', offset: 14, clamp: true, color: '#7c2d12', backgroundColor: 'rgba(254,215,170,0.95)' }
+                    },
+                    {
+                        label: 'Incidencias (1 por guía)', data, fill: true, backgroundColor: gradient,
+                        borderColor: line, borderWidth: 3.5, tension: 0.35, order: 0,
+                        pointRadius: 4.5, pointHoverRadius: 7,
+                        pointBackgroundColor: dot, pointBorderColor: lineDot, pointBorderWidth: 2,
+                        datalabels: {
+                            align: 'center', anchor: 'center', offset: 0, clamp: true,
+                            color: isTraxion ? '#1f2226' : '#f5eaff',
+                            backgroundColor: isTraxion ? 'rgba(210,223,0,0.95)' : 'rgba(126,34,206,0.7)'
+                        }
+                    }
+                ]
             },
-            plugins: (typeof ChartDataLabels !== 'undefined') ? [ChartDataLabels] : [],
+            plugins: ((typeof ChartDataLabels !== 'undefined') ? [ChartDataLabels] : []).concat([{
+                id: 'weekendBands',
+                beforeDatasetsDraw(chart) {
+                    const { ctx: c, chartArea, scales } = chart;
+                    if (!chartArea || !scales.x) return;
+                    const n = labels.length; if (!n) return;
+                    const step = n > 1 ? (scales.x.getPixelForValue(1) - scales.x.getPixelForValue(0)) : chartArea.width;
+                    c.save();
+                    c.fillStyle = lightBg ? 'rgba(239,68,68,0.09)' : 'rgba(251,113,133,0.12)';
+                    labels.forEach((l, i) => {
+                        if (!isWeekendKey(l)) return;
+                        const x = scales.x.getPixelForValue(i);
+                        c.fillRect(x - step / 2, chartArea.top, step, chartArea.bottom - chartArea.top);
+                    });
+                    c.restore();
+                }
+            }]),
             options: {
                 responsive: true, maintainAspectRatio: false,
-                layout: { padding: { top: 26, left: 4, right: 4 } },
+                layout: { padding: { top: 26, left: 4, right: 4, bottom: 14 } },
                 interaction: { intersect: false, mode: 'index' },
                 plugins: {
-                    legend: { display: false },
-                    tooltip: { backgroundColor: '#1d1d21', titleColor: '#fff', bodyColor: line, borderColor: '#2d2d34', borderWidth: 1, padding: 10, displayColors: false },
+                    legend: { display: true, position: 'top', align: 'end', labels: { color: lightBg ? '#4b5057' : '#bbb', boxWidth: 12, boxHeight: 12, font: { size: 11, family: 'Lexend' } } },
+                    tooltip: { backgroundColor: '#1d1d21', titleColor: '#fff', bodyColor: '#fff', borderColor: '#2d2d34', borderWidth: 1, padding: 10, displayColors: true,
+                        callbacks: { title: (items) => items.length ? labels[items[0].dataIndex] + ' (' + dayName(labels[items[0].dataIndex]) + ')' : '' } },
                     datalabels: {
-                        align: 'top', anchor: 'end', offset: 4, color: isTraxion ? '#1f2226' : '#f5eaff',
                         font: { size: 10, weight: '700', family: 'Lexend' },
-                        formatter: (v) => v > 0 ? v : '',
-                        backgroundColor: isTraxion ? 'rgba(210,223,0,0.9)' : 'rgba(126,34,206,0.6)', borderRadius: 4,
+                        formatter: (v) => v,
+                        borderRadius: 4,
                         padding: { top: 2, bottom: 2, left: 5, right: 5 }
                     }
                 },
                 scales: {
-                    x: { grid: { display: false }, ticks: { color: '#999', font: { size: 9 } } },
-                    y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#999', font: { size: 9 }, precision: 0 }, suggestedMax: maxV + Math.ceil((maxV || 1) * 0.25) }
+                    x: { grid: { display: false }, ticks: { padding: 10, color: (c) => isWeekendKey(labels[c.index]) ? wkColor : (lightBg ? '#6b7280' : '#999'), font: (c) => ({ size: isWeekendKey(labels[c.index]) ? 10 : 9, weight: isWeekendKey(labels[c.index]) ? '800' : '500', family: 'Lexend' }) } },
+                    y: { beginAtZero: true, grid: { color: lightBg ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.05)' }, ticks: { color: lightBg ? '#6b7280' : '#999', font: { size: 9 }, precision: 0 }, suggestedMax: maxV + Math.ceil((maxV || 1) * 0.25) }
                 }
             }
         });
@@ -3402,6 +3708,230 @@
     });
     document.getElementById("kpiCloseBtn").addEventListener("click", kpiCloseList);
     document.getElementById("kpiCopyBtn").addEventListener("click", kpiCopyTable);
+</script>
+<script>
+// ===== MAPA PEDIDOS (pestaña) =====
+(function(){
+  const tab = document.getElementById('mapa-tab');
+  let map = null, layer = null;
+  const LIME='#CEDF1F', WARN='#F04438';
+  let onlyFlag=false;
+  let orders=[], headers=[], colorMap={}, hidden=new Set(), skipped=0, cols={};
+
+  const $ = id => document.getElementById(id);
+  const norm = s => String(s==null?'':s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[_\s]+/g,' ').trim().toUpperCase();
+  const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  function toast(msg){ const t=$('mp-toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove('show'),3500); }
+
+  function ensureMap(){
+    if(map) return true;
+    if(typeof L==='undefined'){ toast('No cargó Leaflet (revisa tu conexión)'); return false; }
+    map = L.map('mp-map',{zoomControl:false}).setView([25.67,-100.31],11);
+    L.control.zoom({position:'bottomright'}).addTo(map);
+    const mk=(url,opt)=>L.tileLayer(url,Object.assign({maxZoom:19},opt));
+    const bases={
+      'Calles':mk('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',{attribution:'Tiles &copy; Esri'}),
+      'OpenStreetMap':mk('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap contributors'}),
+      'Satélite':mk('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{attribution:'Tiles &copy; Esri'})
+    };
+    const order=['Calles','OpenStreetMap','Satélite'];
+    let baseIdx=0, tileErrs=0;
+    bases[order[0]].addTo(map);
+    L.control.layers(bases,null,{position:'bottomleft',collapsed:true}).addTo(map);
+    map.on('baselayerchange',e=>{ baseIdx=Math.max(0,order.indexOf(e.name)); tileErrs=0; });
+    Object.keys(bases).forEach(n=>bases[n].on('tileerror',()=>{
+      if(!map.hasLayer(bases[n])) return;
+      if(++tileErrs>=4 && baseIdx<order.length-1){
+        const next=order[baseIdx+1]; map.removeLayer(bases[n]); bases[next].addTo(map); baseIdx++; tileErrs=0;
+        toast('Cambié el mapa base a: '+next);
+      }
+    }));
+    layer = L.layerGroup().addTo(map);
+    return true;
+  }
+
+  window.mapaPedidosShow = function(){
+    if(!ensureMap()) return;
+    setTimeout(()=>{ map.invalidateSize(); },60);
+  };
+  window.addEventListener('resize',()=>{ if(map && tab.classList.contains('active')) map.invalidateSize(); });
+
+  function parseCoord(v){
+    if(v==null||v==='') return NaN;
+    if(typeof v==='number') return v;
+    let s=String(v).trim().replace(/\s/g,'');
+    if(s.includes(',') && s.includes('.')) s=s.replace(/,/g,'');
+    else s=s.replace(',','.');
+    return parseFloat(s);
+  }
+
+  function fmtValue(key,v){
+    if(v==null||v==='') return '';
+    if(v instanceof Date) return v.toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric'});
+    const k=norm(key);
+    if(k.includes('FECHA')){
+      if(typeof v==='number' && v>20000 && v<80000){
+        const d=new Date(Math.round((v-25569)*86400*1000));
+        return d.toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric',timeZone:'UTC'});
+      }
+      const m=String(v).match(/^(\d{4})-(\d{2})-(\d{2})/);
+      if(m){
+        const d=new Date(Date.UTC(+m[1],+m[2]-1,+m[3]));
+        const hasTime=/\d{2}:\d{2}/.test(String(v)) && !/00:00(:00)?$/.test(String(v).trim());
+        let out=d.toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric',timeZone:'UTC'});
+        if(hasTime) out+=' '+String(v).trim().slice(11,16);
+        return out;
+      }
+    }
+    return String(v);
+  }
+
+  function readFile(file){
+    if(!ensureMap()) return;
+    const reader=new FileReader();
+    reader.onload=e=>{
+      try{
+        const wb=XLSX.read(e.target.result,{type:'array',cellDates:true});
+        const ws=wb.Sheets[wb.SheetNames[0]];
+        const rows=XLSX.utils.sheet_to_json(ws,{defval:'',raw:true});
+        if(!rows.length){ toast('El archivo no tiene filas de datos'); return; }
+        headers=Object.keys(rows[0]);
+        const latKey=headers.find(h=>norm(h)==='LATITUD'||norm(h)==='LATITUDE'||norm(h)==='LAT');
+        const lngKey=headers.find(h=>norm(h)==='LONGITUD'||norm(h)==='LONGITUDE'||norm(h)==='LNG'||norm(h)==='LON');
+        if(!latKey||!lngKey){ toast('No encontré las columnas LATITUD y LONGITUD en la primera fila'); return; }
+        const estKey=headers.find(h=>norm(h)==='ESTADO PEDIDO'||norm(h)==='ESTADO');
+
+        orders=[]; skipped=0;
+        rows.forEach(r=>{
+          const lat=parseCoord(r[latKey]), lng=parseCoord(r[lngKey]);
+          if(!isFinite(lat)||!isFinite(lng)||Math.abs(lat)>90||Math.abs(lng)>180||(lat===0&&lng===0)){ skipped++; return; }
+          orders.push({fields:r,lat,lng,estado:estKey?String(r[estKey]||'Sin estado').trim():'Pedidos',key:null});
+        });
+        orders.forEach((o,i)=>{o.key=o.lat.toFixed(5)+','+o.lng.toFixed(5);o.idx=i;o.flag=false;});
+        onlyFlag=false; $('mp-warnChip').classList.remove('active');
+
+        colorMap={}; hidden=new Set();
+        [...new Set(orders.map(o=>o.estado))].forEach(s=>colorMap[s]=LIME);
+        cols={latKey,lngKey,estKey};
+
+        $('mp-fileName').textContent=file.name;
+        tab.classList.add('has-data');
+        $('mp-stats').style.display='flex'; $('mp-legend').style.display='flex';
+        $('mp-q').value='';
+        buildLegend(); render(true);
+        if(!orders.length) toast('Ninguna fila tiene coordenadas válidas');
+      }catch(err){ console.error(err); toast('No pude leer el archivo'); }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  function buildLegend(){
+    const lg=$('mp-legend'); lg.innerHTML='';
+    Object.keys(colorMap).forEach(s=>{
+      const n=orders.filter(o=>o.estado===s).length;
+      const c=document.createElement('span'); c.className='mp-chip'; c.title='Mostrar / ocultar';
+      c.innerHTML='<i style="background:'+colorMap[s]+'"></i>'+esc(s)+' · '+n;
+      c.onclick=()=>{ hidden.has(s)?hidden.delete(s):hidden.add(s); c.classList.toggle('off',hidden.has(s)); render(false); };
+      lg.appendChild(c);
+    });
+  }
+
+  function popupHTML(group){
+    const {latKey,lngKey,estKey}=cols;
+    const descKey=headers.find(h=>norm(h)==='DESCRIPCION');
+    const idKey=headers.find(h=>norm(h)==='ID');
+    let html='<div class="mp-pop">';
+    if(group.length>1) html+='<div class="mp-gcount">'+group.length+' pedidos en esta ubicación</div>';
+    group.forEach(o=>{
+      const f=o.fields;
+      const title=(descKey&&f[descKey])||(idKey&&('Pedido '+f[idKey]))||'Pedido';
+      html+='<div class="mp-order">';
+      html+='<h4>'+esc(title)+'</h4>';
+      if(idKey) html+='<div class="mp-sub">ID '+esc(f[idKey])+'</div>';
+      if(estKey) html+='<span class="mp-badge" style="background:'+colorMap[o.estado]+'">'+esc(o.estado)+'</span>';
+      headers.forEach(h=>{
+        if(h===descKey||h===idKey||h===estKey||h===latKey||h===lngKey) return;
+        const v=fmtValue(h,f[h]); if(v==='') return;
+        html+='<div class="mp-row"><span>'+esc(h.replace(/_/g,' ').trim())+'</span><span>'+esc(v)+'</span></div>';
+      });
+      html+='<div class="mp-row"><span>Coordenadas</span><span>'+o.lat.toFixed(5)+', '+o.lng.toFixed(5)+'</span></div>';
+      html+='<label class="mp-flag'+(o.flag?' on':'')+'"><input type="checkbox" data-i="'+o.idx+'"'+(o.flag?' checked':'')+'> Marcar pin como incorrecto</label>';
+      html+='</div>';
+    });
+    return html+'</div>';
+  }
+
+  function pinIcon(warn,num,sel){
+    const fill=warn?WARN:LIME;
+    const inner=warn
+      ? '<circle cx="14" cy="14" r="8" fill="#fff"/><rect x="12.8" y="8.6" width="2.4" height="6.2" rx="1.2" fill="'+WARN+'"/><circle cx="14" cy="18" r="1.4" fill="'+WARN+'"/>'
+      : '<circle cx="14" cy="14" r="'+(num!==''?7:5.2)+'" fill="#fff"/>';
+    const svg='<svg viewBox="0 0 28 40" xmlns="http://www.w3.org/2000/svg"><path class="body" d="M14 0C6.3 0 0 6.2 0 13.8 0 24 14 40 14 40s14-16 14-26.2C28 6.2 21.7 0 14 0z" fill="'+fill+'" stroke="rgba(0,0,0,.28)" stroke-width=".8"/>'+inner+'</svg>';
+    return L.divIcon({className:'',html:'<div class="gpin'+(sel?' sel':'')+'">'+svg+(!warn&&num!==''?'<span class="gnum">'+num+'</span>':'')+'</div>',iconSize:[28,40],iconAnchor:[14,40],popupAnchor:[0,-34]});
+  }
+
+  function updateFlagUI(){
+    const n=orders.filter(o=>o.flag).length;
+    $('mp-sFlag').textContent=n; $('mp-btnExport').disabled=!n;
+  }
+
+  function render(fit){
+    if(!map) return;
+    layer.clearLayers();
+    const q=norm($('mp-q').value);
+    const visible=orders.filter(o=>{
+      if(hidden.has(o.estado)) return false;
+      if(onlyFlag && !o.flag) return false;
+      if(!q) return true;
+      return Object.values(o.fields).some(v=>norm(v).includes(q));
+    });
+    const groups={};
+    visible.forEach(o=>(groups[o.key]=groups[o.key]||[]).push(o));
+    const pts=[];
+    Object.values(groups).forEach(g=>{
+      const first=g[0];
+      const num=g.length>1?g.length:'';
+      const m=L.marker([first.lat,first.lng],{icon:pinIcon(g.some(o=>o.flag),num,false),riseOnHover:true}).bindPopup(popupHTML(g),{maxWidth:420,minWidth:Math.min(340,Math.max(240,window.innerWidth-80)),autoPanPadding:[30,70]});
+      m._g=g; m._n=num; m._sel=false;
+      const paint=()=>m.setIcon(pinIcon(m._g.some(o=>o.flag),m._n,m._sel));
+      m.on('popupopen',e=>{
+        m._sel=true; paint(); m.setZIndexOffset(1000);
+        e.popup.getElement().querySelectorAll('input[data-i]').forEach(cb=>{
+          cb.addEventListener('change',()=>{
+            const o=orders[+cb.dataset.i]; o.flag=cb.checked;
+            cb.closest('.mp-flag').classList.toggle('on',cb.checked);
+            paint(); updateFlagUI();
+          });
+        });
+      });
+      m.on('popupclose',()=>{ m._sel=false; paint(); m.setZIndexOffset(0); });
+      m.addTo(layer);
+      pts.push([first.lat,first.lng]);
+    });
+    $('mp-sShown').textContent=visible.length;
+    $('mp-sTotal').textContent=orders.length;
+    $('mp-sSkipped').textContent=skipped?('· '+skipped+' sin coordenadas'):'';
+    updateFlagUI();
+    if(fit && pts.length) map.fitBounds(pts,{padding:[70,70],maxZoom:15});
+  }
+
+  $('mp-file').addEventListener('change',e=>{ if(e.target.files[0]) readFile(e.target.files[0]); e.target.value=''; });
+  $('mp-warnChip').addEventListener('click',()=>{ onlyFlag=!onlyFlag; $('mp-warnChip').classList.toggle('active',onlyFlag); render(false); });
+  $('mp-btnExport').addEventListener('click',()=>{
+    const rows=orders.filter(o=>o.flag).map(o=>o.fields);
+    if(!rows.length) return;
+    const wb=XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows),'Incorrectos');
+    XLSX.writeFile(wb,'pedidos_incorrectos.xlsx');
+  });
+  $('mp-q').addEventListener('input',()=>render(false));
+  $('mp-q').addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); render(true); } });
+
+  // Arrastrar y soltar: solo dentro de esta pestaña
+  ['dragenter','dragover'].forEach(ev=>tab.addEventListener(ev,e=>{ e.preventDefault(); tab.classList.add('drag'); }));
+  tab.addEventListener('dragleave',e=>{ if(e.target===tab || !tab.contains(e.relatedTarget)) tab.classList.remove('drag'); });
+  tab.addEventListener('drop',e=>{ e.preventDefault(); tab.classList.remove('drag'); const f=e.dataTransfer.files[0]; if(f) readFile(f); });
+})();
 </script>
 </body>
 </html>
