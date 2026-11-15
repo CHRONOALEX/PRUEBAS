@@ -3336,48 +3336,17 @@
         }).setView([23.6345, -102.5528], 5);
         L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-        // Capa de mapa vectorial / cuadrícula local en Canvas (100% sin API externa ni bloqueo de red)
-        const OfflineGridLayer = L.GridLayer.extend({
-            createTile: function (coords) {
-                const tile = document.createElement('canvas');
-                const size = this.getTileSize();
-                tile.width = size.x;
-                tile.height = size.y;
-                const ctx = tile.getContext('2d');
-
-                // Fondo cartográfico suave
-                ctx.fillStyle = '#eef2f5';
-                ctx.fillRect(0, 0, size.x, size.y);
-
-                // Retícula secundaria
-                ctx.strokeStyle = '#e2e8f0';
-                ctx.lineWidth = 1;
-                const step = 64;
-                for (let x = 0; x <= size.x; x += step) {
-                    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, size.y); ctx.stroke();
-                }
-                for (let y = 0; y <= size.y; y += step) {
-                    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(size.x, y); ctx.stroke();
-                }
-
-                // Borde de mosaico
-                ctx.strokeStyle = '#cbd5e1';
-                ctx.strokeRect(0, 0, size.x, size.y);
-
-                // Coordenadas geográficas de referencia en el mosaico
-                const n = Math.pow(2, coords.z);
-                const lon = (coords.x / n) * 360 - 180;
-                const latRad = Math.atan(Math.sinh(Math.PI * (1 - 2 * coords.y / n)));
-                const lat = (latRad * 180) / Math.PI;
-
-                ctx.fillStyle = '#94a3b8';
-                ctx.font = '10px Lexend, sans-serif';
-                ctx.fillText(`${lat.toFixed(2)}°, ${lon.toFixed(2)}°`, 8, 16);
-
-                return tile;
-            }
+        // Mapas base (requieren internet): calles y satélite
+        const baseCalles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'
         });
-        new OfflineGridLayer({ attribution: 'Mapa Interactivo Local (Sin API)' }).addTo(map);
+        const baseSatelite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            maxZoom: 19,
+            attribution: 'Imágenes &copy; Esri, Maxar, Earthstar Geographics'
+        });
+        baseCalles.addTo(map);
+        L.control.layers({ 'Calles': baseCalles, 'Satélite': baseSatelite }, null, { position: 'bottomright', collapsed: true }).addTo(map);
 
         const pinsLayer = L.layerGroup().addTo(map);
 
