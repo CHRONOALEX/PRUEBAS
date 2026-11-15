@@ -1042,6 +1042,7 @@
     /* Mapa a pantalla completa de fondo; la info flota encima */
     body.mapa-active #app-root { pointer-events: none; }
     body.mapa-active #top-nav { pointer-events: auto; z-index: 200; }
+    body.mapa-active #mapa-tab .mp-wrap { pointer-events: auto; }
     body.mapa-active #mapa-tab .mp-bar {
         pointer-events: auto; position: relative; z-index: 500;
         align-self: flex-start; max-width: 100%;
@@ -1053,6 +1054,45 @@
         border: none; border-radius: 0;
     }
     @media (max-width: 980px) { body.mapa-active #top-nav { position: relative; } }
+
+    /* Ventana flotante de paquetes */
+    #mapa-tab .mp-panel { display: none; }
+    body.mapa-active #mapa-tab.has-data .mp-panel {
+        display: flex; flex-direction: column; pointer-events: auto; position: fixed;
+        left: var(--mp-left, 16px); top: var(--mp-top, 170px); bottom: 16px; width: 310px; max-width: calc(100vw - 24px);
+        z-index: 450; overflow: hidden; border: 1px solid var(--carbon-border); border-radius: 12px;
+        background: color-mix(in srgb, var(--card-bg) 95%, transparent);
+        backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); box-shadow: 0 6px 24px rgba(0,0,0,0.35);
+    }
+    body.mapa-active #mapa-tab.has-data .mp-panel.collapsed { bottom: auto; }
+    #mapa-tab .mp-panel.collapsed .mp-pf, #mapa-tab .mp-panel.collapsed .mp-pl { display: none; }
+    #mapa-tab .mp-panel.collapsed .mp-pcol i { transform: rotate(180deg); }
+    #mapa-tab .mp-ph { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 12px; border-bottom: 1px solid var(--carbon-border); }
+    #mapa-tab .mp-panel.collapsed .mp-ph { border-bottom: none; }
+    #mapa-tab .mp-pt { font-weight: 700; font-size: 0.85rem; color: var(--text-main); display: flex; align-items: center; gap: 8px; }
+    #mapa-tab .mp-pcount { font-size: 0.7rem; background: rgba(128,128,128,0.2); border-radius: 999px; padding: 1px 8px; font-weight: 700; }
+    #mapa-tab .mp-pcol { background: transparent; border: 1px solid var(--carbon-border); color: var(--text-dim); border-radius: 8px; width: 28px; height: 28px; cursor: pointer; }
+    #mapa-tab .mp-pcol i { transition: transform .2s; }
+    #mapa-tab .mp-pf { display: flex; gap: 6px; flex-wrap: wrap; padding: 8px 12px; border-bottom: 1px solid var(--carbon-border); }
+    #mapa-tab .mp-pchip { font-size: 0.68rem; font-weight: 600; border: 1px solid var(--carbon-border); border-radius: 999px; padding: 3px 9px; cursor: pointer; user-select: none; color: var(--text-dim); }
+    #mapa-tab .mp-pchip b { color: var(--text-main); margin-left: 3px; }
+    #mapa-tab .mp-pchip.active { background: var(--text-main); color: var(--card-bg); border-color: var(--text-main); }
+    #mapa-tab .mp-pchip.active b { color: var(--card-bg); }
+    #mapa-tab .mp-pl { flex: 1 1 auto; overflow-y: auto; min-height: 0; }
+    #mapa-tab .mp-it { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 12px; border-bottom: 1px solid var(--border-subtle, var(--carbon-border)); cursor: pointer; }
+    #mapa-tab .mp-it:hover { background: var(--table-row-hover); }
+    #mapa-tab .mp-it.sel { background: rgba(128,128,128,0.16); }
+    #mapa-tab .mp-itx { min-width: 0; flex: 1 1 auto; }
+    #mapa-tab .mp-it1 { font-size: 0.8rem; font-weight: 700; color: var(--text-main); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    #mapa-tab .mp-it2 { font-size: 0.68rem; color: var(--text-dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    #mapa-tab .mp-st { flex: 0 0 auto; font-family: inherit; font-size: 0.64rem; font-weight: 700; border-radius: 999px; padding: 3px 9px; cursor: pointer; border: 1px solid; }
+    #mapa-tab .mp-st.ok { color: #047857; border-color: #10b981; background: rgba(16,185,129,0.14); }
+    #mapa-tab .mp-st.bad { color: #b42318; border-color: #F04438; background: rgba(240,68,56,0.14); }
+    #mapa-tab .mp-pempty { padding: 18px 12px; font-size: 0.75rem; color: var(--text-dim); text-align: center; }
+    @media (max-width: 640px) {
+        body.mapa-active #mapa-tab.has-data .mp-panel { left: 12px; right: 12px; width: auto; top: auto; bottom: 12px; max-height: 42vh; }
+        body.mapa-active #mapa-tab.has-data .leaflet-bottom { bottom: 56px; }
+    }
     @media (max-width: 640px) {
         #mapa-tab .mp-wrap { height: 68vh; min-height: 400px; }
         #mapa-tab .leaflet-popup-content { width: 300px !important; }
@@ -1688,13 +1728,24 @@
                 </div>
                 <div class="mp-legend" id="mp-legend"></div>
             </div>
+            <div class="mp-panel" id="mp-panel">
+                <div class="mp-ph">
+                    <div class="mp-pt"><i class="fas fa-boxes-stacked"></i> Paquetes <span class="mp-pcount" id="mp-pcount">0</span></div>
+                    <button type="button" class="mp-pcol" id="mp-pcol" title="Contraer / expandir"><i class="fas fa-chevron-down"></i></button>
+                </div>
+                <div class="mp-pf" id="mp-pf">
+                    <span class="mp-pchip active" data-m="all">Todos <b id="mp-nAll">0</b></span>
+                    <span class="mp-pchip" data-m="ok">Correctos <b id="mp-nOk">0</b></span>
+                    <span class="mp-pchip" data-m="bad">Incorrectos <b id="mp-nBad">0</b></span>
+                </div>
+                <div class="mp-pl" id="mp-pl"></div>
+            </div>
             <div class="mp-wrap">
                 <div id="mp-map"></div>
                 <div class="mp-empty" id="mp-empty">
                     <div class="mp-box">
                         <h2>Arrastra tu Excel aquí</h2>
-                        <p>Archivo .xlsx, .xls o .csv con encabezados en la primera fila, incluyendo <b>LATITUD</b> y <b>LONGITUD</b>.</p>
-                        <label for="mp-file" class="btn-primary" style="display:inline-flex; cursor:pointer;">Elegir archivo</label>
+                        <p style="margin:0;">Archivo .xlsx, .xls o .csv con encabezados en la primera fila, incluyendo <b>LATITUD</b> y <b>LONGITUD</b>. Usa el botón <b>SUBIR ARCHIVO</b> de arriba.</p>
                     </div>
                 </div>
                 <div id="mp-toast"></div>
@@ -3734,6 +3785,7 @@
   let map = null, layer = null;
   const LIME='#CEDF1F', WARN='#F04438';
   let onlyFlag=false;
+  let markerByKey={}, lastVisible=[], listMode='all', selIdx=-1;
   let orders=[], headers=[], colorMap={}, hidden=new Set(), skipped=0, cols={};
 
   const $ = id => document.getElementById(id);
@@ -3770,7 +3822,7 @@
 
   window.mapaPedidosShow = function(){
     if(!ensureMap()) return;
-    setTimeout(()=>{ map.invalidateSize(); },60);
+    setTimeout(()=>{ map.invalidateSize(); posPanel(); },60);
   };
   window.addEventListener('resize',()=>{ if(map && tab.classList.contains('active')) map.invalidateSize(); });
 
@@ -3836,7 +3888,8 @@
         tab.classList.add('has-data');
         $('mp-stats').style.display='flex'; $('mp-legend').style.display='flex';
         $('mp-q').value='';
-        buildLegend(); render(true);
+        $('mp-panel').classList.toggle('collapsed',window.innerWidth<=640); selIdx=-1;
+        buildLegend(); render(true); posPanel();
         if(!orders.length) toast('Ninguna fila tiene coordenadas válidas');
       }catch(err){ console.error(err); toast('No pude leer el archivo'); }
     };
@@ -3891,8 +3944,40 @@
   function updateFlagUI(){
     const n=orders.filter(o=>o.flag).length;
     $('mp-sFlag').textContent=n; $('mp-btnExport').disabled=!n;
+    renderList();
   }
 
+  function posPanel(){
+    const b=document.querySelector('#mapa-tab .mp-bar'), pn=$('mp-panel'); if(!b||!pn) return;
+    const r=b.getBoundingClientRect();
+    pn.style.setProperty('--mp-top',Math.round(r.bottom+12)+'px');
+    pn.style.setProperty('--mp-left',Math.round(r.left)+'px');
+    Object.values(markerByKey).forEach(applyPads);
+  }
+  function keyOf(re){ return headers.find(h=>norm(h)===re); }
+  function renderList(){
+    const pl=$('mp-pl'); if(!pl) return;
+    const ok=lastVisible.filter(o=>!o.flag).length, bad=lastVisible.length-ok;
+    $('mp-nAll').textContent=lastVisible.length; $('mp-nOk').textContent=ok; $('mp-nBad').textContent=bad;
+    $('mp-pcount').textContent=lastVisible.length;
+    const rows=lastVisible.filter(o=>listMode==='all'||(listMode==='ok'?!o.flag:o.flag));
+    const refK=keyOf('REFERENCIA EXTERNA'), idK=keyOf('ID'), dK=keyOf('DESCRIPCION');
+    if(!rows.length){ pl.innerHTML='<div class="mp-pempty">Sin paquetes para este filtro</div>'; return; }
+    pl.innerHTML=rows.map(o=>{
+      const f=o.fields, ref=refK&&f[refK], id=idK&&f[idK], d=dK&&f[dK];
+      const t=ref||id||'Pedido';
+      const sub=[ref&&id?('ID '+id):'',d||''].filter(Boolean).join(' · ');
+      return '<div class="mp-it'+(o.idx===selIdx?' sel':'')+'" data-i="'+o.idx+'"><div class="mp-itx"><div class="mp-it1">'+esc(t)+'</div>'+(sub?'<div class="mp-it2">'+esc(sub)+'</div>':'')+'</div>'+
+        '<button type="button" class="mp-st '+(o.flag?'bad':'ok')+'" data-t="1" title="Clic para cambiar">'+(o.flag?'Incorrecto':'Correcto')+'</button></div>';
+    }).join('');
+  }
+
+  function pads(){
+    const pn=$('mp-panel'), mob=window.innerWidth<=640, vis=pn && tab.classList.contains('has-data');
+    const r=vis?pn.getBoundingClientRect():null;
+    return { tl:[(!mob&&r)?Math.round(r.right+16):30, topPad()], br:[30, (mob&&r)?Math.round(r.height+24):40] };
+  }
+  function applyPads(m){ const po=m.getPopup(); if(!po) return; const p=pads(); po.options.autoPanPaddingTopLeft=p.tl; po.options.autoPanPaddingBottomRight=p.br; }
   function topPad(){ const b=document.querySelector('#mapa-tab .mp-bar'); return Math.round((b?b.getBoundingClientRect().bottom:120)+24); }
   function render(fit){
     if(!map) return;
@@ -3904,16 +3989,19 @@
       if(!q) return true;
       return Object.values(o.fields).some(v=>norm(v).includes(q));
     });
+    lastVisible=visible; markerByKey={};
     const groups={};
     visible.forEach(o=>(groups[o.key]=groups[o.key]||[]).push(o));
     const pts=[];
     Object.values(groups).forEach(g=>{
       const first=g[0];
       const num=g.length>1?g.length:'';
-      const m=L.marker([first.lat,first.lng],{icon:pinIcon(g.some(o=>o.flag),num,false),riseOnHover:true}).bindPopup(popupHTML(g),{maxWidth:420,minWidth:Math.min(340,Math.max(240,window.innerWidth-80)),autoPanPaddingTopLeft:[30,topPad()],autoPanPaddingBottomRight:[30,40]});
-      m._g=g; m._n=num; m._sel=false;
+      const m=L.marker([first.lat,first.lng],{icon:pinIcon(g.some(o=>o.flag),num,false),riseOnHover:true}).bindPopup(popupHTML(g),{maxWidth:420,minWidth:Math.min(340,Math.max(240,window.innerWidth-80)),autoPanPaddingTopLeft:pads().tl,autoPanPaddingBottomRight:pads().br});
+      m._g=g; m._n=num; m._sel=false; markerByKey[first.key]=m;
       const paint=()=>m.setIcon(pinIcon(m._g.some(o=>o.flag),m._n,m._sel));
+      m._paint=paint;
       m.on('popupopen',e=>{
+        selIdx=first.idx; renderList();
         m._sel=true; paint(); m.setZIndexOffset(1000);
         e.popup.getElement().querySelectorAll('input[data-i]').forEach(cb=>{
           cb.addEventListener('change',()=>{
@@ -3924,6 +4012,7 @@
         });
       });
       m.on('popupclose',()=>{ m._sel=false; paint(); m.setZIndexOffset(0); });
+      applyPads(m);
       m.addTo(layer);
       pts.push([first.lat,first.lng]);
     });
@@ -3943,6 +4032,29 @@
     XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows),'Incorrectos');
     XLSX.writeFile(wb,'pedidos_incorrectos.xlsx');
   });
+  $('mp-pf').addEventListener('click',e=>{
+    const c=e.target.closest('.mp-pchip'); if(!c) return;
+    listMode=c.dataset.m;
+    document.querySelectorAll('#mp-pf .mp-pchip').forEach(x=>x.classList.toggle('active',x===c));
+    renderList();
+  });
+  $('mp-pcol').addEventListener('click',()=>{ $('mp-panel').classList.toggle('collapsed'); posPanel(); });
+  $('mp-pl').addEventListener('click',e=>{
+    const it=e.target.closest('.mp-it'); if(!it) return;
+    const o=orders[+it.dataset.i]; if(!o) return;
+    const m=markerByKey[o.key];
+    if(e.target.closest('[data-t]')){
+      o.flag=!o.flag;
+      if(m){ if(m.isPopupOpen()) m.closePopup(); m.setPopupContent(popupHTML(m._g)); m._paint(); }
+      updateFlagUI(); return;
+    }
+    selIdx=o.idx;
+    if(m){ map.setView([o.lat,o.lng],Math.max(map.getZoom(),16),{animate:false}); applyPads(m); m.openPopup(); }
+    renderList();
+    if(window.innerWidth<=640){ $('mp-panel').classList.add('collapsed'); posPanel(); }
+  });
+  window.addEventListener('resize',posPanel);
+  if(window.ResizeObserver) new ResizeObserver(posPanel).observe(document.querySelector('#mapa-tab .mp-bar'));
   $('mp-q').addEventListener('input',()=>render(false));
   $('mp-q').addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); render(true); } });
 
