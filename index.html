@@ -1718,15 +1718,7 @@
                     <label for="mp-file" class="btn-primary" style="padding:10px 18px; font-size:0.82rem; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:8px;">
                         <i class="fas fa-file-excel"></i> SUBIR ARCHIVO
                     </label>
-                    <span class="mp-fname" id="mp-fileName">Sin archivo</span>
                 </div>
-                <div class="mp-stats" id="mp-stats">
-                    <span class="mp-stat"><b id="mp-sShown">0</b> de <b id="mp-sTotal">0</b> pedidos</span>
-                    <span class="mp-stat" id="mp-sSkipped"></span>
-                    <span class="mp-warnchip" id="mp-warnChip" title="Mostrar solo los marcados"><svg width="12" height="12" viewBox="0 0 24 24" fill="#F04438"><path d="M12 2 1 21h22L12 2zm1 15h-2v-2h2v2zm0-4h-2V9h2v4z"/></svg><b id="mp-sFlag">0</b> incorrectos</span>
-                    <button type="button" class="btn-primary btn-secondary" id="mp-btnExport" disabled style="padding:7px 14px; font-size:0.75rem;">Exportar incorrectos</button>
-                </div>
-                <div class="mp-legend" id="mp-legend"></div>
             </div>
             <div class="mp-panel" id="mp-panel">
                 <div class="mp-ph">
@@ -3784,9 +3776,8 @@
   const tab = document.getElementById('mapa-tab');
   let map = null, layer = null;
   const LIME='#CEDF1F', WARN='#F04438';
-  let onlyFlag=false;
   let markerByKey={}, lastVisible=[], listMode='all', selIdx=-1;
-  let orders=[], headers=[], colorMap={}, hidden=new Set(), skipped=0, cols={};
+  let orders=[], headers=[], skipped=0, cols={};
 
   const $ = id => document.getElementById(id);
   const norm = s => String(s==null?'':s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[_\s]+/g,' ').trim().toUpperCase();
@@ -3878,33 +3869,17 @@
           orders.push({fields:r,lat,lng,estado:estKey?String(r[estKey]||'Sin estado').trim():'Pedidos',key:null});
         });
         orders.forEach((o,i)=>{o.key=o.lat.toFixed(5)+','+o.lng.toFixed(5);o.idx=i;o.flag=false;});
-        onlyFlag=false; $('mp-warnChip').classList.remove('active');
-
-        colorMap={}; hidden=new Set();
-        [...new Set(orders.map(o=>o.estado))].forEach(s=>colorMap[s]=LIME);
         cols={latKey,lngKey,estKey};
 
-        $('mp-fileName').textContent=file.name;
         tab.classList.add('has-data');
-        $('mp-stats').style.display='flex'; $('mp-legend').style.display='flex';
         $('mp-q').value='';
         $('mp-panel').classList.toggle('collapsed',window.innerWidth<=640); selIdx=-1;
-        buildLegend(); render(true); posPanel();
+        render(true); posPanel();
         if(!orders.length) toast('Ninguna fila tiene coordenadas válidas');
+        else if(skipped) toast(orders.length+' pedidos cargados ('+skipped+' sin coordenadas)');
       }catch(err){ console.error(err); toast('No pude leer el archivo'); }
     };
     reader.readAsArrayBuffer(file);
-  }
-
-  function buildLegend(){
-    const lg=$('mp-legend'); lg.innerHTML='';
-    Object.keys(colorMap).forEach(s=>{
-      const n=orders.filter(o=>o.estado===s).length;
-      const c=document.createElement('span'); c.className='mp-chip'; c.title='Mostrar / ocultar';
-      c.innerHTML='<i style="background:'+colorMap[s]+'"></i>'+esc(s)+' · '+n;
-      c.onclick=()=>{ hidden.has(s)?hidden.delete(s):hidden.add(s); c.classList.toggle('off',hidden.has(s)); render(false); };
-      lg.appendChild(c);
-    });
   }
 
   function popupHTML(group){
@@ -3919,7 +3894,7 @@
       html+='<div class="mp-order">';
       html+='<h4>'+esc(title)+'</h4>';
       if(idKey) html+='<div class="mp-sub">ID '+esc(f[idKey])+'</div>';
-      if(estKey) html+='<span class="mp-badge" style="background:'+colorMap[o.estado]+'">'+esc(o.estado)+'</span>';
+      if(estKey) html+='<span class="mp-badge" style="background:'+LIME+'">'+esc(o.estado)+'</span>';
       headers.forEach(h=>{
         if(h===descKey||h===idKey||h===estKey||h===latKey||h===lngKey) return;
         const v=fmtValue(h,f[h]); if(v==='') return;
@@ -3941,12 +3916,6 @@
     return L.divIcon({className:'',html:'<div class="gpin'+(sel?' sel':'')+'">'+svg+(!warn&&num!==''?'<span class="gnum">'+num+'</span>':'')+'</div>',iconSize:[28,40],iconAnchor:[14,40],popupAnchor:[0,-34]});
   }
 
-  function updateFlagUI(){
-    const n=orders.filter(o=>o.flag).length;
-    $('mp-sFlag').textContent=n; $('mp-btnExport').disabled=!n;
-    renderList();
-  }
-
   function posPanel(){
     const b=document.querySelector('#mapa-tab .mp-bar'), pn=$('mp-panel'); if(!b||!pn) return;
     const r=b.getBoundingClientRect();
@@ -3960,7 +3929,9 @@
     const ok=lastVisible.filter(o=>!o.flag).length, bad=lastVisible.length-ok;
     $('mp-nAll').textContent=lastVisible.length; $('mp-nOk').textContent=ok; $('mp-nBad').textContent=bad;
     $('mp-pcount').textContent=lastVisible.length;
-    const rows=lastVisible.filter(o=>listMode==='all'||(listMode==='ok'?!o.flag:o.flag));
+    const rows=lastVisible
+      .filter(o=>listMode==='all'||(listMode==='ok'?!o.flag:o.flag))
+      .sort((a,b)=>(b.flag?1:0)-(a.flag?1:0) || (a.idx-b.idx));
     const refK=keyOf('REFERENCIA EXTERNA'), idK=keyOf('ID'), dK=keyOf('DESCRIPCION');
     if(!rows.length){ pl.innerHTML='<div class="mp-pempty">Sin paquetes para este filtro</div>'; return; }
     pl.innerHTML=rows.map(o=>{
@@ -3984,8 +3955,6 @@
     layer.clearLayers();
     const q=norm($('mp-q').value);
     const visible=orders.filter(o=>{
-      if(hidden.has(o.estado)) return false;
-      if(onlyFlag && !o.flag) return false;
       if(!q) return true;
       return Object.values(o.fields).some(v=>norm(v).includes(q));
     });
@@ -4007,7 +3976,7 @@
           cb.addEventListener('change',()=>{
             const o=orders[+cb.dataset.i]; o.flag=cb.checked;
             cb.closest('.mp-flag').classList.toggle('on',cb.checked);
-            paint(); updateFlagUI();
+            paint(); renderList();
           });
         });
       });
@@ -4016,22 +3985,11 @@
       m.addTo(layer);
       pts.push([first.lat,first.lng]);
     });
-    $('mp-sShown').textContent=visible.length;
-    $('mp-sTotal').textContent=orders.length;
-    $('mp-sSkipped').textContent=skipped?('· '+skipped+' sin coordenadas'):'';
-    updateFlagUI();
+    renderList();
     if(fit && pts.length) map.fitBounds(pts,{paddingTopLeft:[50,topPad()],paddingBottomRight:[50,60],maxZoom:15});
   }
 
   $('mp-file').addEventListener('change',e=>{ if(e.target.files[0]) readFile(e.target.files[0]); e.target.value=''; });
-  $('mp-warnChip').addEventListener('click',()=>{ onlyFlag=!onlyFlag; $('mp-warnChip').classList.toggle('active',onlyFlag); render(false); });
-  $('mp-btnExport').addEventListener('click',()=>{
-    const rows=orders.filter(o=>o.flag).map(o=>o.fields);
-    if(!rows.length) return;
-    const wb=XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows),'Incorrectos');
-    XLSX.writeFile(wb,'pedidos_incorrectos.xlsx');
-  });
   $('mp-pf').addEventListener('click',e=>{
     const c=e.target.closest('.mp-pchip'); if(!c) return;
     listMode=c.dataset.m;
@@ -4046,7 +4004,7 @@
     if(e.target.closest('[data-t]')){
       o.flag=!o.flag;
       if(m){ if(m.isPopupOpen()) m.closePopup(); m.setPopupContent(popupHTML(m._g)); m._paint(); }
-      updateFlagUI(); return;
+      renderList(); return;
     }
     selIdx=o.idx;
     if(m){ map.setView([o.lat,o.lng],Math.max(map.getZoom(),16),{animate:false}); applyPads(m); m.openPopup(); }
