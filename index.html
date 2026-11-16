@@ -3325,6 +3325,7 @@
         const BAD = { bg: '#F04438', border: '#B42318' };
         const BAD_KEYWORDS = ['sin colonia', 'no existe', 'no encontrada', 'no encontrado', 'error', 'invalida', 'inválida', 'sin resultado', 'sin ubicacion', 'sin ubicación', 'desconocida'];
 
+        const MTY = [25.6866, -100.3161], MTY_ZOOM = 12; // Monterrey, Nuevo León
         const map = L.map('mp-map', {
             zoomControl: false,
             dragging: true,
@@ -3333,8 +3334,21 @@
             doubleClickZoom: true,
             boxZoom: true,
             keyboard: true
-        }).setView([23.6345, -102.5528], 5);
+        }).setView(MTY, MTY_ZOOM);
         L.control.zoom({ position: 'bottomright' }).addTo(map);
+        const RecenterCtl = L.Control.extend({
+            options: { position: 'bottomright' },
+            onAdd: function () {
+                const a = L.DomUtil.create('a', 'leaflet-bar');
+                a.href = '#'; a.title = 'Centrar en Monterrey';
+                a.innerHTML = '<i class="fas fa-crosshairs" style="font-size:14px;line-height:30px;display:block;width:30px;text-align:center;color:#333;"></i>';
+                a.style.cssText = 'background:#fff;display:block;width:30px;height:30px;border-radius:4px;cursor:pointer;';
+                L.DomEvent.disableClickPropagation(a);
+                L.DomEvent.on(a, 'click', e => { L.DomEvent.preventDefault(e); map.setView(MTY, MTY_ZOOM); });
+                return a;
+            }
+        });
+        new RecenterCtl().addTo(map);
 
         // Cuadrícula local (siempre debajo): se ve si el mapa de fondo no puede cargar
         const OfflineGridLayer = L.GridLayer.extend({
@@ -3396,25 +3410,35 @@
         const baseSatelite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
             maxZoom: 19, zIndex: 1, attribution: 'Imágenes &copy; Esri, Maxar, Earthstar Geographics'
         });
-        const calleLayers = [baseCarto, baseOsm, baseOsmFr, baseEsri];
-        let tileOk = 0, tileErr = 0, avisoBase = false;
+        const calleLayers = [baseCarto, baseEsri, baseOsm, baseOsmFr];
+        let tileOk = 0, tileErr = 0, avisoBase = false, curIdx = 0, healthTimer = null;
+        const avisar = msg => { const t = document.getElementById('mp-toast'); if (t) { t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 7000); } };
+        function nextProvider() {
+            clearTimeout(healthTimer);
+            const cur = calleLayers[curIdx];
+            if (curIdx + 1 < calleLayers.length) {
+                if (map.hasLayer(cur)) map.removeLayer(cur);
+                curIdx++; tileOk = 0; tileErr = 0;
+                map.addLayer(calleLayers[curIdx]);
+                armHealth();
+            } else if (!avisoBase) {
+                avisoBase = true;
+                avisar('No se pudo cargar el mapa de fondo (sin internet o bloqueado). Se muestra la cuadrícula local.');
+            }
+        }
+        function armHealth() {
+            clearTimeout(healthTimer);
+            healthTimer = setTimeout(() => { if (tileOk === 0 && isTabActive('mapa-tab')) nextProvider(); }, 6000);
+        }
         calleLayers.forEach((l, i) => {
-            l.on('tileload', () => { if (map.hasLayer(l)) tileOk++; });
+            l.on('tileload', () => { if (i === curIdx) tileOk++; });
             l.on('tileerror', () => {
-                if (!map.hasLayer(l) || tileOk > 0) return;
-                if (++tileErr < 4) return;
-                tileErr = 0;
-                if (i + 1 < calleLayers.length) {
-                    map.removeLayer(l);
-                    map.addLayer(calleLayers[i + 1]);
-                } else if (!avisoBase) {
-                    avisoBase = true;
-                    const t = document.getElementById('mp-toast');
-                    if (t) { t.textContent = 'No se pudo cargar el mapa de fondo (sin internet o bloqueado). Se muestra la cuadrícula local.'; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 7000); }
-                }
+                if (i !== curIdx || tileOk > 0) return;
+                if (++tileErr >= 3) nextProvider();
             });
         });
-        map.on('baselayerchange', () => { tileOk = 0; tileErr = 0; });
+        window._mpArmHealth = armHealth;
+        map.on('baselayerchange', e => { const i = calleLayers.indexOf(e.layer); if (i >= 0) curIdx = i; tileOk = 0; tileErr = 0; });
         baseCarto.addTo(map);
         L.control.layers({ 'Calles (CARTO)': baseCarto, 'Calles (OSM)': baseOsm, 'Calles (OSM Francia)': baseOsmFr, 'Calles (Esri)': baseEsri, 'Satélite': baseSatelite }, null, { position: 'bottomright', collapsed: true }).addTo(map);
 
@@ -3689,7 +3713,7 @@
             updateBadCount();
             renderPanel();
             if (fit && bounds.length) {
-                map.fitBounds(bounds, { padding: [50, 50], maxZoom: 16 });
+                map.setView(MTY, MTY_ZOOM);
             }
         }
 
@@ -3760,11 +3784,14 @@
         ['dragleave', 'drop'].forEach(ev => tabEl.addEventListener(ev, e => { e.preventDefault(); tabEl.classList.remove('drag'); }));
         tabEl.addEventListener('drop', e => handleFile(e.dataTransfer.files[0]));
 
+        let mpFirst = true;
         window.mapaPedidosShow = () => {
             syncPanelTop();
             requestAnimationFrame(() => {
-                map.invalidateSize();
-                setTimeout(() => map.invalidateSize(), 150);
+                map.invalidateSize(false);
+                if (mpFirst) { mpFirst = false; map.setView(MTY, MTY_ZOOM, { animate: false }); }
+                setTimeout(() => { map.invalidateSize(false); map.eachLayer(l => { if (l.redraw && l !== undefined && l._url) l.redraw(); }); }, 200);
+                if (window._mpArmHealth) window._mpArmHealth();
             });
         };
     })();
